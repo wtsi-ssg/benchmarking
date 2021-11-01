@@ -1,0 +1,10 @@
+referenceGenome_index1/hash.bin,8f8d73a877ad086bbb281e4e2bdadfc5,
+referenceGenome_index1/header.json,c52fa34e1ab393041c0f84474de4d39c,
+referenceGenome_index1/indexing.log,d1ba3fb36c816398201b98151e7a6e24,
+referenceGenome_index1/quasi_index.log,7bdda407564d52aaf323edc7bd66c012,
+referenceGenome_index1/rsd.bin,72a2ac4610b1e1dd8c263efb8046ce42,
+referenceGenome_index1/sa.bin,67d06446c902e984be24ff48ec8f37a0,
+referenceGenome_index1/txpInfo.bin,54565bc07fbe5c5da8bd374e85b44715,
+referenceGenome_index1/versionInfo.json,3d2de5424aae670242a9ca02c0f4c48c,
+SRR10103759/C1_1.fq.gz,2d5692e54b6edd0c6b962497d729e8d6,
+SRR10103759/C1_2.fq.gz,5d19f1d143afd6b4c4e54ba3de799b7b

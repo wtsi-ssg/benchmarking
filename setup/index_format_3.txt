@@ -1,0 +1,11 @@
+referenceGenome_index3/duplicate_clusters.tsv,141a31df508bb6db20430a46e32a878c,
+referenceGenome_index3/hash.bin,20ae6ff1455798e511275635a3a7f196,
+referenceGenome_index3/header.json,c125dfc9325e35e96b4378ad8f80641f,
+referenceGenome_index3/indexing.log,f56e1b8b05bec52c4daae7d1db9d71d4,
+referenceGenome_index3/quasi_index.log,91991547fb33370787d29e73f1f91686,
+referenceGenome_index3/rsd.bin,08be22d089af45eeb18ff14aa358570c,
+referenceGenome_index3/sa.bin,8a3a112b1567f0fa0e390c9cb9f474db,
+referenceGenome_index3/txpInfo.bin,3ee7b32275f91bb6c10c087e18b052ae,
+referenceGenome_index3/versionInfo.json,001ef788a87a43e0d2ea8c7c8c09ef1d,
+SRR10103759/C1_1.fq.gz,2d5692e54b6edd0c6b962497d729e8d6,
+SRR10103759/C1_2.fq.gz,5d19f1d143afd6b4c4e54ba3de799b7b
