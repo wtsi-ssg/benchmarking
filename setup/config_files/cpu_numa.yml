@@ -1,0 +1,21 @@
+---
+- general_settings:
+  release_date: "00-00-00"
+  file_system: "something"
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: numactl
+      settings:
+        tag: numactl_bwa
+        command: "/data/benchmarking/setup/bwa.sh"
+        program: "bwa"
+        programversion: "0.7.17"
+        shell: True
+        dataset_tag: "bwa"
+        datadir: "/data/datasets/bwa/"
+        dataset_file: "/data/benchmarking/setup/bwa_data.txt"
+        resultdir: "/data/results/runs/"
+        repeats: 2
+        clear_caches: true
+        step: 1

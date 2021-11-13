@@ -1,9 +1,8 @@
 ---
 - general_settings:
   release_date: "00-00-00"
-  file_system: "ext4"
+  file_system: "something"
   install_dir: "/data/"
-  virtualized: "FALSE"
 - type: disk
   settings:
     target_dir: /tmp

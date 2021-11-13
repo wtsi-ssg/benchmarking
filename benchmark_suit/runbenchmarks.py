@@ -25,7 +25,7 @@ def get_args():
         '-t','--type',
         type=str,
         help="""Type of the benchmark""",
-        choices=['cpu', 'disk', 'network', 'all'],
+        choices=['cpu_numa', 'disk', 'network', 'threaded', 'timed_command'],
         required=True
     )
     parser.add_argument(
@@ -38,13 +38,7 @@ def get_args():
     return parser.parse_args()
 
 def get_config_file(b_type):
-    type_config = {
-            "cpu": "/benchmarking/setup/config_files/cpu.yml",
-            "disk": "/benchmarking/setup/config_files/disk.yml",
-            "network": "/benchmarking/setup/config_files/network.yml"
-    }
-
-    return type_config[b_type]
+    return os.path.join("/data/benchmarking/setup/config_files", b_type+".yml")
 
 def get_config(c_file):
     with open(c_file, "r") as yamlconfig:
@@ -93,14 +87,17 @@ def add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks):
 
     return benchsuite
 
-def result_file_name(output_file):
-    timestr = time.strftime("%Y%m%d-%H%M%S")
+def result_file_name(b_type, output_file):
+    result_dir = os.path.join("/data/results", b_type)
+    os.makedirs(result_dir, exist_ok=True)
+
+    output_file = os.path.join(result_dir, time.strftime("%Y%m%d-%H%M%S")+"_"+output_file) 
     
-    return timestr+"_"+output_file
+    return output_file
 
 def run_benchsuite(benchsuite, config_file, result_file):
     install_dir = prepareScript.get_install_dir(config_file)
-    results = benchsuite.run(install_dir)
+    results = benchsuite.run()
     
     with open(result_file, "w") as file:
         json.dump(results, file, indent=2)
@@ -118,7 +115,8 @@ if __name__ == '__main__':
         print("Configuration file used:    {}".format(config_file))
         print("Output will be stored at:   {}".format(args.output_file_name))
 
-    config_file = get_config_file(args.type)
+    config_file = os.path.join("/data/benchmarking/setup/config_files", args.type+".yml")
+    
     config = get_config(config_file)
     
     loaded_benchmarks = load_all_benchmarks()
@@ -129,7 +127,7 @@ if __name__ == '__main__':
     
     benchsuite = add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks)
     
-    result_file = "/data/results/"+result_file_name(args.output_file_name)
+    result_file = result_file_name(args.type, args.output_file_name)
 
     run_benchsuite(benchsuite, config_file, result_file)
     

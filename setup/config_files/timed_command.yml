@@ -1,0 +1,32 @@
+---
+- general_settings:
+  release_date: "00-00-00"
+  file_system: "/lustre"
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: command
+      settings:
+        tag: bwa
+        command: "/data/benchmarking/scripts/bwa.sh"
+        program: "bwa"
+        programversion: "0.7.17"
+        shell: True
+        dataset_tag: "bwa"
+        dataset_file: "/data/benchmarking/setup/bwa_data.txt"
+        datadir: "/data/datasets/bwa/"
+        result_dir: "/data/results/runs/"
+        repeats: 2
+        clear_caches: True
+    - type: command
+      settings:
+        tag: salmon-1.0.0
+        command: "/data/benchmarking/scripts/salmon.sh"
+        program: "salmon"
+        programversion: "1.0.0"
+        shell: True
+        dataset_tag: "default"
+        datadir: "/data/datasets/salmon/"
+        result_dir: "/data/results/runs/"
+        repeats: 2
+        clear_caches: True

@@ -11,19 +11,17 @@ class Suite(object):
 
      - supplies high level system information: host, OS, CPUs, Arch
     """
-    def __init__(self, benchmarks=None, release_date=None, install_dir=None, fs_name=None, virtualized=None):
+    def __init__(self, benchmarks=None, release_date=None, install_dir=None, fs_name=None):
         self.benchmarks = benchmarks if benchmarks else []
         self.release_date = release_date
         self.fs_name = fs_name
-        self.virtualized = virtualized
         self.install_dir = install_dir
 
-    def run(self, install_dir):
+    def run(self):
         results = {
                   "date": datetime.datetime.now().strftime("%Y-%m-%d"), 
                   "general_settings": { "release date": self.release_date,
-                                        "files system": self.fs_name, 
-                                        "virtualized": self.virtualized
+                                        "files system": self.fs_name
                                       },
                   "system-info": self._get_system_info(), 
                   "results": {}
@@ -33,9 +31,9 @@ class Suite(object):
             print("Running {0} benchmarks".format(benchmark.get_name()), file=sys.stderr)
             
             if benchmark.get_name() == "Disk":
-                results["results"][benchmark.get_name()] = benchmark.run(self.fs_name, self.install_dir )
+                results["results"][benchmark.get_name()] = benchmark.run(self.fs_name)
             else:
-                results["results"][benchmark.get_name()] = benchmark.run(self.install_dir)
+                results["results"][benchmark.get_name()] = benchmark.run()
         
         return results
 
