@@ -4,6 +4,7 @@ import yaml
 import json
 import argparse
 import os
+import shutil
 import sys
 import yapsy.PluginManager as pm
 import yapsy.PluginFileLocator as pfl
@@ -33,6 +34,12 @@ def get_args():
         type=str,
         help="""The output file name""",
         required=True
+    )
+    parser.add_argument(
+        '-c', '--cleanup',
+        type=str,
+        help="""Cleanup after the runs?""",
+        choices=['y', 'n'], nargs='?', const='n'
     )
     
     return parser.parse_args()
@@ -105,6 +112,16 @@ def run_benchsuite(benchsuite, config_file, result_file):
     if args.verbose:
         print(json.dumps(results, indent=2, sort_keys=True))
 
+def cleanup():
+    dirs = ["/data/tools", "/data/datasets", "/data/results/runs"]
+    for d in dirs:
+        try:
+            shutil.rmtree(d)
+        except OSError as e:
+            print("Error: %s : %s" % (d, e.strerror))
+
+    print("Clean up is done.")
+
 if __name__ == '__main__':
     args = get_args()
 
@@ -132,4 +149,6 @@ if __name__ == '__main__':
     run_benchsuite(benchsuite, config_file, result_file)
     
     print("Result stored at: {}".format(result_file))
-
+    
+    if args.cleanup == 'y':
+        cleanup()

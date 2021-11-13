@@ -16,7 +16,6 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 class MultiThread(timedcommand.TimedCommand):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        print(kwargs.items())
         self.process_thread = kwargs['process_thread'].split(',')
 
     def get_name(self):
@@ -44,7 +43,7 @@ class MultiThread(timedcommand.TimedCommand):
 
                 print("--Running command with {threads} threads".format(threads=th), file=sys.stderr)
                 
-                with subprocess.Popen([self.script_path+" "+get_cpu_info()["arch"]+" "+str(self.original_datadir)+" "+str(repeat)+" "+self.install_path+" "+str(ps)+" "+str(th)+" "+resulted_sam_dir+" "+resulted_time_dir], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
+                with subprocess.Popen([self.execution_string+" "+get_cpu_info()["arch"]+" "+str(self.original_datadir)+" "+str(repeat)+" "+self.install_path+" "+str(ps)+" "+str(th)+" "+resulted_sam_dir+" "+resulted_time_dir], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
                     stdout, _ = process.communicate()
                     usr_sys_elp_list = stdout.strip().split(" ")
                     if len(usr_sys_elp_list) == 3:
