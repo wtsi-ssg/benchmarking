@@ -18,14 +18,14 @@ class Network(benchmarkessentials.ParentBenchmark):
         self.benchmarks.append(benchmark)
         return self
 
-    def run(self, install_dir):
+    def run(self):
         results = {"benchmarks": {}}
         for benchmark in self.benchmarks:
             print("-Running {} benchmark".format(benchmark.get_name()), file=sys.stderr)
             if benchmark.get_name() not in results["benchmarks"]:
                 results["benchmarks"][benchmark.get_name()] = [] 
             
-            results["benchmarks"][benchmark.get_name()].append(benchmark.run(install_dir))
+            results["benchmarks"][benchmark.get_name()].append(benchmark.run())
 
         return results
 

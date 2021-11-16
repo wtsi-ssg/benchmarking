@@ -107,7 +107,7 @@ def download_and_install_programs(settings_list, install_dir):
         with open(os.path.dirname(os.path.realpath(__file__))+"/binaryAddresses.txt", "r") as binary_url:
             for line in binary_url:
                 pro_ver, url = line.strip().split(',')
-                
+                 
                 if pro_ver == name_and_version:
                     file_name = Path(url).name
                     if not path.exists(install_dir+file_name):

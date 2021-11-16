@@ -16,9 +16,10 @@ class IPerf(benchmarkessentials.Benchmark):
     An iperf server is required to be running on the server_{address,port}
     Requires iperf to be in PATH
     """
-    def __init__(self, server_address, install_dir, server_port, protocol, time_to_transmit, parallel_streams, programversion):
+    def __init__(self, server_address, install_dir, server_port, protocol, time_to_transmit, parallel_streams, program, programversion):
         self.server_address = server_address
         self.server_port = str(server_port)
+        self.program = program
         self.programversion = programversion
         self.install_dir = install_dir
         self.server_port = server_port
@@ -29,7 +30,16 @@ class IPerf(benchmarkessentials.Benchmark):
     def get_name(self):
         return "iPerf"
 
-    def run(self, install_dir):
+    def run(self):
+        results = {"program": self.program,
+                   "version": self.programversion,
+                   "server": self.server_address, 
+                   "port": self.server_port, 
+                   "protocol": self.protocol, 
+                   "time_to_transmit": int(self.time_to_transmit), 
+                   "parallel_streams": int(self.parallel_streams), 
+                   "result_summary": {}}
+
         print("--Version: {}, Protocol: {}".format(self.programversion, self.protocol))
         command = self.install_dir+"iperf-v"+self.programversion+"/usr/bin/iperf3"
         exe_list = [command, "-c", self.server_address, "-p", self.server_port, "-J", "-t", self.time_to_transmit, "-P", self.parallel_streams]
@@ -45,19 +55,20 @@ class IPerf(benchmarkessentials.Benchmark):
                 print("Is your iPerf3 server running?")
                 sys.exit()
 
-            results = {}
+            run_results = {}
             
             if stdout_dict["end"]:
                 if self.protocol == "TCP":
-                    results["sum_sent"] = stdout_dict["end"]["sum_sent"] if stdout_dict["end"]["sum_sent"] else {}
-                    results["sum_received"] = stdout_dict["end"]["sum_received"] if stdout_dict["end"]["sum_received"] else {}
+                    run_results["sum_sent"] = stdout_dict["end"]["sum_sent"] if stdout_dict["end"]["sum_sent"] else {}
+                    run_results["sum_received"] = stdout_dict["end"]["sum_received"] if stdout_dict["end"]["sum_received"] else {}
                 elif self.protocol == "UDP":
-                   results["sum"] = stdout_dict["end"]["sum"] if stdout_dict["end"]["sum"] else {}
+                   run_results["sum"] = stdout_dict["end"]["sum"] if stdout_dict["end"]["sum"] else {}
             
-                results["cpu_utilization_percent"] = stdout_dict["end"]["cpu_utilization_percent"] if stdout_dict["end"]["cpu_utilization_percent"] else {}
+                run_results["cpu_utilization_percent"] = stdout_dict["end"]["cpu_utilization_percent"] if stdout_dict["end"]["cpu_utilization_percent"] else {}
             else:
                 print("No network data collected. Exiting...")
                 sys.exit()
         
-        return {"version": self.programversion, "server": self.server_address, "port": self.server_port, "protocol": self.protocol, "time_to_transmit": int(self.time_to_transmit), "parallel_streams": int(self.parallel_streams), "result_summary": results}
+        results["result_summary"] = run_results
 
+        return results

@@ -81,10 +81,10 @@ class TimedCommand(benchmarkessentials.Benchmark):
 
     def create_result_dirs(self, subdir):
         timestamp = time.strftime("%Y%m%d-%H%M%S")
-        resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, "data_files", timestamp, "")
+        resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
         os.makedirs(resulted_data_dir, exist_ok=True)
 
-        resulted_time_dir = os.path.join(self.result_dir, subdir,  self.tag, "timed_files", timestamp, "")
+        resulted_time_dir = os.path.join(self.result_dir, subdir,  self.tag, timestamp, "time_files", "")
         os.makedirs(resulted_time_dir, exist_ok=True)
 
         return resulted_data_dir, resulted_time_dir

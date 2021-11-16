@@ -1,13 +1,15 @@
 ---
 - general_settings:
   release_date: "00-00-00"
-  file_system: "something"
-  install_dir: "/data/"
+  file_system: "lustre"
+  install_dir: "/data/tools/"
 - type: disk
   settings:
     target_dir: /tmp
   benchmarks:
     - type: iozone
       settings:
+        program: "iozone"
+        programversion: "3.492"
         arguments: "-a"
-        programversion: "default"
+        result_dir: "/data/results/runs"

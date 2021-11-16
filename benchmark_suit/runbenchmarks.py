@@ -4,7 +4,7 @@ import yaml
 import json
 import argparse
 import os
-import shutil
+import pathlib
 import sys
 import yapsy.PluginManager as pm
 import yapsy.PluginFileLocator as pfl
@@ -36,10 +36,14 @@ def get_args():
         required=True
     )
     parser.add_argument(
-        '-c', '--cleanup',
+        '-s_ip', '--server_ip',
         type=str,
-        help="""Cleanup after the runs?""",
-        choices=['y', 'n'], nargs='?', const='n'
+        help="""Server IP for iPerf server""",
+    )
+    parser.add_argument(
+        '-s_port', '--server_port',
+        type=str,
+        help="""Server Port for iPerf server""",
     )
     
     return parser.parse_args()
@@ -112,18 +116,22 @@ def run_benchsuite(benchsuite, config_file, result_file):
     if args.verbose:
         print(json.dumps(results, indent=2, sort_keys=True))
 
-def cleanup():
-    dirs = ["/data/tools", "/data/datasets", "/data/results/runs"]
-    for d in dirs:
-        try:
-            shutil.rmtree(d)
-        except OSError as e:
-            print("Error: %s : %s" % (d, e.strerror))
+def update_iperf_server_address(config, server_address, port):
+    for c in config:
+        if "benchmarks" in c:
+            for b in c["benchmarks"]:
+                b["settings"]["server_address"] = server_address
+                b["settings"]["server_port"] = port
 
-    print("Clean up is done.")
+    return config
+    
 
 if __name__ == '__main__':
     args = get_args()
+ 
+    if args.type == "network" and not (args.server_ip and args.server_port):
+        print("-s_ip and -s_port required for iPerf network benchmark.")
+        sys.exit(1)
 
     config_file = get_config_file(args.type)
     
@@ -135,7 +143,10 @@ if __name__ == '__main__':
     config_file = os.path.join("/data/benchmarking/setup/config_files", args.type+".yml")
     
     config = get_config(config_file)
-    
+
+    if args.type == "network":
+        config = update_iperf_server_address(config, args.server_ip, args.server_port)
+
     loaded_benchmarks = load_all_benchmarks()
     
     benchsuite = suite.Suite()
@@ -148,7 +159,6 @@ if __name__ == '__main__':
 
     run_benchsuite(benchsuite, config_file, result_file)
     
-    print("Result stored at: {}".format(result_file))
-    
-    if args.cleanup == 'y':
-        cleanup()
+    result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_file).parts[2:]))
+    print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
+

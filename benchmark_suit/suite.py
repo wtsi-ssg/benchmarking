@@ -26,7 +26,8 @@ class Suite(object):
                   "system-info": self._get_system_info(), 
                   "results": {}
                   }
-        
+       
+        print("CCC", self.fs_name)
         for benchmark in self.benchmarks:
             print("Running {0} benchmarks".format(benchmark.get_name()), file=sys.stderr)
             
@@ -61,4 +62,3 @@ class Suite(object):
             self.fs_name= self.general_settings[key]
         if key == 'install_dir':
             self.install_dir= self.general_settings[key]
-
