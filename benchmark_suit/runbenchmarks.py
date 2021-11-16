@@ -12,7 +12,7 @@ import benchmarkessentials
 import suite
 import time
 
-sys.path.insert(1, '/benchmarking/')
+sys.path.insert(1, '/benchmarking/setup/')
 import prepareScript
 
 def get_args():
@@ -49,7 +49,7 @@ def get_args():
     return parser.parse_args()
 
 def get_config_file(b_type):
-    return os.path.join("/data/benchmarking/setup/config_files", b_type+".yml")
+    return os.path.join("/benchmarking/setup/config_files", b_type+".yml")
 
 def get_config(c_file):
     with open(c_file, "r") as yamlconfig:
@@ -140,8 +140,6 @@ if __name__ == '__main__':
         print("Configuration file used:    {}".format(config_file))
         print("Output will be stored at:   {}".format(args.output_file_name))
 
-    config_file = os.path.join("/data/benchmarking/setup/config_files", args.type+".yml")
-    
     config = get_config(config_file)
 
     if args.type == "network":

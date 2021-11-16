@@ -8,12 +8,12 @@
     - type: multithreaded 
       settings:
         tag: bwa
-        command: "/data/benchmarking/scripts/numactl_multithreaded.sh"
+        command: "/benchmarking/scripts/numactl_multithreaded.sh"
         program: "bwa"
         programversion: "0.7.17"
         shell: True
         dataset_tag: "bwa"
-        dataset_file: "/data/benchmarking/setup/bwa_data.txt"
+        dataset_file: "/benchmarking/setup/bwa_data.txt"
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 1

@@ -27,7 +27,6 @@ class Suite(object):
                   "results": {}
                   }
        
-        print("CCC", self.fs_name)
         for benchmark in self.benchmarks:
             print("Running {0} benchmarks".format(benchmark.get_name()), file=sys.stderr)
             
