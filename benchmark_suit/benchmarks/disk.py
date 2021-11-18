@@ -29,7 +29,7 @@ class Disk(benchmarkessentials.ParentBenchmark):
         self.fs_name = fs_name
         print(self.fs_name)
         startdir = os.getcwd()
-        dirpath = self.target_dir + "/benchmarking-" + platform.node() + "-" + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        dirpath = self.target_dir + "/benchmarking-" + platform.node() + "-" + datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
         os.makedirs(dirpath, exist_ok=True)
         os.chdir(dirpath)
         results = {"filesystem": self.fs_name, "benchmarks": {}}
@@ -39,7 +39,6 @@ class Disk(benchmarkessentials.ParentBenchmark):
                 results["benchmarks"][benchmark.get_name()] = []
            
             results["benchmarks"][benchmark.get_name()].append(benchmark.run())
-            print("--Completed.")
 
         os.chdir(startdir)
         return results

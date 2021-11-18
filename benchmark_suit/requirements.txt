@@ -1,4 +1,0 @@
-numa==1.4.4
-PyYAML==3.12
-Yapsy==1.11.223
-py-cpuinfo==8.0.0

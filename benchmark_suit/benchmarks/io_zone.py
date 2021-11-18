@@ -19,7 +19,7 @@ class IOZone(benchmarkessentials.Benchmark):
         return "IOZone"
 
     def _get_iozone_xls(self):
-        timestr = time.strftime("%Y%m%d-%H%M%S")
+        timestr = time.strftime("%Y-%m-%d-%H%M%S")
         result_file_path = os.path.join(self.result_dir, self.get_name())
         os.makedirs(result_file_path, exist_ok=True)
 

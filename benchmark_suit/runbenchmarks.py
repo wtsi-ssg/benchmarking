@@ -26,7 +26,7 @@ def get_args():
         '-t','--type',
         type=str,
         help="""Type of the benchmark""",
-        choices=['cpu_numa', 'disk', 'network', 'threaded', 'timed_command'],
+        choices=['disk', 'network', 'threaded', 'timed_command'],
         required=True
     )
     parser.add_argument(
@@ -102,7 +102,7 @@ def result_file_name(b_type, output_file):
     result_dir = os.path.join("/data/results", b_type)
     os.makedirs(result_dir, exist_ok=True)
 
-    output_file = os.path.join(result_dir, time.strftime("%Y%m%d-%H%M%S")+"_"+output_file) 
+    output_file = os.path.join(result_dir, time.strftime("%Y-%m-%d-%H%M%S")+"_"+output_file) 
     
     return output_file
 

@@ -80,7 +80,7 @@ class TimedCommand(benchmarkessentials.Benchmark):
             dropcaches.write("3")
 
     def create_result_dirs(self, subdir):
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        timestamp = time.strftime("%Y-%m-%d-%H%M%S")
         resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
         os.makedirs(resulted_data_dir, exist_ok=True)
 
