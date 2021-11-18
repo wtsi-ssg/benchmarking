@@ -17,5 +17,5 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 2
-        process_thread: "2*1,2*2,1*1,1*2"
+        process_thread: "1*1"
         clear_caches: True
