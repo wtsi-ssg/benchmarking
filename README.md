@@ -6,7 +6,7 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 ## **Setup**
 
-### Prior to running this benchmarking suite, please ensure the following steps are taken:
+### Prior to running this benchmarking suite, please ensure the following steps are taken
 
 1. Install the latest version of docker (documentation at https://docs.docker.com/get-docker/)
 
@@ -31,7 +31,7 @@ git clone https://gitlab.internal.sanger.ac.uk/ISG/benchmarking.git
 docker build -f Dockerfile . -t benchmarking:latest
 ```
 
-## **Benchmarks in docker container**:
+## **Benchmarks in docker container**
 
 Currently for this version, all the benchmark configuration files are pre-defined (~/benchmarking/setup/config_files). You just need to pass the type of the benchmark to be run to the `docker run` command and that should be enough. 
 
@@ -46,7 +46,7 @@ Currently for this version, all the benchmark configuration files are pre-define
 
 The respective configuration files are named based on these types, and this is to be passed to `docker run` command. Please refer [Running different benchmarks](##Running different benchmarks) section below for further details about each one.
 
-#### Directory structure in docker container:
+#### Directory structure in docker container
 
 |     What      |     Path      |
 | ------------- | ------------- |
@@ -186,7 +186,7 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` command we must pass the iperf server address and port it's running on.
 
 ```
-docker run -v /<mount_point_for_volume>/:/data benchmarking:latest network <server_adress> 5201
+docker run -v /<mount_point_for_volume>/:/data benchmarking:latest network <iperf_server_address> <iperf_port>
 ```
 
 Example config:
