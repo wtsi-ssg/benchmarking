@@ -186,7 +186,7 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` command we must pass the iperf server address and port it's running on.
 
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest network <server_adress> 5201
+docker run -v /<mount_point_for_volume>/:/data benchmarking:latest network <server_adress> 5201
 ```
 
 Example config:
