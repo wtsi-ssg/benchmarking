@@ -10,18 +10,22 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 1. Install the latest version of docker (documentation at https://docs.docker.com/get-docker/)
 
-2. A data volume is available to be mounted to the `/data` directory of this container. (Approx volume size: 200 GB)
+2. If using singularity, please ensure singularity 3.5.3 or later is installed (documentation at http://singularity.lbl.gov/install-linux)
 
-3. For network specific benchmark (i.e. iperf), an iperf server will need to be set up and be running on an appropriate machine (documentation on https://iperf.fr/)
+3. A data volume is available to be mounted to the `/data` directory of this container. (Approx volume size: 200 GB)
 
-### **Using a pre built docker image**
+4. For network specific benchmark (i.e. iperf), an iperf server will need to be set up and be running on an appropriate machine (documentation on https://iperf.fr/)
 
-The recommended method for accessing this benchmarking suite is pulling the image directly from the dockerhub wsisci/benchmarking:latest as below:
+### **Docker Image**
+
+#### Using a pre built docker image
+
+The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the dockerhub `wsisci/benchmarking:latest` as below:
 ```
 docker pull wsisci/benchmarking:latest
 ```
 
-### **Building the docker image locally**
+#### Building the docker image locally
 
 Alternatively, this docker image can be built from scratch by cloning this repository, and using docker build command, as below, this option is only applicable to those with access to the sanger internal gitlab site.
 
@@ -30,6 +34,33 @@ git clone https://gitlab.internal.sanger.ac.uk/ISG/benchmarking.git
 
 docker build -f Dockerfile . -t benchmarking:latest
 ```
+
+### **Singularity Image**
+
+This is necessary for running the container in environment where docker is either not available or is not an approprite approach due to security concerns.
+
+#### Using a pre built singularity image
+
+ISG has build the singularity image for this benchmarking suite which can be found at `/software/isg/benchmarking_suite/singularity_image/benchmarking.simg` location on farm cluster. 
+
+#### Building the singularity image from the docker image
+
+Alternatively, this singularity image can be built from the docker image as:
+```
+SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://wsisci/benchmarking:latest
+```
+
+Or from a local docker images as:
+```
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+
+docker tag <NAME_OF_LOCAL_DOCKER_IMAGE> localhost:5000/<NAME_OF_DOCKER_IMAGE>
+
+docker push localhost:5000/<NAME_OF_DOCKER_IMAGE>
+
+SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://localhost:5000/<NAME_OF_DOCKER_IMAGE>
+```
+
 
 ## **Benchmarks in docker container**
 
@@ -44,7 +75,7 @@ Currently for this version, all the benchmark configuration files are pre-define
 - Network test
   * `network` (iperf)
 
-The respective configuration files are named based on these types, and this is to be passed to `docker run` command. Please refer [Running different benchmarks](##Running different benchmarks) section below for further details about each one.
+The respective configuration files are named based on these types, and this is to be passed to `docker run` command. Please refer [Running different benchmarks](## Running different benchmarks) section below for further details about each one.
 
 #### Directory structure in docker container
 
@@ -61,12 +92,20 @@ The respective configuration files are named based on these types, and this is t
 *These directories will be created on-the-go and can be easily accessible from the local machine under `/<mount_point_for_data_volume>` directory.
 
 
+## **Benchmarks in singularity container**
+
+Similar to docker, singularity container also follows the same format to run the benchmarking suite depending on its type. In addition to that, we need to specify the present working directory (`--pwd`) as "/" in the `singularity run` command.
+
+
 ## **Running different benchmarks**
 
-**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode wherever needed (runnable program and io test). 
-Eg.
+Benchmarks can be run by passing their type to the `docker run` or `singularity run` commands as:
 
-`docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest <type_of_benchmark>`
+`docker run -v /<mount_point_for_volume>/:/data benchmarking:latest <type_of_benchmark>`
+
+or 
+
+`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark>` 
 
 
 ### Runnable program
@@ -83,8 +122,14 @@ The benchmarking suite requires 3 general settings to be set, the system release
 #### `threaded` (BWA+NUMA)
 This benchmark is for running numactl in a multi process-threaded setup.
 
+**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks. 
+Eg.
 ```
 docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest threaded
+```
+Or
+```
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded
 ```
 
 Example config:
@@ -113,8 +158,14 @@ The test will be run `repeat` number of times and an average will be stored in r
 #### `timed_command` (BWA, Salmon)
 This benchmark is for measuring the time taken to run a bwa and salmon command on the dataset.
 
+**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the timed_command related benchmarks. 
+Eg.
 ```
 docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest timed_command
+```
+Or
+```
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg timed_command
 ```
 
 Example config:
@@ -156,7 +207,11 @@ Example config:
 This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at http://www.iozone.org/ for more information. 
 
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest disk
+docker run -v /<mount_point_for_volume>/:/data benchmarking:latest disk
+```
+Or
+```
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk
 ```
 
 Example config:
@@ -179,14 +234,19 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 
 `arguments: "-a"` launches iozone in default mode (recommended). 
 
+
 ### Network test
 
 #### `network` (iperf)
 
-This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` command we must pass the iperf server address and port it's running on.
+This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
 ```
 docker run -v /<mount_point_for_volume>/:/data benchmarking:latest network <iperf_server_address> <iperf_port>
+```
+Or
+```
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg network <iperf_server_address> <iperf_port>
 ```
 
 Example config:
@@ -216,16 +276,18 @@ Example config:
 
 This benchmark tests both `protocol: "UDP"` and `protocol: "TCP"`. The `time_to_transmit` specifies the time in seconds to transmit for and `parallel_streams` specifies the number of parallel client threads to run.
 
+
 ## **Rusults**
 
-As mentioned above, results for each benchmark is stored in `/data/results/` on docker container i.e. `/mount_point_for_volume/results/` directory on local machine under their respective type.
+As mentioned above, results for each benchmark is stored in `/data/results/` on docker container i.e. `/<mount_point_for_volume>/results/` directory on local machine under their respective type.
 
 Eg. 
 ```
-:/mnt/data_volume/results# ls 
+:~$/mnt/data_volume/results# ls 
 disk  network  runs  threaded  timed_command
 ```
-This directory will also have a `runs` directory which is contain all the intermediate files and result .sam/.quant.sf for each test run. 
+
+This directory will also have a `runs` directory which contains all the intermediate files and output .sam/.quant.sf files for each test run. 
 
 Example result file for network test:
 <details>
@@ -253,7 +315,7 @@ Example result file for network test:
                     "program":"iperf",
                     "version":"3.1.3",
                     "server":"172.27.24.70",
-                    "port":"5202",
+                    "port":"5201",
                     "protocol":"UDP",
                     "time_to_transmit":60,
                     "parallel_streams":5,
@@ -283,7 +345,7 @@ Example result file for network test:
                     "program":"iperf",
                     "version":"3.1.3",
                     "server":"172.27.24.70",
-                    "port":"5202",
+                    "port":"5201",
                     "protocol":"TCP",
                     "time_to_transmit":60,
                     "parallel_streams":5,
