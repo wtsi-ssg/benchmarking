@@ -16,6 +16,8 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 4. For network specific benchmark (i.e. iperf), an iperf server will need to be set up and be running on an appropriate machine (documentation on https://iperf.fr/)
 
+5. All the benchmarks must be run as `root`.
+
 ### **Docker Image**
 
 #### Using a pre built docker image
