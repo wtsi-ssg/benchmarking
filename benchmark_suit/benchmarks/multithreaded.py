@@ -30,22 +30,22 @@ class MultiThread(timedcommand.TimedCommand):
 
         resulted_sam_dir, resulted_time_dir = self.create_result_dirs(self.get_name())
 
-        for repeat in range(1, self.repeats+1):
-            print("-Running {tag} multithreaded numa interleaved run {repeat} of {repeats}".format(tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
-            runresult = {}
-            for pt in self.process_thread:
-                if self.clear_caches:
-                    print("--Clearing cache", file=sys.stderr)
-                    self.clear_cache()
+        for pt in self.process_thread:
+            if self.clear_caches:
+                print("--Clearing cache", file=sys.stderr)
+                self.clear_cache()
 
-                ps, th = list(map(str, pt.split("*")))
-                if th == "N":
-                    th = str(get_cpu_info()["count"])
+            ps, th = list(map(str, pt.split("*")))
+            if th == "N":
+                th = str(get_cpu_info()["count"])
 
-                pt_key = "p{}.t{}".format(ps,th)
+            pt_key = "p{}.t{}".format(ps,th)
 
-                print("--Running command with {threads} threads".format(threads=th), file=sys.stderr)
-                
+            for repeat in range(1, self.repeats+1):
+                print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
+
+                runresult = {}
+
                 with subprocess.Popen([self.execution_string+" "+get_cpu_info()["arch"]+" "+self.original_datadir+" "+str(repeat)+" "+self.install_path+" "+ps+" "+th+" "+resulted_sam_dir+" "+resulted_time_dir], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
                     stdout, _ = process.communicate()
                     usr_sys_elp_list = stdout.strip().split(" ")
@@ -54,13 +54,10 @@ class MultiThread(timedcommand.TimedCommand):
 
                 if pt_key not in results["runs"]:
                     results["runs"][pt_key] = []
-                
+
                 results["runs"][pt_key].append(runresult)
-
-        for pt_k in results["runs"]:
-            if pt_k not in results["average"]:
-                results["average"][pt_k] = []
-
-            results["average"][pt_k].append(self.generate_averages(results["runs"][pt_k]))
+            
+            for pt_k in results["runs"]:
+                results["average"][pt_k] = self.generate_averages(results["runs"][pt_k])
 
         return results
