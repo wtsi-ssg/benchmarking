@@ -385,3 +385,9 @@ Example result file for network test:
 ```
 </details>
 
+
+## **TODOs**
+1. Provide an option to save the results into a database.
+2. Generate local comparison charts.
+3. Add functionality to take user-defined configuration file as an input. 
+4. Add functionality to add a new benchmark type.
