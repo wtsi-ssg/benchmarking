@@ -22,9 +22,9 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 #### Using a pre built docker image
 
-The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the dockerhub `wsisci/benchmarking:latest` as below:
+The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the dockerhub `wsisci/benchmarking:1.0` as below:
 ```
-docker pull wsisci/benchmarking:latest
+docker pull wsisci/benchmarking:1.0
 ```
 
 #### Building the docker image locally
@@ -49,7 +49,7 @@ ISG has build the singularity image for this benchmarking suite which can be fou
 
 Alternatively, this singularity image can be built from the docker image as:
 ```
-SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://wsisci/benchmarking:latest
+SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://wsisci/benchmarking:1.0
 ```
 
 Or from a local docker images as:
@@ -103,7 +103,7 @@ Similar to docker, singularity container also follows the same format to run the
 
 Benchmarks can be run by passing their type to the `docker run` or `singularity run` commands as:
 
-`docker run -v /<mount_point_for_volume>/:/data benchmarking:latest <type_of_benchmark>`
+`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark>`
 
 or 
 
@@ -127,7 +127,7 @@ This benchmark is for running numactl in a multi process-threaded setup.
 **Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks. 
 Eg.
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest threaded
+docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded
 ```
 Or
 ```
@@ -163,7 +163,7 @@ This benchmark is for measuring the time taken to run a bwa and salmon command o
 **Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the timed_command related benchmarks. 
 Eg.
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data benchmarking:latest timed_command
+docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 timed_command
 ```
 Or
 ```
@@ -209,7 +209,7 @@ Example config:
 This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at http://www.iozone.org/ for more information. 
 
 ```
-docker run -v /<mount_point_for_volume>/:/data benchmarking:latest disk
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk
 ```
 Or
 ```
@@ -244,7 +244,7 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
 ```
-docker run -v /<mount_point_for_volume>/:/data benchmarking:latest network <iperf_server_address> <iperf_port>
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 network <iperf_server_address> <iperf_port>
 ```
 Or
 ```
