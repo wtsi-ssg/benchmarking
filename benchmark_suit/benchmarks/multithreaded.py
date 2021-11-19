@@ -38,12 +38,15 @@ class MultiThread(timedcommand.TimedCommand):
                     print("--Clearing cache", file=sys.stderr)
                     self.clear_cache()
 
-                ps, th = list(map(int, pt.split("*")))
+                ps, th = list(map(str, pt.split("*")))
+                if th == "N":
+                    th = str(get_cpu_info()["count"])
+
                 pt_key = "p{}.t{}".format(ps,th)
 
                 print("--Running command with {threads} threads".format(threads=th), file=sys.stderr)
                 
-                with subprocess.Popen([self.execution_string+" "+get_cpu_info()["arch"]+" "+str(self.original_datadir)+" "+str(repeat)+" "+self.install_path+" "+str(ps)+" "+str(th)+" "+resulted_sam_dir+" "+resulted_time_dir], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
+                with subprocess.Popen([self.execution_string+" "+get_cpu_info()["arch"]+" "+self.original_datadir+" "+str(repeat)+" "+self.install_path+" "+ps+" "+th+" "+resulted_sam_dir+" "+resulted_time_dir], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
                     stdout, _ = process.communicate()
                     usr_sys_elp_list = stdout.strip().split(" ")
                     if len(usr_sys_elp_list) == 3:

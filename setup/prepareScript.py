@@ -135,6 +135,9 @@ def download_and_install_programs(settings_list, install_dir):
 
                     if program_name == "bwa":
                         subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version)
+                else:
+                    print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
+                    exit()
 
         print("Successfully installed {}.".format(name_and_version))
 

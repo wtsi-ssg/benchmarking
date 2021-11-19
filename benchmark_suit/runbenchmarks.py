@@ -91,10 +91,6 @@ def add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks):
     for bmsettings in config:
         if len(list(bmsettings.keys())) > 0 and list(bmsettings.keys())[0] == 'type':
             benchsuite.add_benchmark(get_benchmark_with_children(bmsettings, loaded_benchmarks))
-        else:
-            for k in ['general_settings','release_date', 'file_system']:
-                benchsuite.add_general_settings(k, bmsettings[k])
-                del bmsettings[k]
 
     return benchsuite
 

@@ -1,7 +1,5 @@
 ---
 - general_settings:
-  release_date: "00-00-00"
-  file_system: "/lustre"
   install_dir: "/data/tools/"
 - type: cpu
   benchmarks:

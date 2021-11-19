@@ -277,6 +277,7 @@ iozone-v3.486,http://www.iozone.org/src/current/iozone3_486.tar
 iozone-v3.487,http://www.iozone.org/src/current/iozone3_487.tar
 iozone-v3.488,http://www.iozone.org/src/current/iozone3_488.tar
 iozone-v3.489,http://www.iozone.org/src/current/iozone3_489.tar
+iozone-v3.492,http://www.iozone.org/src/current/iozone3_492.tar
 iozone-v3.427,no download
 iozone-v3.444,no download
 iperf-v1.7.0,https://iperf.fr/download/ubuntu/iperf_1.7.0-1_amd64.deb
