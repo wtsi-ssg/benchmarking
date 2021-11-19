@@ -151,7 +151,8 @@ Example config:
         process_thread: "1*1,1*N"
         clear_caches: True
 ```
-The above configuration file will run bwa tool with numa, on process_thread configuration of 1*1 (one process, one thread) and 1*N (one process and N threads). Here `N` is the maximum number of cores available on the system. Additionally, multiple variations of the process_thread can be used in the same section as: `process_thread: "1*1,1*2,2*1,2*2,4*16,1*N,2*N"` (first entry is for process and second is for thread.)
+The above configuration file will run bwa tool with numa, on process_thread configuration of `1*1` (one process, one thread) and `1*N` (one process and N threads). Here `N` is the maximum number of cores available to the system. 
+Additionally, multiple variations of the process_thread can be used in the same section as: `process_thread: "1*1,1*2,2*1,2*2,4*16,1*N,2*N"` (first entry is for process and second is for thread.)
 
 The test will be run `repeat` number of times and an average will be stored in result file. If `clear_cache` is set to True, it'd clear the system cache between each run.
 
