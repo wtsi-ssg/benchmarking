@@ -46,7 +46,7 @@ def get_settings():
                     program_name = doc[n]['benchmarks'][m]['settings']['program']
                 else:
                     print("no program setting given")
-                    exit()
+                    sys.exit(1)
 
             #get program version
             required_version = doc[n]['benchmarks'][m]['settings']['programversion']
@@ -60,12 +60,12 @@ def get_settings():
                     dataset_tag = doc[n]['benchmarks'][m]['settings']['dataset_tag']
                 else:
                     print("dataset_tag setting required, none set.")
-                    exit()
+                    sys.exit(1)
                 if 'datadir' in doc[n]['benchmarks'][m]['settings'].keys():
                     datadir = doc[n]['benchmarks'][m]['settings']['datadir']
                 else:
                     print("datadir setting required, none set.")
-                    exit()
+                    sys.exit(1)
                 if 'dataset_file' in doc[n]['benchmarks'][m]['settings'].keys():
                     dataset_file = doc[n]['benchmarks'][m]['settings']['dataset_file']
                 else:
@@ -135,9 +135,10 @@ def download_and_install_programs(settings_list, install_dir):
 
                     if program_name == "bwa":
                         subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version)
-                else:
-                    print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
-                    exit()
+
+        if not path.exists(path_to_program):
+            print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
+            sys.exit(1)
 
         print("Successfully installed {}.".format(name_and_version))
 
