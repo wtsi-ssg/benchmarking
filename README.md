@@ -279,7 +279,7 @@ Example config:
 This benchmark tests both `protocol: "UDP"` and `protocol: "TCP"`. The `time_to_transmit` specifies the time in seconds to transmit for and `parallel_streams` specifies the number of parallel client threads to run.
 
 
-## **Rusults**
+## **Results**
 
 As mentioned above, results for each benchmark is stored in `/data/results/` on docker container i.e. `/<mount_point_for_volume>/results/` directory on local machine under their respective type.
 
