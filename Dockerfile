@@ -1,6 +1,6 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
-MAINTAINER Ashwini Chhipa
+MAINTAINER Martin Pollard
 
 ENV PACKAGES autoconf build-essential ca-certificates cmake curl g++ gcc git \
         lib32z1 libboost-all-dev libbz2-dev libcurl4 libcurl4-openssl-dev libffi-dev \

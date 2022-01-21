@@ -134,7 +134,7 @@ def download_and_install_programs(settings_list, install_dir):
                             subprocess.call("gcc -fopenmp -D_OPENMP stream.c -o stream", shell=True, cwd=install_dir)
 
                     if program_name == "bwa":
-                        subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version)
+                        subprocess.check_call(["make CFLAGS='-g -Wall -Wno-unused-function -O3 -march=native'"], shell=True, cwd=install_dir+name_and_version)
 
         if not path.exists(path_to_program):
             print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
