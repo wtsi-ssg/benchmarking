@@ -39,8 +39,5 @@ lint-test-job:   # This job also runs in the test stage.
     - sleep 10
     - echo "No lint issues found."
 
-#deploy-job:      # This job runs in the deploy stage.
-#  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-#  script:
-#    - echo "Deploying application..."
-#    - echo "Application successfully deployed."
+include:
+- template: Security/Secret-Detection.gitlab-ci.yml

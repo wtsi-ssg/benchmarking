@@ -19,7 +19,7 @@ RUN mkdir /benchmarking
 #copy files required for benchmarking and install requirements.txt
 COPY ./setup/ /benchmarking/setup
 COPY ./scripts/ /benchmarking/scripts
-COPY ./benchmark_suit /benchmarking/benchmark_suit
+COPY ./benchmark_suite /benchmarking/benchmark_suite
 COPY ./runbenchmarks.sh /benchmarking/
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /benchmarking/setup/requirements.txt
