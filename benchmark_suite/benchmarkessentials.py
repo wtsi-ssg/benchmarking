@@ -2,6 +2,7 @@
 
 import abc
 import yapsy.IPlugin
+import json
 
 class BenchmarkPlugin(abc.ABC, yapsy.IPlugin.IPlugin):
     @abc.abstractmethod
