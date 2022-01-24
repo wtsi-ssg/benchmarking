@@ -28,7 +28,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - docker build -t wsisci/benchmarking .
     - echo "Build complete, stashing the image."
     - mkdir image
-    - docker save app > image/app.tar
+    - docker save wsisci/benchmarking > image/app.tar
   artifacts:
     paths:
       - image
