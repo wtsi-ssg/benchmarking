@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import subprocess
 import yaml
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 import argparse
 import sys
 import os.path
@@ -25,7 +29,7 @@ def get_args():
     return parser.parse_args()
 
 def get_install_dir(yml_input_file):
-    doc = yaml.load(open(yml_input_file, 'rb'))
+    doc = yaml.load(open(yml_input_file, 'rb'), Loader=Loader)
     general_settings = doc[0]
     if 'install_dir' in general_settings.keys():
         install_dir = general_settings['install_dir']
@@ -210,7 +214,7 @@ def download_salmon_data(settings_dict):
                                     print(required_file_name+" is already downloaded.")
                         else:
                             if args.verbose:
-                                print(file_name+" is not downloaded. Downloading now...")
+                                print(required_file_name+" is not downloaded. Downloading now...")
                             subprocess.check_call(["wget -q https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
 
 def get_path_to_program(program_name, required_version):
