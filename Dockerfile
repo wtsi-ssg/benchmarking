@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-MAINTAINER Martin Pollard
+LABEL org.opencontainers.image.authors="Martin Pollard <mp15@sanger.ac.uk>"
 
 ENV PACKAGES autoconf build-essential ca-certificates cmake curl g++ gcc git \
         lib32z1 libboost-all-dev libbz2-dev libcurl4 libcurl4-openssl-dev libffi-dev \

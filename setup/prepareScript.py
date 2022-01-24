@@ -287,4 +287,3 @@ if  __name__ == '__main__':
                 download_salmon_data(settings_list[st])
             if settings_list[st]["program_name"] == "bwa":
                 download_bwa_data(settings_list[st])
-
