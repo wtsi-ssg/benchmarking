@@ -13,12 +13,12 @@
 
 
 stages:          # List of stages for jobs, and their order of execution
-  - buildtest
-#  - test
+  - build
+  - test
 #  - deploy
 
 buildtest-job:       # This job runs in the build stage, which runs first.
-  stage: buildtest
+  stage: build
   tags:
    - autoscale
    - openstack-autoscale-theta-docker-in-docker
