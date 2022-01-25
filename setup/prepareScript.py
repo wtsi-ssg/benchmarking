@@ -265,7 +265,7 @@ if  __name__ == '__main__':
     dataset_required["index_format_3"] = ["0.14.0", "0.14.1", "0.14.2", "0.14.2-1", "0.15.0"]
     dataset_required["index_format_4"] = ["0.99.0-beta1", "0.99.0-beta1", "1.0.0", "1.1.0"]
 
-    doc = yaml.load(open(yml_input_file, 'rb'))
+    doc = yaml.load(open(yml_input_file, 'rb'), Loader=Loader)
 
     settings_list = get_settings()
     
