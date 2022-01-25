@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sanger.ac.uk/schemas/benchmarking",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string"
+    },
+    "system-info": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "OS": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "arch": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "OS",
+        "model",
+        "arch"
+      ]
+    },
+    "results": {
+      "type": "object",
+      "properties": {
+        "CPU": {
+          "type": "object",
+          "properties": {
+            "benchmarks": {
+              "type": "object",
+              "patternProperties": {
+                "multithreaded_[A-Za-z0-9]*": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "program": {
+                          "type": "string"
+                        },
+                        "programversion": {
+                          "type": "string"
+                        },
+                        "runs": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^p[0-9]*.t[0-9]*$": {
+                              "type": "array",
+                              "items": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "user": {
+                                      "type": "number"
+                                    },
+                                    "system": {
+                                      "type": "number"
+                                    },
+                                    "elapsed": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "user",
+                                    "system",
+                                    "elapsed"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "average": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^p[0-9]*\.t[0-9]*$": {
+                              "type": "object",
+                              "properties": {
+                                "user": {
+                                  "type": "number"
+                                },
+                                "system": {
+                                  "type": "number"
+                                },
+                                "elapsed": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "user",
+                                "system",
+                                "elapsed"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "program",
+                        "programversion",
+                        "runs",
+                        "average"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "NUMAtopology": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "benchmarks",
+            "NUMAtopology"
+          ]
+        }
+      },
+      "required": [
+        "CPU"
+      ]
+    }
+  },
+  "required": [
+    "date",
+    "system-info",
+    "results"
+  ]
+}
