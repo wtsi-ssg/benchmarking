@@ -1,0 +1,39 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded 
+      settings:
+        tag: bwa
+        command: "/benchmarking/scripts/numactl_multithreaded.sh"
+        program: "bwa"
+        programversion: "0.7.17"
+        shell: True
+        dataset_tag: "bwa"
+        dataset_file: "/benchmarking/setup/bwa_data.txt"
+        datadir: "/data/datasets/bwa/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        process_thread: "1*1,1*N"
+        clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: salmon-1.0.0
+        command: "/benchmarking/scripts/salmon.sh"
+        program: "salmon"
+        programversion: "1.0.0"
+        shell: True
+        dataset_tag: "default"
+        datadir: "/data/datasets/salmon/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        process_thread: "1*1"
+        clear_caches: True
+    - type: iozone
+      settings:
+        program: "iozone"
+        programversion: "3.492"
+        arguments: "-a"
+        result_dir: "/data/results/runs"
+
