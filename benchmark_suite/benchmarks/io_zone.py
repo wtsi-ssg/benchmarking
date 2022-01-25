@@ -34,19 +34,19 @@ class IOZone(benchmarkessentials.Benchmark):
         import pandas as pd
         results = {
             # Extract "Writer Report"
-            'Writer Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=3, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Re-writer Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=19, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Reader Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=35, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Re-reader Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=51, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Random Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=67, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Random Write Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=83, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Backward Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=99, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Record Rewrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=115, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Stride Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=131, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Fwrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=147, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Re-fwrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=163, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Fread Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=179, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
-            'Re-fread Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=195, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes()
+            'Writer Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=3, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Re-writer Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=19, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Reader Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=35, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Re-reader Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=51, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Random Read Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=67, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Random Write Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=83, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Backward Read Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=99, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Record Rewrite Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=115, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Stride Read Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=131, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Fwrite Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=147, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Re-fwrite Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=163, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Fread Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=179, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json()),
+            'Re-fread Report' : json.loads(pd.read_excel(iozone_result_file, engine='xlrd', skiprows=195, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes().to_json())
         }
         return results
 
