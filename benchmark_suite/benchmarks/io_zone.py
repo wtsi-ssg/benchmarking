@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
-import subprocess
+import json
 import os
+import pathlib
+import subprocess
 import time
+
 import benchmarkessentials
+import pandas as pd
+
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):
@@ -25,10 +30,30 @@ class IOZone(benchmarkessentials.Benchmark):
 
         return os.path.join(result_file_path, timestr+"_iozone.xls")
 
+    def _parse_iozone_xls(self, iozone_result_file: str):
+        import pandas as pd
+        results = {
+            # Extract "Writer Report"
+            'Writer Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=3, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Re-writer Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=19, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Reader Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=35, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Re-reader Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=51, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Random Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=67, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Random Write Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=83, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Backward Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=99, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Record Rewrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=115, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Stride Read Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=131, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Fwrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=147, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Re-fwrite Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=163, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Fread Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=179, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes(),
+            'Re-fread Report' : pd.read_excel(iozone_result_file, engine='xlrd', skiprows=195, header=1, index_col=0, nrows=14, usecols='A:N').convert_dtypes()
+        }
+        return results
+
     def run(self):
         iozone_result_file = self._get_iozone_xls()
         with subprocess.Popen([self.install_path + "/iozone", self.arguments, "-Rb", iozone_result_file], stdout=subprocess.PIPE, universal_newlines=True) as process:
             stdout, _ = process.communicate()
 
-        return {"results": iozone_result_file} if stdout else {"results": ""}
+        return {"results": self._parse_iozone_xls(iozone_result_file)} if stdout else {"results": ""}
 
