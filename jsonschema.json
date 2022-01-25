@@ -82,7 +82,7 @@
                         "average": {
                           "type": "object",
                           "patternProperties": {
-                            "^p[0-9]*\.t[0-9]*$": {
+                            "^p[0-9]*.t[0-9]*$": {
                               "type": "object",
                               "properties": {
                                 "user": {
