@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from urllib.error import URLError
 import yaml
 import json
 import argparse
@@ -11,6 +12,7 @@ import yapsy.PluginFileLocator as pfl
 import benchmarkessentials
 import suite
 import time
+import urllib.request
 
 sys.path.insert(1, '/benchmarking/setup/')
 import prepareScript
@@ -102,6 +104,24 @@ def result_file_name(b_type, output_file):
     
     return output_file
 
+def post_results():
+    # Fetch signed post URL from s3 cog
+    post_signed_url = "https://it_randd.cog.sanger.ac.uk/post_signed_url"
+    with urllib.request.urlopen(post_signed_url) as data:
+        myurl_raw = data.read(300)
+
+    myurl = myurl_raw + "blah.json"
+    # POST results JSON to fetched URL
+    req = urllib.request.Request(myurl)
+    req.add_header('Content-Type', 'application/json; charset=utf-8')
+    jsondata = "{'json':'json'}"
+    jsondataasbytes = jsondata.encode('utf-8')   # needs to be bytes
+    req.add_header('Content-Length', len(jsondataasbytes))
+    try:
+        response = urllib.request.urlopen(req, jsondataasbytes)
+    except URLError as err:
+        print(f"URL error posting results data: {err.reason}")
+
 def run_benchsuite(benchsuite, config_file, result_file):
     install_dir = prepareScript.get_install_dir(config_file)
     results = benchsuite.run()
@@ -152,7 +172,7 @@ if __name__ == '__main__':
     result_file = result_file_name(args.type, args.output_file_name)
 
     run_benchsuite(benchsuite, config_file, result_file)
-    
+
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_file).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
 
