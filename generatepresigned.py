@@ -6,12 +6,12 @@ import json
 
 client = boto3.client('s3', endpoint_url ='https://cog.sanger.ac.uk')
 
-Fields = {"Content-Type":"application/json"}
+Fields = [{"Content-Type":"application/json"},{'acl':'private'}]
 
 res = client.generate_presigned_post('it_randd',
                                      'results/${filename}',
                                      Fields=Fields,
-                                     Conditions=[{'acl':'bucket-owner-read'},
+                                     Conditions=[{'acl':'private'},
                                                  {'Content-Type':'application/json'},
                                                  ["content-length-range", 1, 10485760],
                                                  ["starts-with", "$key", "results/"]])
