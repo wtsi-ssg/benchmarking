@@ -116,8 +116,8 @@ def post_results(raw_result_file : str, jsondata : str):
     # POST results JSON to fetched URL
     files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
     resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
-    if not r.status_code == requests.codes.ok:
-        print(f'Error {r.status_code} uploading results: {r.body}')
+    if not resp.status_code == requests.codes.ok:
+        print(f'Error {r.status_code} uploading results: {r.text}')
     else:
         print('Results returned successfully.')
 
@@ -175,4 +175,3 @@ if __name__ == '__main__':
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
-
