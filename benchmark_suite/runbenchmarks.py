@@ -169,6 +169,6 @@ if __name__ == '__main__':
 
     run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file)
 
-    result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_file).parts[2:]))
+    result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
 
