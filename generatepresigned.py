@@ -18,16 +18,12 @@ print(res)
 with open("post_signed_url.json", "a") as f:
     f.write(json.dumps(res))
 
+#does equiv of:
+#  s3cmd put post_signed_url.json s3://it_randd/post_signed_url.json
+#  s3cmd setacl s3://it_randd/post_signed_url.json --acl-public
+
 response = client.put_object(ACL='public-read',
                              Body=json.dumps(res),
                              Bucket='it_randd',
                              ContentType='application/json',
                              Key='post_signed_url.json')
-#TODO: s3cmd put post_signed_url.json s3://it_randd/post_signed_url.json
-#TODO: s3cmd setacl s3://it_randd/post_signed_url.json --acl-public
-
-#with open('a.txt', 'rb') as f: 
-#    files = {'file': ('a.txt', f)}
-#    http_response = requests.post(res['url'], data=res['fields'], files=files)
-#    print(http_response.content)
-
