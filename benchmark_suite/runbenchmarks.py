@@ -105,7 +105,7 @@ def result_file_name(b_type, output_file):
     result_file =  time.strftime("%Y-%m-%d-%H%M%S") + "_" + output_file
     output_fullpath = os.path.join(result_dir,result_file) 
     
-    return [output_file, output_fullpath]
+    return [result_file, output_fullpath]
 
 def post_results(raw_result_file : str, jsondata : str):
     # Fetch signed post URL from s3 cog
@@ -116,6 +116,10 @@ def post_results(raw_result_file : str, jsondata : str):
     # POST results JSON to fetched URL
     files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
     resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
+    if not r.status_code == requests.codes.ok:
+        print(f'Error {r.status_code} uploading results: {r.body}')
+    else:
+        print('Results returned successfully.')
 
 def run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file):
     install_dir = prepareScript.get_install_dir(config_file)
