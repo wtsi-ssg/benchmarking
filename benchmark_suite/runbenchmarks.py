@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 
-from urllib.error import URLError
-import yaml
-import json
 import argparse
+import json
 import os
 import pathlib
 import sys
-import yapsy.PluginManager as pm
+import time
+
+import requests
+import yaml
 import yapsy.PluginFileLocator as pfl
+import yapsy.PluginManager as pm
+
 import benchmarkessentials
 import suite
-import time
-import urllib.request
 
 sys.path.insert(1, '/benchmarking/setup/')
 import prepareScript
+
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -100,34 +102,28 @@ def result_file_name(b_type, output_file):
     result_dir = os.path.join("/data/results", b_type)
     os.makedirs(result_dir, exist_ok=True)
 
-    output_file = os.path.join(result_dir, time.strftime("%Y-%m-%d-%H%M%S")+"_"+output_file) 
+    result_file =  time.strftime("%Y-%m-%d-%H%M%S") + "_" + output_file
+    output_fullpath = os.path.join(result_dir,result_file) 
     
-    return output_file
+    return [output_file, output_fullpath]
 
-def post_results():
+def post_results(raw_result_file : str, jsondata : str):
     # Fetch signed post URL from s3 cog
-    post_signed_url = "https://it_randd.cog.sanger.ac.uk/post_signed_url"
-    with urllib.request.urlopen(post_signed_url) as data:
-        myurl_raw = data.read(300)
+    post_signed_url = "https://it_randd.cog.sanger.ac.uk/post_signed_url.json"
+    r = requests.get(url=post_signed_url)
+    myurl_raw = json.loads(r.text)
 
-    myurl = myurl_raw + "blah.json"
     # POST results JSON to fetched URL
-    req = urllib.request.Request(myurl)
-    req.add_header('Content-Type', 'application/json; charset=utf-8')
-    jsondata = "{'json':'json'}"
-    jsondataasbytes = jsondata.encode('utf-8')   # needs to be bytes
-    req.add_header('Content-Length', len(jsondataasbytes))
-    try:
-        response = urllib.request.urlopen(req, jsondataasbytes)
-    except URLError as err:
-        print(f"URL error posting results data: {err.reason}")
+    files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
+    resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
 
-def run_benchsuite(benchsuite, config_file, result_file):
+def run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file):
     install_dir = prepareScript.get_install_dir(config_file)
     results = benchsuite.run()
     
-    with open(result_file, "w") as file:
+    with open(result_fullpath, "w") as file:
         json.dump(results, file, indent=2)
+    post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
     
     if args.verbose:
         print(json.dumps(results, indent=2, sort_keys=True))
@@ -169,9 +165,9 @@ if __name__ == '__main__':
     
     benchsuite = add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks)
     
-    result_file = result_file_name(args.type, args.output_file_name)
+    [raw_result_file, result_fullpath] = result_file_name(args.type, args.output_file_name)
 
-    run_benchsuite(benchsuite, config_file, result_file)
+    run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file)
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_file).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
