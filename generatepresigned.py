@@ -11,7 +11,7 @@ Fields = {"Content-Type":"application/json"}
 res = client.generate_presigned_post('it_randd',
                                      'results/${filename}',
                                      Fields=Fields,
-                                     Conditions=[{'acl':'private'},
+                                     Conditions=[{'acl':'bucket-owner-read'},
                                                  {'Content-Type':'application/json'},
                                                  ["content-length-range", 1, 10485760],
                                                  ["starts-with", "$key", "results/"]])
