@@ -12,8 +12,9 @@ import yaml
 import yapsy.PluginFileLocator as pfl
 import yapsy.PluginManager as pm
 
-import benchmarkessentials
-import suite
+from benchmark_suite.suite import Suite
+from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
+                                                 ParentBenchmark)
 
 sys.path.insert(1, '/benchmarking/setup/')
 import prepareScript
@@ -72,7 +73,7 @@ def get_benchmark_with_children(base_benchmark, benchmark_dict):
         base_benchmark["settings"]['install_dir'] = prepareScript.get_install_dir(get_config_file(args.type))
 
     benchmark_object = benchmark_dict[base_benchmark["type"]](**settings)
-    if issubclass(type(benchmark_object), benchmarkessentials.ParentBenchmark):
+    if issubclass(type(benchmark_object), ParentBenchmark):
         for mark in base_benchmark["benchmarks"]:
             benchmark_object.add_benchmark(get_benchmark_with_children(mark, benchmark_dict))
 
@@ -81,7 +82,7 @@ def get_benchmark_with_children(base_benchmark, benchmark_dict):
 def load_all_benchmarks():
     loaded_benchmarks = {}
 
-    pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": benchmarkessentials.BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
+    pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
     pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmarks"])
     pluginmanager.collectPlugins()
 
@@ -168,7 +169,7 @@ if __name__ == '__main__':
 
     loaded_benchmarks = load_all_benchmarks()
     
-    benchsuite = suite.Suite(clear_cache_bin=args.clear_cache_bin)
+    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin)
     
     set_wd(config_file)
     
