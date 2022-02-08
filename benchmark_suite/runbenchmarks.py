@@ -49,6 +49,11 @@ def get_args():
         type=str,
         help="""Server Port for iPerf server""",
     )
+    parser.add_argument(
+        '-d', '--clear_cache_bin',
+        type=str,
+        help=""Executable to drop test host cache""
+    )
     
     return parser.parse_args()
 
@@ -163,7 +168,7 @@ if __name__ == '__main__':
 
     loaded_benchmarks = load_all_benchmarks()
     
-    benchsuite = suite.Suite()
+    benchsuite = suite.Suite(clear_cache_bin=args.clear_cache_bin)
     
     set_wd(config_file)
     

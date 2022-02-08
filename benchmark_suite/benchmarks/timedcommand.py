@@ -55,7 +55,7 @@ class TimedCommand(benchmarkessentials.Benchmark):
 
             if self.clear_caches:
                 print("--Clearing cache", file=sys.stderr)
-                self.clear_cache()
+                self.suite.clear_cache()
 
             print("--Running command {0} (run {1} of {2})".format(self.tag, repeat, self.repeats), file=sys.stderr)
             
@@ -70,14 +70,6 @@ class TimedCommand(benchmarkessentials.Benchmark):
         results["average"] = self.generate_averages(results["runs"])
 
         return results
-    
-    def clear_cache(self):
-        """
-        Clear the system VFS cache, running sync first. Must be run as root.
-        """
-        subprocess.call("sync")
-        with open("/proc/sys/vm/drop_caches", "w") as dropcaches:
-            dropcaches.write("3")
 
     def create_result_dirs(self, subdir):
         timestamp = time.strftime("%Y-%m-%d-%H%M%S")

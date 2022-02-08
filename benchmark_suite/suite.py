@@ -4,6 +4,7 @@ import platform
 import sys
 import datetime
 import cpuinfo
+import subprocess
 
 class Suite(object):
     """
@@ -11,9 +12,10 @@ class Suite(object):
 
      - supplies high level system information: host, OS, CPUs, Arch
     """
-    def __init__(self, benchmarks=None, install_dir=None):
+    def __init__(self, benchmarks=None, install_dir=None, clear_cache_bin=None):
         self.benchmarks = benchmarks if benchmarks else []
         self.install_dir = install_dir
+        self.clear_cache_bin = clear_cache_bin
 
     def run(self):
         results = {
@@ -37,7 +39,19 @@ class Suite(object):
                   "arch":        platform.processor()
                 }
 
+    def clear_cache(self):
+        subprocess.call("sync")
+        if self.clear_cache_bin is None:
+            """
+            Clear the system VFS cache, running sync first. Must be run as root.
+            """
+            with open("/proc/sys/vm/drop_caches", "w") as dropcaches:
+                dropcaches.write("3")
+        else:
+            subprocess.call(self.clear_cache_bin)
+
 
     def add_benchmark(self, benchmark):
         """Add benchmarks to the list of benchmarks"""
+        benchmark.suite = self
         self.benchmarks.append(benchmark)

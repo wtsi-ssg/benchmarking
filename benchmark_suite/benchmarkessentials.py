@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import abc
+from benchmark_suite.suite import Suite
 import yapsy.IPlugin
 import json
 
@@ -10,6 +11,7 @@ class BenchmarkPlugin(abc.ABC, yapsy.IPlugin.IPlugin):
         pass
 
 class Benchmark(abc.ABC):
+    suite : Suite
     """Abstract class defining an interface for Benchmarks to implement"""
     @abc.abstractmethod
     def run(self) -> "json serializeable":
