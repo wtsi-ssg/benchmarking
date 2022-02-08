@@ -52,7 +52,7 @@ def get_args():
     parser.add_argument(
         '-d', '--clear_cache_bin',
         type=str,
-        help=""Executable to drop test host cache""
+        help="""Executable to drop test host cache"""
     )
     
     return parser.parse_args()
