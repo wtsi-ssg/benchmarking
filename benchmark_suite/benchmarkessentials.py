@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import abc
-from benchmark_suite.suite import Suite
+from .suite import Suite
 import yapsy.IPlugin
 import json
 
