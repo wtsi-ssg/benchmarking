@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='Create plot for results file.')
 parser.add_argument('results_file', metavar='results_file', type=pathlib.Path, nargs='?',
                     help='results JSON file', default=sys.stdin)
 parser.add_argument('plot_file', metavar='plot_file', type=pathlib.Path, nargs='?',
-                    help='file to plot results to', default=sys.stdin)
+                    help='file to plot results to', default=sys.stdout)
 
 args = parser.parse_args()
 
@@ -33,4 +33,4 @@ ax.set_title('How fast do you want to go today?')
 ax.set_xlabel('Platform')
 ax.set_ylabel('User-mode runtime (Seconds)')
 
-plt.savefig(args.plot_file)
+plt.savefig(str(args.plot_file))
