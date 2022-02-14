@@ -11,25 +11,26 @@ import pathlib
 import sys
 
 def plot_CPU(results : dict, pdf : PdfPages):
-    x_labels = [results['system-info']['model']+ ' ' + m for m in results['results']['CPU']['benchmarks']['multithreaded_bwa'][0]['average'].keys()]
-    x = (results['results']['CPU']['benchmarks']['multithreaded_bwa'][0]['average']['p1.t1']['user'],results['results']['CPU']['benchmarks']['multithreaded_bwa'][0]['average']['p1.t256']['user'])
+    for report, data in results['results']['CPU']['benchmarks'].items():
+        x_labels = [results['system-info']['model']+ ' ' + m for m in data[0]['average'].keys()]
+        x = (data[0]['average']['p1.t1']['user'],data[0]['average']['p1.t256']['user'])
 
-    # plot
-    fig, ax = plt.subplots()
+        # plot
+        fig, ax = plt.subplots()
 
-    ind = np.arange(len(x))    # the x locations for the groups
-    width = 0.35         # the width of the bars
+        ind = np.arange(len(x))    # the x locations for the groups
+        width = 0.35         # the width of the bars
 
-    ax.bar(ind, x, width)
+        ax.bar(ind, x, width)
 
-    ax.set_xticks(ind)
-    ax.set_xticklabels(x_labels)
-    ax.set_title('How fast do you want to go today?')
-    ax.set_xlabel('Platform')
-    ax.set_ylabel('User-mode runtime (Seconds)')
+        ax.set_xticks(ind)
+        ax.set_xticklabels(x_labels)
+        ax.set_title(report)
+        ax.set_xlabel('Platform')
+        ax.set_ylabel('User-mode runtime (Seconds)')
 
-    pdf.savefig()
-    plt.close()
+        pdf.savefig()
+        plt.close()
 
 def plot_disk(results : dict, pdf : PdfPages):
     for report, data in results['results']['Disk']['benchmarks']['IOZone'][0]['results'].items():
