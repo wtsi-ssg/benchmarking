@@ -16,8 +16,8 @@ from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
 
-sys.path.insert(1, '/benchmarking/setup/')
-import prepareScript
+sys.path.insert(1, '/setup/')
+import benchmark_suite.prepareScript as prepareScript
 
 
 def get_args():
@@ -83,7 +83,7 @@ def load_all_benchmarks():
     loaded_benchmarks = {}
 
     pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
-    pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmarks"])
+    pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmark_suite/benchmarks"])
     pluginmanager.collectPlugins()
 
     for plugin in pluginmanager.getAllPlugins():

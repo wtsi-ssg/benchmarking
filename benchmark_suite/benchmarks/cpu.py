@@ -2,7 +2,7 @@
 
 import sys
 import numa
-import benchmarkessentials
+from benchmark_suite import benchmarkessentials
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):

@@ -14,7 +14,7 @@ class Benchmark(abc.ABC):
     suite : Suite
     """Abstract class defining an interface for Benchmarks to implement"""
     @abc.abstractmethod
-    def run(self) -> "json serializeable":
+    def run(self) -> "json.serializeable":
         """Run the benchmark, return JSON serializeable results"""
         pass
 

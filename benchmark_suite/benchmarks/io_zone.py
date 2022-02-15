@@ -6,7 +6,7 @@ import pathlib
 import subprocess
 import time
 
-import benchmarkessentials
+from benchmark_suite import benchmarkessentials
 import pandas as pd
 
 

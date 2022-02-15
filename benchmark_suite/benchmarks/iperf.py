@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import benchmarkessentials
+from benchmark_suite import benchmarkessentials
 import subprocess
 import shlex
 import json

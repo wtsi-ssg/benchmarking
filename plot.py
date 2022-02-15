@@ -66,6 +66,9 @@ def plot_disk(results : dict, pdf : PdfPages):
         pdf.savefig()
         plt.close()
 
+def plot_iperf(results : dict, pdf : PdfPages):
+    for report, data in results['results']['iperf']['benchmarks']['IOZone'][0]['results'].items():
+
 
 parser = argparse.ArgumentParser(description='Create plot for results file.')
 parser.add_argument('results_file', metavar='results_file', type=pathlib.Path, nargs='?',
@@ -82,3 +85,5 @@ with PdfPages(str(args.plot_file)) as pdf:
         plot_CPU(results, pdf)
     if 'Disk' in results['results']:
         plot_disk(results, pdf)
+    if 'iperf' in results['iperf']:
+        plot_iperf(results, pdf)

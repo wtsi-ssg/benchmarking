@@ -6,8 +6,8 @@ import subprocess
 import time
 from cpuinfo import get_cpu_info
 from collections import Counter
-import benchmarkessentials
-import benchmarks.timedcommand as timedcommand
+from benchmark_suite import benchmarkessentials
+import benchmark_suite.benchmarks.timedcommand as timedcommand
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):

@@ -7,7 +7,7 @@ import shutil
 import sys
 import time
 from cpuinfo import get_cpu_info
-import benchmarkessentials
+from benchmark_suite import benchmarkessentials
 import os.path
 from os import path
 
