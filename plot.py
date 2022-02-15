@@ -67,7 +67,25 @@ def plot_disk(results : dict, pdf : PdfPages):
         plt.close()
 
 def plot_iperf(results : dict, pdf : PdfPages):
-    for report, data in results['results']['iperf']['benchmarks']['IOZone'][0]['results'].items():
+    x_labels = ('UDP',)
+    x = (results['results']['Network']['benchmarks']['iPerf'][0]['result_summary']['sum']['bits_per_second'],)
+
+    # plot
+    fig, ax = plt.subplots()
+
+    ind = np.arange(len(x))    # the x locations for the groups
+    width = 0.35         # the width of the bars
+
+    ax.bar(ind, x, width)
+
+    ax.set_xticks(ind)
+    ax.set_xticklabels(x_labels)
+    ax.set_title('IPerf')
+    ax.set_xlabel('Protocol')
+    ax.set_ylabel('bits per second')
+
+    pdf.savefig()
+    plt.close()
 
 
 parser = argparse.ArgumentParser(description='Create plot for results file.')
@@ -85,5 +103,5 @@ with PdfPages(str(args.plot_file)) as pdf:
         plot_CPU(results, pdf)
     if 'Disk' in results['results']:
         plot_disk(results, pdf)
-    if 'iperf' in results['iperf']:
+    if 'Network' in results['results']:
         plot_iperf(results, pdf)
