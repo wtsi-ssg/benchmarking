@@ -74,7 +74,7 @@ def get_benchmark_with_children(benchsuite, base_benchmark, benchmark_dict):
     benchmark_object = benchmark_dict[base_benchmark["type"]](suite=benchsuite, **settings)
     if issubclass(type(benchmark_object), ParentBenchmark):
         for mark in base_benchmark["benchmarks"]:
-            benchmark_object.add_benchmark(get_benchmark_with_children(mark, benchmark_dict))
+            benchmark_object.add_benchmark(get_benchmark_with_children(benchsuite, mark, benchmark_dict))
 
     return benchmark_object
 
