@@ -33,7 +33,7 @@ class MultiThread(timedcommand.TimedCommand):
         for pt in self.process_thread:
             if self.clear_caches:
                 print("--Clearing cache", file=sys.stderr)
-                self.clear_cache()
+                self.suite.clear_cache()
 
             ps, th = list(map(str, pt.split("*")))
             if th == "N":
