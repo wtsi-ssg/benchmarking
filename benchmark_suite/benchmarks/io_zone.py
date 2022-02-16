@@ -15,7 +15,8 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"iozone": IOZone}
 
 class IOZone(benchmarkessentials.Benchmark):
-    def __init__(self, install_dir, arguments="-a", program=None, programversion=None, result_dir=None):
+    def __init__(self, install_dir, arguments="-a", program=None, programversion=None, result_dir=None, **kwargs):
+        super.__init__(self, **kwargs)
         self.arguments = arguments
         self.install_path = "{}{}/src/current".format(install_dir, program+"-v"+programversion)
         self.result_dir = result_dir

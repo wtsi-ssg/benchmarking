@@ -17,7 +17,8 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"command": TimedCommand}
 
 class TimedCommand(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, threads=None, process_thread=None): 
+    def __init__(self, command, install_dir, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, threads=None, process_thread=None, **kwargs): 
+        super.__init__(self, **kwargs)
         self.program = program
         self.programversion = programversion
         self.install_dir = install_dir
