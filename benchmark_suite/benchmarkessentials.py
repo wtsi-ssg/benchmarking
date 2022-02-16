@@ -15,9 +15,12 @@ class BenchmarkPlugin(abc.ABC, yapsy.IPlugin.IPlugin):
         pass
 
 
-@dataclass
 class Benchmark(abc.ABC):
     suite : Suite
+    def __init__(self, suite : Suite) -> None:
+        super().__init__()
+        self.suite = suite
+
     """Abstract class defining an interface for Benchmarks to implement"""
     @abc.abstractmethod
     def run(self) -> "json.serializeable":
@@ -30,6 +33,9 @@ class Benchmark(abc.ABC):
         pass
 
 class ParentBenchmark(Benchmark):
+    def __init__(self, suite: Suite) -> None:
+        super().__init__(suite)
+
     @abc.abstractmethod
     def add_benchmark(self, benchmark: Benchmark):
         """Add a benchmark to the list to be run"""
