@@ -30,6 +30,8 @@
         repeats: 3
         process_thread: "1*1"
         clear_caches: True
+- type: disk
+  benchmarks:
     - type: iozone
       settings:
         program: "iozone"

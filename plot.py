@@ -15,7 +15,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 def plot_CPU(results : dict, pdf : PdfPages):
     for report, data in results['results']['CPU']['benchmarks'].items():
         x_labels = [results['system-info']['model']+ ' ' + m for m in data[0]['average'].keys()]
-        x = (data[0]['average']['p1.t1']['user'],data[0]['average']['p1.t256']['user'])
+        x = [keyData['user'] for keyData in data[0]['average'].values()]
 
         # plot
         fig, ax = plt.subplots()

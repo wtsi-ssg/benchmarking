@@ -10,6 +10,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/plot.py",
             "console": "integratedTerminal",
-            "args": ["2022-01-31-224230_disk.json", "2022-01-31-224230_disk.pdf"]        }
+            "args": ["2022-01-31-224230_disk.json", "2022-01-31-224230_disk.pdf"]
+        },
+        {
+            "name": "Python: full plot",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/plot.py",
+            "console": "integratedTerminal",
+            "args": ["2022-02-16-153750_full_test.json", "2022-02-16-153750_full_test.pdf"]
+        }    
     ]
 }
