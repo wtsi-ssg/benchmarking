@@ -9,8 +9,8 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"cpu": CPU}
 
 class CPU(benchmarkessentials.ParentBenchmark):
-    def __init__(self, benchmarks=None, **kwargs):
-        super().__init__(self, **kwargs)
+    def __init__(self, benchmarks=None,  **kwargs):
+        super().__init__(**kwargs)
         self.benchmarks = benchmarks if benchmarks else []
 
     def get_name(self):

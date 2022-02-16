@@ -14,8 +14,8 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(timedcommand.TimedCommand):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.process_thread = kwargs['process_thread'].split(',')
 
     def get_name(self):

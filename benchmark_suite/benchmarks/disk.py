@@ -13,7 +13,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 
 class Disk(benchmarkessentials.ParentBenchmark):
     def __init__(self, benchmarks=None, target_dir=None, install_dir=None, arguments="-a", program=None, programversion=None, result_dir=None, **kwargs):
-        super().__init__(self, **kwargs)
+        super().__init__(**kwargs)
         self.benchmarks = benchmarks if benchmarks else []
         self.target_dir = target_dir if target_dir else "/tmp"
         self.install_dir = install_dir
