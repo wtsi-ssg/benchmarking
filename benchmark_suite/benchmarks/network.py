@@ -9,7 +9,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 
 class Network(benchmarkessentials.ParentBenchmark):
     def __init__(self, benchmarks=None, **kwargs):
-        super.__init__(self, **kwargs)
+        super().__init__(self, **kwargs)
         self.benchmarks = benchmarks if benchmarks else []
 
     def get_name(self):

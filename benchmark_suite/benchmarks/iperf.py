@@ -17,7 +17,7 @@ class IPerf(benchmarkessentials.Benchmark):
     Requires iperf to be in PATH
     """
     def __init__(self, server_address, install_dir, server_port, protocol, time_to_transmit, parallel_streams, program, programversion, **kwargs):
-        super.__init__(self, **kwargs)
+        super().__init__(self, **kwargs)
         self.server_address = server_address
         self.server_port = str(server_port)
         self.program = program
