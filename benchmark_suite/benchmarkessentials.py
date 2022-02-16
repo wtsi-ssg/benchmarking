@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 
 import abc
-from .suite import Suite
-import yapsy.IPlugin
 import json
+from dataclasses import dataclass
+
+import yapsy.IPlugin
+
+from .suite import Suite
+
 
 class BenchmarkPlugin(abc.ABC, yapsy.IPlugin.IPlugin):
     @abc.abstractmethod
     def get_benchmarks(self) -> dict:
         pass
 
+
+@dataclass
 class Benchmark(abc.ABC):
     suite : Suite
     """Abstract class defining an interface for Benchmarks to implement"""
