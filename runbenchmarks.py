@@ -66,12 +66,12 @@ def get_config(c_file):
 
     return config
 
-def get_benchmark_with_children(base_benchmark, benchmark_dict):
+def get_benchmark_with_children(benchsuite, base_benchmark, benchmark_dict):
     settings = base_benchmark["settings"] if "settings" in base_benchmark and base_benchmark["settings"] is not None else {}
     if settings:
         base_benchmark["settings"]['install_dir'] = prepareScript.get_install_dir(get_config_file(args.type))
 
-    benchmark_object = benchmark_dict[base_benchmark["type"]](**settings)
+    benchmark_object = benchmark_dict[base_benchmark["type"]](**settings, suite=benchsuite)
     if issubclass(type(benchmark_object), ParentBenchmark):
         for mark in base_benchmark["benchmarks"]:
             benchmark_object.add_benchmark(get_benchmark_with_children(mark, benchmark_dict))
@@ -99,7 +99,7 @@ def set_wd(config_file):
 def add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks):
     for bmsettings in config:
         if len(list(bmsettings.keys())) > 0 and list(bmsettings.keys())[0] == 'type':
-            benchsuite.add_benchmark(get_benchmark_with_children(bmsettings, loaded_benchmarks))
+            benchsuite.add_benchmark(get_benchmark_with_children(benchsuite, bmsettings, loaded_benchmarks))
 
     return benchsuite
 
