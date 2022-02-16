@@ -31,7 +31,6 @@ def get_args():
         '-t','--type',
         type=str,
         help="""Type of the benchmark""",
-        choices=['disk', 'network', 'threaded', 'timed_command'],
         required=True
     )
     parser.add_argument(

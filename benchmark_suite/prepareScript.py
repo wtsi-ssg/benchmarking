@@ -108,7 +108,7 @@ def download_and_install_programs(settings_list, install_dir):
             print("{} is already installed".format(name_and_version))
             continue
         
-        with open(os.path.dirname(os.path.realpath(__file__))+"/binaryAddresses.txt", "r") as binary_url:
+        with open(os.path.dirname(os.path.realpath(__file__))+"/../setup/binaryAddresses.txt", "r") as binary_url:
             for line in binary_url:
                 pro_ver, url = line.strip().split(',')
                  
@@ -200,7 +200,7 @@ def download_salmon_data(settings_dict):
                 os.makedirs(datadir+index_name, exist_ok=True)
                 os.makedirs(datadir+"SRR10103759", exist_ok=True)
                 
-                with open(os.path.dirname(os.path.realpath(__file__))+"/"+ds+".txt", 'r') as data_f:
+                with open(os.path.dirname(os.path.realpath(__file__))+"/../setup/"+ds+".txt", 'r') as data_f:
                     for line in data_f:
                         required_file_name, correct_md5sum = line.strip().split(',')
                         
