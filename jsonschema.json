@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sanger.ac.uk/schemas/benchmarking",
+  "$id": "https://sanger.ac.uk/schemas/benchmarking/1.0",
   "type": "object",
   "properties": {
     "date": {
@@ -133,11 +133,333 @@
             "benchmarks",
             "NUMAtopology"
           ]
+        },
+        "Disk": {
+          "type": "object",
+          "properties": {
+            "benchmarks": {
+              "type": "object",
+              "properties": {
+                "IOZone": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results": {
+                          "type": "object",
+                          "patternProperties": {
+                            "[A-Za-z0-9 ]* Report": {
+                              "type": "object",
+                              "patternProperties":{
+                                "[0-9]*": {
+                                  "type": "object",
+                                  "patternProperties":{
+                                    "[0-9]*": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Network": {
+          "type": "object",
+          "properties": {
+            "benchmarks": {
+              "type": "object",
+              "properties": {
+                "iPerf": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "program": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "server": {
+                          "type": "string"
+                        },
+                        "port": {
+                          "type": "string"
+                        },
+                        "protocol": {
+                          "type": "string"
+                        },
+                        "time_to_transmit": {
+                          "type": "integer"
+                        },
+                        "parallel_streams": {
+                          "type": "integer"
+                        },
+                        "result_summary": {
+                          "type": "object",
+                          "properties": {
+                            "sum": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "integer"
+                                },
+                                "end": {
+                                  "type": "number"
+                                },
+                                "seconds": {
+                                  "type": "number"
+                                },
+                                "bytes": {
+                                  "type": "integer"
+                                },
+                                "bits_per_second": {
+                                  "type": "number"
+                                },
+                                "jitter_ms": {
+                                  "type": "number"
+                                },
+                                "lost_packets": {
+                                  "type": "integer"
+                                },
+                                "packets": {
+                                  "type": "integer"
+                                },
+                                "lost_percent": {
+                                  "type": "integer"
+                                },
+                                "sender": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end",
+                                "seconds",
+                                "bytes",
+                                "bits_per_second",
+                                "jitter_ms",
+                                "lost_packets",
+                                "packets",
+                                "lost_percent",
+                                "sender"
+                              ]
+                            },
+                            "cpu_utilization_percent": {
+                              "type": "object",
+                              "properties": {
+                                "host_total": {
+                                  "type": "number"
+                                },
+                                "host_user": {
+                                  "type": "number"
+                                },
+                                "host_system": {
+                                  "type": "number"
+                                },
+                                "remote_total": {
+                                  "type": "number"
+                                },
+                                "remote_user": {
+                                  "type": "number"
+                                },
+                                "remote_system": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "host_total",
+                                "host_user",
+                                "host_system",
+                                "remote_total",
+                                "remote_user",
+                                "remote_system"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "sum",
+                            "cpu_utilization_percent"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "program",
+                        "version",
+                        "server",
+                        "port",
+                        "protocol",
+                        "time_to_transmit",
+                        "parallel_streams",
+                        "result_summary"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "program": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "server": {
+                          "type": "string"
+                        },
+                        "port": {
+                          "type": "string"
+                        },
+                        "protocol": {
+                          "type": "string"
+                        },
+                        "time_to_transmit": {
+                          "type": "integer"
+                        },
+                        "parallel_streams": {
+                          "type": "integer"
+                        },
+                        "result_summary": {
+                          "type": "object",
+                          "properties": {
+                            "sum_sent": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "integer"
+                                },
+                                "end": {
+                                  "type": "number"
+                                },
+                                "seconds": {
+                                  "type": "number"
+                                },
+                                "bytes": {
+                                  "type": "integer"
+                                },
+                                "bits_per_second": {
+                                  "type": "number"
+                                },
+                                "retransmits": {
+                                  "type": "integer"
+                                },
+                                "sender": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end",
+                                "seconds",
+                                "bytes",
+                                "bits_per_second",
+                                "retransmits",
+                                "sender"
+                              ]
+                            },
+                            "sum_received": {
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "type": "integer"
+                                },
+                                "end": {
+                                  "type": "number"
+                                },
+                                "seconds": {
+                                  "type": "number"
+                                },
+                                "bytes": {
+                                  "type": "integer"
+                                },
+                                "bits_per_second": {
+                                  "type": "number"
+                                },
+                                "sender": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "start",
+                                "end",
+                                "seconds",
+                                "bytes",
+                                "bits_per_second",
+                                "sender"
+                              ]
+                            },
+                            "cpu_utilization_percent": {
+                              "type": "object",
+                              "properties": {
+                                "host_total": {
+                                  "type": "number"
+                                },
+                                "host_user": {
+                                  "type": "number"
+                                },
+                                "host_system": {
+                                  "type": "number"
+                                },
+                                "remote_total": {
+                                  "type": "number"
+                                },
+                                "remote_user": {
+                                  "type": "number"
+                                },
+                                "remote_system": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "host_total",
+                                "host_user",
+                                "host_system",
+                                "remote_total",
+                                "remote_user",
+                                "remote_system"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "sum_sent",
+                            "sum_received",
+                            "cpu_utilization_percent"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "program",
+                        "version",
+                        "server",
+                        "port",
+                        "protocol",
+                        "time_to_transmit",
+                        "parallel_streams",
+                        "result_summary"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "iPerf"
+              ]
+            }
+          },
+          "required": [
+            "benchmarks"
+          ]
         }
-      },
-      "required": [
-        "CPU"
-      ]
+      }
     }
   },
   "required": [
