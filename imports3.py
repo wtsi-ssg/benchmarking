@@ -8,7 +8,7 @@ import jsonschema
 import psycopg2
 from librabbitmq import Connection
 
-DSN = "dbname=suppliers user=postgres password=postgres"
+DSN = "dbname=benchmarking user=postgres password=postgres"
 
 def dump_message(message):
     pgconn = psycopg2.connect(DSN)
@@ -30,13 +30,13 @@ def dump_message(message):
                     next
                 # Validate it against schema
                 doc = res['Body'].read()
+                res['Body'].close()
                 try:
                     jsonschema.validate(instance = doc, schema=schema)
+                    # It has passed? Send it to postgres database
+                    curs.execute("insert into mytable (jsondata) values (%s)", doc)
                 except jsonschema.exceptions.ValidationError as err:
                     pass
-                res['Body'].close()
-                # Send it to postgres database
-                curs.execute("insert into mytable (jsondata) values (%s)", doc)
 
                 # Delete it from S3
                 try:
