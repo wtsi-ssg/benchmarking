@@ -3,7 +3,6 @@
 import os
 import shlex
 import subprocess
-import shutil
 import sys
 import time
 from cpuinfo import get_cpu_info

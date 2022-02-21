@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import os
 import subprocess
-import time
 from cpuinfo import get_cpu_info
 from collections import Counter
 from benchmark_suite import benchmarkessentials
@@ -24,8 +22,7 @@ class MultiThread(timedcommand.TimedCommand):
     def run(self):
         results = {"program": self.program,
                    "programversion": self.programversion,
-                   "runs": {},
-                   "average": {}
+                   "runs": []
                   }
 
         resulted_sam_dir, resulted_time_dir = self.create_result_dirs(self.get_name())
@@ -40,6 +37,10 @@ class MultiThread(timedcommand.TimedCommand):
                 th = str(get_cpu_info()["count"])
 
             pt_key = "p{}.t{}".format(ps,th)
+            result = { "processes" : ps,
+                        "threads" : th,
+                        "runs" : []
+                        }
 
             for repeat in range(1, self.repeats+1):
                 print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
@@ -52,12 +53,8 @@ class MultiThread(timedcommand.TimedCommand):
                     if len(usr_sys_elp_list) == 3:
                         runresult["user"], runresult["system"], runresult["elapsed"] = list(map(float, usr_sys_elp_list))
 
-                if pt_key not in results["runs"]:
-                    results["runs"][pt_key] = []
-
-                results["runs"][pt_key].append(runresult)
+                results["runs"].append(runresult)
             
-            for pt_k in results["runs"]:
-                results["average"][pt_k] = self.generate_averages(results["runs"][pt_k])
-
+            results["runs"].append(result)
+            
         return results

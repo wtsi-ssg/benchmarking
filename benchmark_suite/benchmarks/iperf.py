@@ -2,7 +2,6 @@
 
 from benchmark_suite import benchmarkessentials
 import subprocess
-import shlex
 import json
 import sys
 
