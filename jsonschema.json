@@ -50,65 +50,52 @@
                         "programversion": {
                           "type": "string"
                         },
-                        "runs": {
-                          "type": "object",
-                          "patternProperties": {
-                            "^p[0-9]*.t[0-9]*$": {
-                              "type": "array",
-                              "items": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "user": {
-                                      "type": "number"
-                                    },
-                                    "system": {
-                                      "type": "number"
-                                    },
-                                    "elapsed": {
-                                      "type": "number"
-                                    }
-                                  },
-                                  "required": [
-                                    "user",
-                                    "system",
-                                    "elapsed"
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        },
-                        "average": {
-                          "type": "object",
-                          "patternProperties": {
-                            "^p[0-9]*.t[0-9]*$": {
+                        "configurations": {
+                          "type": "array",
+                          "items": {
                               "type": "object",
                               "properties": {
-                                "user": {
-                                  "type": "number"
+                                "processes": {
+                                  "type": "integer"
                                 },
-                                "system": {
-                                  "type": "number"
-                                },
-                                "elapsed": {
-                                  "type": "number"
-                                }
-                              },
-                              "required": [
-                                "user",
-                                "system",
-                                "elapsed"
-                              ]
+                                "threads": {
+                                  "type": "integer"
+                                },      
+                                "runs": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "user": {
+                                        "type": "number"
+                                      },
+                                      "system": {
+                                        "type": "number"
+                                      },
+                                      "elapsed": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "user",
+                                      "system",
+                                      "elapsed"
+                                    ]
+                                  }
+                              }
                             }
-                          }
+                          },
+                          "required": [
+                            "processes",
+                            "threads",
+                            "runs"
+                          ]
                         }
                       },
                       "required": [
                         "program",
                         "programversion",
-                        "runs",
-                        "average"
+                        "configurations"
                       ]
                     }
                   ]
@@ -156,7 +143,7 @@
                                   "type": "object",
                                   "patternProperties":{
                                     "[0-9]*": {
-                                      "type": "integer"
+                                      "type": ["integer", "null"]
                                     }
                                   }
                                 }

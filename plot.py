@@ -11,11 +11,20 @@ import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
+def yield_processthreadlabels(model:str, data:list):
+    for m in data['configurations']:
+        for i in range(0, len(m['runs'])):
+            yield f" p{m['processes']}t{m['threads']}"
+
+def yield_usertime(data:list):
+    for keyData in data['configurations']:
+        for m in keyData['runs']:
+            yield m['user']
 
 def plot_CPU(results : dict, pdf : PdfPages):
     for report, data in results['results']['CPU']['benchmarks'].items():
-        x_labels = [results['system-info']['model']+ ' ' + m for m in data[0]['average'].keys()]
-        x = [keyData['user'] for keyData in data[0]['average'].values()]
+        x_labels = list(yield_processthreadlabels(results['system-info']['model'],data[0]))
+        x = list(yield_usertime(data[0]))
 
         # plot
         fig, ax = plt.subplots()

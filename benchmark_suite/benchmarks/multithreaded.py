@@ -37,8 +37,8 @@ class MultiThread(timedcommand.TimedCommand):
                 th = str(get_cpu_info()["count"])
 
             pt_key = "p{}.t{}".format(ps,th)
-            configuration = { "processes" : ps,
-                        "threads" : th,
+            configuration = { "processes" : int(ps),
+                        "threads" : int(th),
                         "runs" : []
                         }
 
