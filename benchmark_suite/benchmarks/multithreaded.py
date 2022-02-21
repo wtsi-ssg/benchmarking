@@ -22,7 +22,7 @@ class MultiThread(timedcommand.TimedCommand):
     def run(self):
         results = {"program": self.program,
                    "programversion": self.programversion,
-                   "runs": []
+                   "configurations": []
                   }
 
         resulted_sam_dir, resulted_time_dir = self.create_result_dirs(self.get_name())
@@ -37,7 +37,7 @@ class MultiThread(timedcommand.TimedCommand):
                 th = str(get_cpu_info()["count"])
 
             pt_key = "p{}.t{}".format(ps,th)
-            result = { "processes" : ps,
+            configuration = { "processes" : ps,
                         "threads" : th,
                         "runs" : []
                         }
@@ -53,8 +53,8 @@ class MultiThread(timedcommand.TimedCommand):
                     if len(usr_sys_elp_list) == 3:
                         runresult["user"], runresult["system"], runresult["elapsed"] = list(map(float, usr_sys_elp_list))
 
-                results["runs"].append(runresult)
+                configuration["runs"].append(runresult)
             
-            results["runs"].append(result)
+            results["configurations"].append(configuration)
             
         return results
