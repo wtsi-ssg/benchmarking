@@ -11,19 +11,24 @@ from librabbitmq import Connection
 DSN = "dbname=benchmarking user=postgres password=postgres"
 
 def dump_message(message):
+    # Connect to destination Postgres server
     pgconn = psycopg2.connect(DSN)
 
-    with conn:
-        with conn.cursor() as curs:
+    with pgconn:
+        with pgconn.cursor() as curs:
+            # Open connection to S3
             client = boto3.client('s3', endpoint_url ='https://cog.sanger.ac.uk')
-            print("Body:'%s', Properties:'%s', DeliveryInfo:'%s'" % (
-            message.body, message.properties, message.delivery_info))
+            # DEBUG: print("Body:'%s', Properties:'%s', DeliveryInfo:'%s'" % (
+            # DEBUG: message.body, message.properties, message.delivery_info))
+
+            # Read notification from queue
             bd = json.loads(message.body)
             for record in bd['Records']:
+                # Check it is for us
                 if record['eventName'] != 's3:ObjectCreated:Post' or record['s3']['bucket']['name'] != 'it_randd':
                     next
 
-                # Get new file from S3
+                # Download new file from S3
                 try:
                     res = client.get_object(Bucket='it_randd', Key=record['s3']['object']['key'])
                 except boto3.S3.Client.exceptions.NoSuchKey:
@@ -34,6 +39,7 @@ def dump_message(message):
                 try:
                     jsonschema.validate(instance = doc, schema=schema)
                     # It has passed? Send it to postgres database
+                    # TODO: Check return from this and if it fails don't delete
                     curs.execute("insert into mytable (jsondata) values (%s)", doc)
                 except jsonschema.exceptions.ValidationError as err:
                     pass
@@ -55,10 +61,13 @@ args = parser.parse_args()
 with open('jsonschema.json', mode='r') as f:
     schema = json.load(f.read())
 
+# Connect to Rabbit MQ server providing S3 notifications
 conn = Connection(host=args.host, userid="guest",
                   password="guest", virtual_host="/")
 
+# Set up channel to recieve from queue
 channel = conn.channel()
 channel.basic_consume(queue='returned_results', callback=dump_message)
+# Mainloop
 while True:
     conn.drain_events()
