@@ -28,7 +28,7 @@
         datadir: "/data/datasets/salmon/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*1"
+        process_thread: "1*N"
         clear_caches: True
 - type: disk
   benchmarks:
