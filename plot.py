@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from cProfile import label
 import json
 import pathlib
 import sys
@@ -16,29 +17,37 @@ def yield_processthreadlabels(model:str, data:list):
         for i in range(0, len(m['runs'])):
             yield f" p{m['processes']}t{m['threads']}"
 
-def yield_usertime(data:list):
+def yield_time(data:list, type:str):
     for keyData in data['configurations']:
         for m in keyData['runs']:
-            yield m['user']
+            yield m[type]
 
 def plot_CPU(results : dict, pdf : PdfPages):
     for report, data in results['results']['CPU']['benchmarks'].items():
         x_labels = list(yield_processthreadlabels(results['system-info']['model'],data[0]))
-        x = list(yield_usertime(data[0]))
+        x_user = list(yield_time(data[0],'user'))
+        x_sys = list(yield_time(data[0],'system'))
+        x_elapsed = list(yield_time(data[0],'elapsed'))
 
         # plot
         fig, ax = plt.subplots()
 
-        ind = np.arange(len(x))    # the x locations for the groups
-        width = 0.35         # the width of the bars
+        ind = np.arange(len(x_user))    # the x locations for the groups
+        width = 0.20         # the width of the bars
 
-        ax.bar(ind, x, width)
+        rects1 = ax.bar(ind-1.3*width, x_user, width, label='User')
+        rects2 = ax.bar(ind, x_sys, width, label='System')
+        rects3 = ax.bar(ind+1.3*width, x_elapsed, width, label='Elapsed')
 
         ax.set_xticks(ind)
         ax.set_xticklabels(x_labels)
         ax.set_title(report)
         ax.set_xlabel('Platform')
         ax.set_ylabel('User-mode runtime (Seconds)')
+
+        ax.bar_label(rects1, padding=3)
+        ax.bar_label(rects2, padding=3)
+        ax.bar_label(rects3, padding=3)
 
         pdf.savefig()
         plt.close()
