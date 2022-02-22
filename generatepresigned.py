@@ -1,7 +1,6 @@
 #!/bin/env python3
 
 import boto3
-import requests
 import json
 
 client = boto3.client('s3', endpoint_url ='https://cog.sanger.ac.uk')
