@@ -40,7 +40,7 @@ def dump_message(message):
                     jsonschema.validate(instance = doc, schema=schema)
                     # It has passed? Send it to postgres database
                     # TODO: Check return from this and if it fails don't delete
-                    curs.execute("insert into mytable (jsondata) values (%s)", doc)
+                    curs.execute("insert into returned_results (jsondata) values (%s)", doc)
                 except jsonschema.exceptions.ValidationError as err:
                     pass
 
