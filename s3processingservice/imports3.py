@@ -56,9 +56,9 @@ parser = argparse.ArgumentParser(description='Check queue for files to download 
 parser.add_argument('host', metavar='host', type=str, nargs='?',
                     help='rabbitmq host', default='localhost')
 parser.add_argument('user', metavar='user', type=str, nargs='?',
-                    help='rabbitmq username', default='localhost')
+                    help='rabbitmq username', default='guest')
 parser.add_argument('password', metavar='password', type=str, nargs='?',
-                    help='rabbitmq password', default='localhost')
+                    help='rabbitmq password', default='password')
 parser.add_argument('dsn', metavar='host', type=str, nargs='?',
                     help='postgres host', default='dbname=benchmarking user=postgres password=postgres')
 

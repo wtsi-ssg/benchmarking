@@ -1,8 +1,9 @@
 ACCESS_KEY=$1
 SECRET_ACCESS_KEY=$2
 DSN=$3
+RABBIT_USER='user'
 RABBIT_PASSWORD=`openssl rand -base64 32`
-docker create --hostname s3-rabbit --name s3-rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS="$RABBIT_PASSWORD" rabbitmq:3-management
+docker create --hostname s3-rabbit --name s3-rabbit -e RABBITMQ_DEFAULT_USER="$RABBIT_USER" -e RABBITMQ_DEFAULT_PASS="$RABBIT_PASSWORD" rabbitmq:3-management
 docker cp rabbitmq.conf s3-rabbit:/etc/rabbitmq/rabbitmq.conf
 docker cp definitions.json s3-rabbit:/etc/rabbitmq/definitions.json
 docker start s3-rabbit
