@@ -1,4 +1,4 @@
 boto3
 jsonschema
 psycopg2
-py-amqp
+amqp
