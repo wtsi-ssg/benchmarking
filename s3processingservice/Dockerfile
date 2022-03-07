@@ -15,4 +15,4 @@ COPY ./imports3.py /
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /requirements.txt
 
-ENTRYPOINT ["python3 ./imports3.py"]
+ENTRYPOINT ["/usr/bin/python3","/imports3.py"]
