@@ -6,7 +6,7 @@ import json
 import boto3
 import jsonschema
 import psycopg2
-from librabbitmq import Connection
+from py-amqp import Connection
 
 DSN = "dbname=benchmarking user=postgres password=postgres"
 
