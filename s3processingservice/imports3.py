@@ -55,6 +55,10 @@ def dump_message(message):
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
 parser.add_argument('host', metavar='host', type=str, nargs='?',
                     help='rabbitmq host', default='localhost')
+parser.add_argument('user', metavar='user', type=str, nargs='?',
+                    help='rabbitmq username', default='localhost')
+parser.add_argument('pass', metavar='pass', type=str, nargs='?',
+                    help='rabbitmq password', default='localhost')
 parser.add_argument('dsn', metavar='host', type=str, nargs='?',
                     help='postgres host', default='dbname=benchmarking user=postgres password=postgres')
 
@@ -65,8 +69,8 @@ with open('jsonschema.json', mode='r') as f:
     schema = json.load(f)
 
 # Connect to Rabbit MQ server providing S3 notifications
-conn = Connection(host=args.host, userid="guest",
-                  password="guest", virtual_host="/")
+conn = Connection(host=args.host, userid=args.user,
+                  password=args.pass, virtual_host="/")
 conn.connect()
 
 # Set up channel to recieve from queue
