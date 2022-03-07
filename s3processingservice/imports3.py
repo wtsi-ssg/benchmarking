@@ -62,11 +62,12 @@ args = parser.parse_args()
 DSN = args.dsn
 
 with open('jsonschema.json', mode='r') as f:
-    schema = json.load(f.read())
+    schema = json.load(f)
 
 # Connect to Rabbit MQ server providing S3 notifications
 conn = Connection(host=args.host, userid="guest",
                   password="guest", virtual_host="/")
+conn.connect()
 
 # Set up channel to recieve from queue
 channel = conn.channel()
