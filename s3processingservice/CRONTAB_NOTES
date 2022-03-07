@@ -2,4 +2,4 @@ SHELL=/bin/bash
 AWS_SECRET_ACCESS_KEY="blah"
 AWS_ACCESS_KEY_ID="blah"
 # m h  dom mon dow   command
-0 1 * * 0 source /home/ubuntu/benchmarking/s3processingservice/s3processingservice.venv/bin/activate && /home/ubuntu/benchmarking/s3processingservice/generatepresigned.py/
+0 1 * * 0 source /home/ubuntu/benchmarking/s3processingservice/s3processingservice.venv/bin/activate && /home/ubuntu/benchmarking/s3processingservice/generatepresigned.py
