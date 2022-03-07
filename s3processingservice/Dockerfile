@@ -2,7 +2,7 @@ FROM ubuntu:21.10
 
 LABEL org.opencontainers.image.authors="Martin Pollard <mp15@sanger.ac.uk>"
 
-ENV PACKAGES autoconf automake build-essential ca-certificates cmake curl g++ gcc git libtool make python3-dev python3-pip \
+ENV PACKAGES autoconf automake build-essential ca-certificates cmake curl g++ gcc git libtool make pkg-config python3-dev python3-pip \
         libpq-dev librabbitmq-dev
 
 RUN apt-get update && \
