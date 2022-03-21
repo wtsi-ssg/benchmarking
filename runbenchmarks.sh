@@ -1,5 +1,6 @@
 #!/bin/bash -e
 ymlFileName="/benchmarking/setup/config_files/${1}.yml"
+cd /benchmarking
 python3 /benchmarking/benchmark_suite/prepareScript.py -yml $ymlFileName
 
 export PYTHONPATH=/benchmarking
