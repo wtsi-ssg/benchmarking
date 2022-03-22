@@ -22,6 +22,7 @@ COPY ./scripts/ /benchmarking/scripts
 COPY ./benchmark_suite /benchmarking/benchmark_suite
 COPY ./runbenchmarks.sh /benchmarking/
 COPY ./runbenchmarks.py /benchmarking/
+COPY ./prepareScript.py /benchmarking/
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /benchmarking/setup/requirements.txt
 
