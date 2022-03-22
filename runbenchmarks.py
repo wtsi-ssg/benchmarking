@@ -16,9 +16,8 @@ from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
 
-sys.path.insert(1, '/setup/')
-import benchmark_suite.prepareScript as prepareScript
-
+sys.path.insert(1, f'{sys.path[0]}/setup/')
+from benchmark_suite.utility import Utility
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -58,7 +57,7 @@ def get_args():
     return parser.parse_args()
 
 def get_config_file(b_type):
-    return os.path.join("/benchmarking/setup/config_files", b_type+".yml")
+    return os.path.join(sys.path[0]+"/setup/config_files", b_type+".yml")
 
 def get_config(c_file):
     with open(c_file, "r") as yamlconfig:
@@ -69,7 +68,7 @@ def get_config(c_file):
 def get_benchmark_with_children(benchsuite, base_benchmark, benchmark_dict):
     settings = base_benchmark["settings"] if "settings" in base_benchmark and base_benchmark["settings"] is not None else {}
     if settings:
-        base_benchmark["settings"]['install_dir'] = prepareScript.get_install_dir(get_config_file(args.type))
+        base_benchmark["settings"]['install_dir'] = Utility.get_install_dir(get_config_file(args.type))
 
     benchmark_object = benchmark_dict[base_benchmark["type"]](suite=benchsuite, **settings)
     if issubclass(type(benchmark_object), ParentBenchmark):
@@ -127,7 +126,7 @@ def post_results(raw_result_file : str, jsondata : str):
         print('Results returned successfully.')
 
 def run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file):
-    install_dir = prepareScript.get_install_dir(config_file)
+    install_dir = Utility.get_install_dir(config_file)
     results = benchsuite.run()
     
     with open(result_fullpath, "w") as file:

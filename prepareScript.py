@@ -11,6 +11,8 @@ import os.path
 from os import path
 from pathlib import Path
 
+from benchmark_suite.utility import Utility
+
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
 def get_args():
@@ -27,15 +29,6 @@ def get_args():
         required=True)
 
     return parser.parse_args()
-
-def get_install_dir(yml_input_file):
-    doc = yaml.load(open(yml_input_file, 'rb'), Loader=Loader)
-    general_settings = doc[0]
-    if 'install_dir' in general_settings.keys():
-        install_dir = general_settings['install_dir']
-    else:
-        print("no install_dir set, automatic install failed")
-    return install_dir
 
 def get_settings():
     """ this function gets a list of all programs, programversions, and datasets used by tests in the yml file"""
@@ -269,7 +262,7 @@ if  __name__ == '__main__':
 
     settings_list = get_settings()
     
-    install_dir = get_install_dir(yml_input_file)
+    install_dir = Utility.get_install_dir(yml_input_file)
 
     path_to_program_dict= {}
     path_to_program_dict["salmon"] = ["{}name_and_version/bin/salmon".format(install_dir)]
