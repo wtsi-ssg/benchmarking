@@ -25,7 +25,7 @@ def get_args():
         '-v','--verbose', help=verbose_help,
         action="store_true")
     parser.add_argument(
-        '-yml','--yml_file', help=yml_file_help,
+        '-y','--yml_file', help=yml_file_help,
         required=True)
 
     return parser.parse_args()

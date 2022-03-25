@@ -39,12 +39,12 @@ def get_args():
         required=True
     )
     parser.add_argument(
-        '-s_ip', '--server_ip',
+        '-i', '--server_ip',
         type=str,
         help="""Server IP for iPerf server""",
     )
     parser.add_argument(
-        '-s_port', '--server_port',
+        '-p', '--server_port',
         type=str,
         help="""Server Port for iPerf server""",
     )
