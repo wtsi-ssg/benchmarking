@@ -29,7 +29,7 @@ class MBW(benchmarkessentials.Benchmark):
         for line in lines:
             splits = line.split('\t')
             if str.isalpha(splits[0]) == True:
-                next
+                continue
             record = { 'iteration' : splits[0],
                 'method' : splits[1].split(':')[1],
                 'elapsed' : splits[2].split(':')[1],

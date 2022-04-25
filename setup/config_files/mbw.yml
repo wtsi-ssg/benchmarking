@@ -1,9 +1,7 @@
 ---
 - general_settings:
   install_dir: "/data/tools/"
-- type: disk
-  settings:
-    target_dir: /tmp
+- type: cpu
   benchmarks:
     - type: mbw
       settings:
