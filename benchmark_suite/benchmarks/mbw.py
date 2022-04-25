@@ -18,7 +18,7 @@ class MBW(benchmarkessentials.Benchmark):
     def __init__(self, install_dir, arguments="-a", program=None, programversion=None, **kwargs):
         super().__init__(**kwargs)
         self.arguments = arguments
-        self.install_path = "{}{}/src/current".format(install_dir, program+"-v"+programversion)
+        self.install_path = "{}{}/".format(install_dir, program+"-v"+programversion)
 
     def get_name(self):
         return "mbw"
