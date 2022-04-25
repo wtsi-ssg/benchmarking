@@ -37,6 +37,43 @@
           "properties": {
             "benchmarks": {
               "type": "object",
+              "properties": {
+                "mbw": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "results":{
+                          "type": "array",
+                          "items":[
+                            {
+                              "type": "object",
+                              "properties": {
+                                "MiB": {
+                                  "type": "string"
+                                },
+                                "copy": {
+                                  "type": "string"
+                                },
+                                "elapsed": {
+                                  "type": "string"
+                                },
+                                "iteration": {
+                                  "type": "integer"
+                                },
+                                "method": {
+                                  "type": "string"
+                                },
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
               "patternProperties": {
                 "multithreaded_[A-Za-z0-9]*": {
                   "type": "array",

@@ -30,11 +30,11 @@ class MBW(benchmarkessentials.Benchmark):
             splits = line.split('\t')
             if str.isalpha(splits[0]) == True:
                 continue
-            record = { 'iteration' : splits[0],
-                'method' : splits[1].split(':')[1],
-                'elapsed' : splits[2].split(':')[1],
-                'MiB' : splits[3].split(':')[1],
-                'copy' : splits[4].split(':')[1]
+            record = { 'iteration' : int(splits[0]),
+                'method' : splits[1].split(':')[1].strip(),
+                'elapsed' : splits[2].split(':')[1].strip(),
+                'MiB' : splits[3].split(':')[1].strip(),
+                'copy' : splits[4].split(':')[1].strip()
             }
             results.append(record)
         return results
