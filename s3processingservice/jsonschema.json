@@ -64,7 +64,7 @@
                                 },
                                 "method": {
                                   "type": "string"
-                                },
+                                }
                               }
                             }
                           ]
@@ -154,8 +154,7 @@
             }
           },
           "required": [
-            "benchmarks",
-            "NUMAtopology"
+            "benchmarks"
           ]
         },
         "Disk": {
