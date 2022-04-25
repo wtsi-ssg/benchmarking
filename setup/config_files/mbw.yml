@@ -1,0 +1,12 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: disk
+  settings:
+    target_dir: /tmp
+  benchmarks:
+    - type: mbw
+      settings:
+        program: "mbw"
+        programversion: "1.4a"
+        arguments: ""
