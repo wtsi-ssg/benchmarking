@@ -25,7 +25,7 @@ class MBW(benchmarkessentials.Benchmark):
 
     def _parse_mbw_output(self, stdout_text: str):
         lines = stdout_text.splitlines()
-        results = ()
+        results = []
         for line in lines:
             splits = line.split('\t')
             if str.isalpha(splits[0]) == True:
