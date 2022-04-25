@@ -98,7 +98,7 @@ def download_and_install_programs(settings_list, install_dir):
         print("Required program name and version: "+name_and_version)
         path_to_program = get_path_to_program(program_name, required_version)
         if path.exists(path_to_program):
-            print("{} is already installed".format(name_and_version))
+            print("{} is already installed at {}".format(name_and_version, path_to_program))
             continue
         
         with open(base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
@@ -275,6 +275,7 @@ if  __name__ == '__main__':
     path_to_program_dict["iperf"] = ["{}name_and_version/usr/bin/iperfvar".format(install_dir)]
     path_to_program_dict["bwa"] = ["{}name_and_version/bwa".format(install_dir)]
     path_to_program_dict["streams"] = ["{}name_and_version/stream".format(install_dir)]
+    path_to_program_dict["mbw"] = ["{}name_and_version/mbw".format(install_dir)]
 
     
     #Print the program list if verbose is set
