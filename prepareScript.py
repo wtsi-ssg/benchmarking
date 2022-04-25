@@ -119,10 +119,15 @@ def download_and_install_programs(settings_list, install_dir):
                     #if the binary is in the .deb form, use dpkg to extract it 
                     elif file_extension in [".deb"]:
                         rc = subprocess.call(['dpkg', '-x', install_dir+file_name, install_dir+name_and_version], cwd=install_dir)
+                    elif file_extension in [".zip"]:
+                        rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
 
                     if program_name == "iozone":
                         subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/src/current")
                         subprocess.check_call(["make linux"], shell=True, cwd=install_dir+name_and_version+"/src/current")
+
+                    if program_name == "mbw":
+                        subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/src/current")
 
                     if program_name == "streams":
                         if mode == "single_processing":
