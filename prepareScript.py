@@ -127,7 +127,7 @@ def download_and_install_programs(settings_list, install_dir):
                         subprocess.check_call(["make linux"], shell=True, cwd=install_dir+name_and_version+"/src/current")
 
                     if program_name == "mbw":
-                        subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/src/current")
+                        subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/")
 
                     if program_name == "streams":
                         if mode == "single_processing":
