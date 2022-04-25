@@ -40,10 +40,9 @@ class MBW(benchmarkessentials.Benchmark):
         return results
 
     def run(self):
-        iozone_result_file = self._get_iozone_xls()
         with subprocess.Popen([self.install_path + "/mbw", "-q"+self.arguments], stdout=subprocess.PIPE, universal_newlines=True) as process:
             stdout, _ = process.communicate()
             results = self._parse_mbw_output(stdout)
 
-        return {"results": self._parse_iozone_xls(iozone_result_file)} if stdout else {"results": ""}
+        return {"results": results} if stdout else {"results": ""}
 
