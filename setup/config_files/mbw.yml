@@ -9,4 +9,4 @@
       settings:
         program: "mbw"
         programversion: "1.4a"
-        arguments: ""
+        arguments: "512MiB"
