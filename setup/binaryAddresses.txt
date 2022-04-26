@@ -324,5 +324,5 @@ bwa-v0.7.17,https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2
 streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/stream.c
 streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c
 mbw-v1.4a, https://github.com/raas/mbw/archive/2a15026ff65160127204881263464b1740a57198.zip
-bwa-mem2-v2.2.1,https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.2.1/bwa-mem2-2.2.1_x64-linux.tar.bz2
+bwa-mem2-v2.2.1,https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.2.1/Source_code_including_submodules.tar.gz
 bwa-mem2-v2.2.1+edc703f, https://github.com/bwa-mem2/bwa-mem2/archive/edc703f883e8aaed83067100d8e54e0e9e810ef5.zip
