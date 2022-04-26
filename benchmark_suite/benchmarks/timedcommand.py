@@ -23,11 +23,11 @@ class TimedCommand(benchmarkessentials.Benchmark):
         self.install_dir = install_dir
         self.threads = threads
 
-        if self.program == "bwa":
-            self.install_path = self.install_dir+self.program+"-v"+programversion+"/"
-        elif self.program == "salmon":
-            self.install_path = self.install_dir+"/salmon-v"+self.programversion+"/bin/"
-        
+        # TODO: make this more generic
+        if self.program == "salmon":
+            self.install_path = self.install_dir+self.program+"-v"+self.programversion+"/bin/"
+        else: #bwa
+            self.install_path = self.install_dir+self.program+"-v"+self.programversion+"/"
         
         self.execution_string = os.path.abspath(os.path.expanduser(command))
         self.tag = tag if tag else os.path.basename(shlex.split(self.execution_string)[0]) 
