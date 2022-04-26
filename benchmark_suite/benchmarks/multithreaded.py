@@ -40,7 +40,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         self.shell = shell
         self.clear_caches = clear_caches
         self.repeats = repeats
-        self.process_thread = kwargs['process_thread'].split(',')
+        self.process_thread = process_thread.split(',')
 
     def get_name(self):
         return "multithreaded_{tag}".format(tag=self.tag)
