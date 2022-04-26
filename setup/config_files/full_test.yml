@@ -22,7 +22,7 @@
         tag: bwa-mem2
         command: "/benchmarking/scripts/numactl_multithreaded.sh"
         program: "bwa-mem2"
-        programversion: "2.2.1+edc703f"
+        programversion: "2.2.1"
         shell: True
         dataset_tag: "bwa"
         dataset_file: "/benchmarking/setup/bwa_data.txt"
