@@ -1,19 +1,45 @@
 #!/usr/bin/env python3
 
-import sys
+import os
+import os.path
+import shlex
 import subprocess
-from cpuinfo import get_cpu_info
+import sys
+import time
 from collections import Counter
+from string import Template
+
 from benchmark_suite import benchmarkessentials
-import benchmark_suite.benchmarks.timedcommand as timedcommand
+from cpuinfo import get_cpu_info
+
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):
         return {"multithreaded": MultiThread}
 
-class MultiThread(timedcommand.TimedCommand):
+class MultiThread(benchmarkessentials.Benchmark):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
+        self.program = program
+        self.programversion = programversion
+        self.install_dir = install_dir
+        self.threads = threads
+
+        # TODO: make this more generic
+        if self.program == "salmon":
+            self.install_path = self.install_dir+self.program+"-v"+self.programversion+"/bin/"
+        else: #bwa
+            self.install_path = self.install_dir+self.program+"-v"+self.programversion+"/"
+        
+        self.execution_string = os.path.abspath(os.path.expanduser(command))
+        self.tag = tag if tag else os.path.basename(shlex.split(self.execution_string)[0]) 
+        self.time_names = ["user", "system", "elapsed"] 
+        self.original_datadir = os.path.abspath(os.path.expanduser(datadir)) if datadir else None
+        self.dataset_file = dataset_file
+        self.result_dir = result_dir
+        self.shell = shell
+        self.clear_caches = clear_caches
+        self.repeats = repeats
         self.process_thread = kwargs['process_thread'].split(',')
 
     def get_name(self):
@@ -58,3 +84,38 @@ class MultiThread(timedcommand.TimedCommand):
             results["configurations"].append(configuration)
             
         return results
+
+    def create_result_dirs(self, subdir):
+        timestamp = time.strftime("%Y-%m-%d-%H%M%S")
+        resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
+        os.makedirs(resulted_data_dir, exist_ok=True)
+
+        resulted_time_dir = os.path.join(self.result_dir, subdir,  self.tag, timestamp, "time_files", "")
+        os.makedirs(resulted_time_dir, exist_ok=True)
+
+        return resulted_data_dir, resulted_time_dir
+
+    def get_time_results_from_file(self, fileout):
+        timedict = {}
+        with open(fileout, "r") as time_file:
+            time_lines = time_file.readlines()
+            timelist = [float(n) for n in time_lines[-1].strip().split()]
+            timedict = dict(zip(self.time_names, timelist))
+        
+        return timedict
+
+    def generate_averages(self, time_list):
+        averages = {}
+        for timetype in self.time_names:
+            averages[timetype] = round(float(sum(d[timetype] for d in time_list)) / len(time_list) ,2)
+
+        return averages
+
+    class ExecutionError(Exception): 
+        """Exception that is raised when a command exits with non-zero exit code"""
+        def __init__(self, command, return_val):
+            message = "Command with tag {0} exited with non-zero exit code: {1}".format(
+                command, return_val)
+            super().__init__(message)
+
+
