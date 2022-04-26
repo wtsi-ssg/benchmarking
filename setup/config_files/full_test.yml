@@ -30,6 +30,11 @@
         repeats: 3
         process_thread: "1*N"
         clear_caches: True
+    - type: mbw
+      settings:
+        program: "mbw"
+        programversion: "1.4a"
+        arguments: "512MiB"
 - type: disk
   benchmarks:
     - type: iozone
