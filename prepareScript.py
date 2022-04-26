@@ -276,7 +276,7 @@ if  __name__ == '__main__':
     path_to_program_dict["iozone"] = ["{}name_and_version/src/current/iozone".format(install_dir)]
     path_to_program_dict["iperf"] = ["{}name_and_version/usr/bin/iperfvar".format(install_dir)]
     path_to_program_dict["bwa"] = ["{}name_and_version/bwa".format(install_dir)]
-    path_to_program_dict["bwa-mem2"] = ["{}name_and_version/bwa".format(install_dir)]
+    path_to_program_dict["bwa-mem2"] = ["{}name_and_version/bwa-mem2".format(install_dir)]
     path_to_program_dict["streams"] = ["{}name_and_version/stream".format(install_dir)]
     path_to_program_dict["mbw"] = ["{}name_and_version/mbw".format(install_dir)]
 
