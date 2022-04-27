@@ -6,7 +6,7 @@
     - type: multithreaded 
       settings:
         tag: bwa
-        command: "/benchmarking/scripts/numactl_multithreaded.sh"
+        command: "${install_path}bwa mem -t ${threads} -K 100000000 -o ${result_path}/output.${repeatn}.{}.sam ${input_datapath}/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna ${input_datapath}/truncated.fq"
         program: "bwa"
         programversion: "0.7.17"
         shell: True
@@ -20,7 +20,7 @@
     - type: multithreaded 
       settings:
         tag: bwa-mem2
-        command: "/benchmarking/scripts/numactl_multithreaded.sh"
+        command: "${install_path}bwa-mem2 -t ${threads} -K 100000000 -o ${result_path}/output.${repeatn}.{}.sam ${input_datapath}/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna ${input_datapath}/truncated.fq"
         program: "bwa-mem2"
         programversion: "2.2.1"
         shell: True
@@ -34,7 +34,7 @@
     - type: multithreaded
       settings:
         tag: salmon-1.0.0
-        command: "/benchmarking/scripts/salmon.sh"
+        command: "${install_path}salmon quant --threads ${threads} -i ${input_datapath}/referenceGenome_index4/ -l A -1 ${input_datapath}/SRR10103759/C1_1.fq.gz -2 ${input_datapath}/SRR10103759/C1_2.fq.gz -o ${result_path}output.${repeatn}.quant.sf"
         program: "salmon"
         programversion: "1.0.0"
         shell: True
