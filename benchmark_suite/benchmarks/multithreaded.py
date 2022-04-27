@@ -73,7 +73,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult = {}
 
                 timetempfd, timetemp = tempfile.mkstemp()
-                parallelstring = Template('/usr/bin/time -f "%U %S %e" -o $timetemp bash -c "(for i in $$(bash -c "echo {1..$processcount}"); do echo $$i; done)| parallel --verbose -j 0 -P +$processcount -- ')
+                parallelstring = Template('/usr/bin/time -f "%U %S %e" -o $timetemp bash -c "(for i in $$(bash -c "echo {1..$processcount}"); do echo \\$$i; done)| parallel --verbose -j 0 -P +$processcount -- ')
                 execstring = Template(self.execution_string)
                 runstring =  parallelstring.substitute(timetemp=timetemp, processcount=ps) + execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir) + '"'
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
