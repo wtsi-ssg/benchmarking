@@ -74,14 +74,14 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 fifo = tempfile.mktemp()
                 os.mkfifo(fifo)
-                parallelstring = Template('/usr/bin/time -f "%U %S %e" -o $fifo bash -c (for i in $$(bash -c "echo {1..$processcount}"); do echo \\$$i; done)| parallel --verbose -j 0 -P +$processcount -- ')
+                parallelstring = Template('/usr/bin/time -f "%U %S %e" -o $fifo bash -c (for i in $$(bash -c "echo {1..$processcount}"); do echo $$i; done)| parallel --verbose -j 0 -P +$processcount -- ')
                 execstring = Template(self.execution_string)
                 runstring =  parallelstring.substitute(fifo=fifo, processcount=ps) + execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir) + '"'
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
                 print("runstring is: '{runstring}'")
-                with open(fifo) as fifofd, subprocess.Popen([runstring], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
+                with open(fifo, os.O_RDONLY) as fifofd, subprocess.Popen([runstring], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
                     stdout, _ = process.communicate()
-                    usr_sys_elp_list = stdout.strip().split(" ")
+                    usr_sys_elp_list = fifofd.readline().strip().split(" ")
                     if len(usr_sys_elp_list) == 3:
                         runresult["user"], runresult["system"], runresult["elapsed"] = list(map(float, usr_sys_elp_list))
 
