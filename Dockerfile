@@ -18,7 +18,6 @@ RUN mkdir /benchmarking
 
 #copy files required for benchmarking and install requirements.txt
 COPY ./setup/ /benchmarking/setup
-COPY ./scripts/ /benchmarking/scripts
 COPY ./benchmark_suite /benchmarking/benchmark_suite
 COPY ./runbenchmarks.sh /benchmarking/
 COPY ./runbenchmarks.py /benchmarking/
