@@ -84,7 +84,6 @@ class MultiThread(benchmarkessentials.Benchmark):
                     if len(usr_sys_elp_list) == 3:
                         runresult["user"], runresult["system"], runresult["elapsed"] = list(map(float, usr_sys_elp_list))
                 configuration["runs"].append(runresult)
-                os.close(timetempfd)
             
             results["configurations"].append(configuration)
             
