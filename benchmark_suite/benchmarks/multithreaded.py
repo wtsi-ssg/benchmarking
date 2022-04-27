@@ -30,7 +30,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         else: #bwa, etc
             self.install_path = self.install_dir+self.program+"-v"+self.programversion+"/"
         
-        self.execution_string = os.path.abspath(os.path.expanduser(command))
+        self.execution_string = command
         self.tag = tag if tag else os.path.basename(shlex.split(self.execution_string)[0]) 
         self.time_names = ["user", "system", "elapsed"] 
         self.original_datadir = os.path.abspath(os.path.expanduser(datadir)) if datadir else None
