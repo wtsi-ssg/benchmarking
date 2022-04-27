@@ -78,6 +78,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 execstring = Template(self.execution_string)
                 runstring =  parallelstring.substitute(fifo=fifo, processcount=ps) + execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datadir = self.original_datadir) + '"'
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
+                print("runstring is: '{runstring}'")
                 with open(fifo) as fifofd, subprocess.Popen([runstring], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
                     stdout, _ = process.communicate()
                     usr_sys_elp_list = stdout.strip().split(" ")
