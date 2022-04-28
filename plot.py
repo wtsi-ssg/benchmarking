@@ -71,7 +71,7 @@ def plot_MBW(results : dict, pdf : PdfPages):
         rects1 = ax.bar(ind, x_user, width)
 
         ax.set_xticks(ind)
-        ax.set_title(report)
+        ax.set_title(f'Memory Bandwidth (mbw)')
         ax.set_xlabel('Replicate Number')
         ax.set_ylabel('Bandwidth (MiB/sec)')
 
