@@ -4,10 +4,12 @@ import argparse
 from cProfile import label
 import json
 import pathlib
+import re
 import sys
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
@@ -24,6 +26,8 @@ def yield_time(data:list, type:str):
 
 def plot_CPU(results : dict, pdf : PdfPages):
     for report, data in results['results']['CPU']['benchmarks'].items():
+        if not re.match('multithreaded_.*', report):
+            continue
         x_labels = list(yield_processthreadlabels(results['system-info']['model'],data[0]))
         x_user = list(yield_time(data[0],'user'))
         x_sys = list(yield_time(data[0],'system'))
@@ -52,6 +56,30 @@ def plot_CPU(results : dict, pdf : PdfPages):
         pdf.savefig()
         plt.close()
 
+def plot_MBW(results : dict, pdf : PdfPages):
+    for report, data in results['results']['CPU']['benchmarks'].items():
+        if not re.match('mbw', report):
+            continue
+        x_user = list(float(x['copy'].split(' ')[0]) for x in data[0]['results'] if x['method'] == 'MEMCPY')
+
+        # plot
+        fig, ax = plt.subplots()
+
+        ind = np.arange(len(x_user))    # the x locations for the groups
+        width = 0.20         # the width of the bars
+
+        rects1 = ax.bar(ind, x_user, width)
+
+        ax.set_xticks(ind)
+        ax.set_title(report)
+        ax.set_xlabel('Replicate Number')
+        ax.set_ylabel('Bandwidth (MiB/sec)')
+
+        ax.bar_label(rects1, padding=3)
+
+        pdf.savefig()
+        plt.close()
+
 def plot_disk(results : dict, pdf : PdfPages):
     for report, data in results['results']['Disk']['benchmarks']['IOZone'][0]['results'].items():
         x = pd.DataFrame(data)
@@ -61,25 +89,14 @@ def plot_disk(results : dict, pdf : PdfPages):
         x.sort_index(axis = 1, inplace=True)
 
         # plot
-        fig, ax = plt.subplots()
-
-        im = ax.imshow(x, interpolation='none')
-
-        # get the colors of the values, according to the 
-        # colormap used by imshow
-        values = np.unique(x.to_numpy().ravel())
-        colors = [ im.cmap(im.norm(value)) for value in values]
-        # create a patch (proxy artist) for every color 
-        patches = [ mpatches.Patch(color=colors[i], label="Level {l}".format(l=values[i]) ) for i in range(len(values)) ]
-        # put those patched as legend-handles into the legend
-        plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0. )
+        ax = sns.heatmap(x)
 
         ax.set_xticklabels(x.columns.values)
         ax.set_yticklabels(x.index.values)
 
         ax.set_title(f'IOZone - {report}')
-        ax.set_xlabel('Platform')
-        ax.set_ylabel('User-mode runtime (Seconds)')
+        ax.set_xlabel('Kb record')
+        ax.set_ylabel('Kb file')
 
         pdf.savefig()
         plt.close()
@@ -119,6 +136,7 @@ results = json.load(open(args.results_file))
 with PdfPages(str(args.plot_file)) as pdf:
     if 'CPU' in results['results']:
         plot_CPU(results, pdf)
+        plot_MBW(results, pdf)
     if 'Disk' in results['results']:
         plot_disk(results, pdf)
     if 'Network' in results['results']:
