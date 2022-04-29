@@ -19,6 +19,12 @@ class MBW(benchmarkessentials.Benchmark):
         super().__init__(**kwargs)
         self.arguments = arguments
         self.install_path = "{}{}/".format(install_dir, program+"-v"+programversion)
+        self.settings = {
+            "program":program,
+            "programversion":programversion,
+            "arguments":arguments
+            }
+
 
     def get_name(self):
         return "mbw"
@@ -44,5 +50,5 @@ class MBW(benchmarkessentials.Benchmark):
             stdout, _ = process.communicate()
             results = self._parse_mbw_output(stdout)
 
-        return {"results": results} if stdout else {"results": ""}
+        return {"settings":self.settings,"results": results} if stdout else {"settings":self.settings,"results": ""}
 

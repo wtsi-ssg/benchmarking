@@ -40,6 +40,11 @@ class MultiThread(benchmarkessentials.Benchmark):
         self.clear_caches = clear_caches
         self.repeats = repeats
         self.process_thread = process_thread.split(',')
+        self.settings = {
+            "program":program,
+            "programversion":programversion,
+            "arguments":command
+            }
 
     def get_name(self):
         return "multithreaded_{tag}".format(tag=self.tag)
@@ -87,7 +92,7 @@ class MultiThread(benchmarkessentials.Benchmark):
             
             results["configurations"].append(configuration)
             
-        return results
+        return {"settings":self.settings,"results": results}
 
     def create_result_dirs(self, subdir):
         timestamp = time.strftime("%Y-%m-%d-%H%M%S")

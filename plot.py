@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-from cProfile import label
 import json
 import pathlib
 import re
 import sys
 
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np

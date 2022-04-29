@@ -20,6 +20,11 @@ class IOZone(benchmarkessentials.Benchmark):
         self.arguments = arguments
         self.install_path = "{}{}/src/current".format(install_dir, program+"-v"+programversion)
         self.result_dir = result_dir
+        self.settings = {
+            "program":program,
+            "programversion":programversion,
+            "arguments":arguments
+            }
 
     def get_name(self):
         return "IOZone"
@@ -56,5 +61,5 @@ class IOZone(benchmarkessentials.Benchmark):
         with subprocess.Popen([self.install_path + "/iozone", self.arguments, "-Rb", iozone_result_file], stdout=subprocess.PIPE, universal_newlines=True) as process:
             stdout, _ = process.communicate()
 
-        return {"results": self._parse_iozone_xls(iozone_result_file)} if stdout else {"results": ""}
+        return {"settings":self.settings, "results": self._parse_iozone_xls(iozone_result_file)} if stdout else {"results": ""}
 

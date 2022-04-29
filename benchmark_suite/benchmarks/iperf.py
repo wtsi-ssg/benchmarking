@@ -26,6 +26,12 @@ class IPerf(benchmarkessentials.Benchmark):
         self.protocol = protocol
         self.time_to_transmit = str(time_to_transmit)
         self.parallel_streams = str(parallel_streams)
+        self.settings = {
+            "program":program,
+            "programversion":programversion,
+            "arguments":""
+            }
+
 
     def get_name(self):
         return "iPerf"
@@ -71,4 +77,4 @@ class IPerf(benchmarkessentials.Benchmark):
         
         results["result_summary"] = run_results
 
-        return results
+        return {"settings":self.settings, "results" : results }
