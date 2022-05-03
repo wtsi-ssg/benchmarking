@@ -1,0 +1,14 @@
+services:
+  amqp:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER="user"
+      - RABBITMQ_DEFAULT_PASS="$RABBIT_PASSWORD"
+  s3_listen:
+    image: wsisci/benchmarking_s3processing
+    command: [ $RABBITMQ_IP, $RABBIT_USER, $RABBIT_PASSWORD, "$DSN" ] 
+    environment:
+      - AWS_ACCESS_KEY_ID=$ACCESS_KEY
+      - AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY 
+    depends_on:
+      - amqp  
