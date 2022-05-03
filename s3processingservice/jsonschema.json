@@ -44,9 +44,28 @@
                     {
                       "type": "object",
                       "properties": {
-                        "results":{
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "program": {
+                              "type": "string"
+                            },
+                            "programversion": {
+                              "type": "string"
+                            },
+                            "arguments": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "program",
+                            "programversion",
+                            "arguments"
+                          ]
+                        },
+                        "results": {
                           "type": "array",
-                          "items":[
+                          "items": [
                             {
                               "type": "object",
                               "properties": {
@@ -81,58 +100,78 @@
                     {
                       "type": "object",
                       "properties": {
-                        "program": {
-                          "type": "string"
-                        },
-                        "programversion": {
-                          "type": "string"
-                        },
-                        "configurations": {
-                          "type": "array",
-                          "items": {
-                              "type": "object",
-                              "properties": {
-                                "processes": {
-                                  "type": "integer"
-                                },
-                                "threads": {
-                                  "type": "integer"
-                                },      
-                                "runs": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "user": {
-                                        "type": "number"
-                                      },
-                                      "system": {
-                                        "type": "number"
-                                      },
-                                      "elapsed": {
-                                        "type": "number"
-                                      }
-                                    },
-                                    "required": [
-                                      "user",
-                                      "system",
-                                      "elapsed"
-                                    ]
-                                  }
-                              }
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "program": {
+                              "type": "string"
+                            },
+                            "programversion": {
+                              "type": "string"
+                            },
+                            "arguments": {
+                              "type": "string"
                             }
                           },
                           "required": [
-                            "processes",
-                            "threads",
-                            "runs"
+                            "program",
+                            "programversion",
+                            "arguments"
+                          ]
+                        },
+                        "results": {
+                          "type": "object",
+                          "properties": {
+                            "configurations": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "processes": {
+                                    "type": "integer"
+                                  },
+                                  "threads": {
+                                    "type": "integer"
+                                  },
+                                  "runs": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "user": {
+                                          "type": "number"
+                                        },
+                                        "system": {
+                                          "type": "number"
+                                        },
+                                        "elapsed": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "user",
+                                        "system",
+                                        "elapsed"
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "required": [
+                                "processes",
+                                "threads",
+                                "runs"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "configurations"
                           ]
                         }
                       },
                       "required": [
-                        "program",
-                        "programversion",
-                        "configurations"
+                        "settings",
+                        "results"
                       ]
                     }
                   ]
@@ -169,17 +208,39 @@
                     {
                       "type": "object",
                       "properties": {
+                        "settings": {
+                          "type": "object",
+                          "properties": {
+                            "program": {
+                              "type": "string"
+                            },
+                            "programversion": {
+                              "type": "string"
+                            },
+                            "arguments": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "program",
+                            "programversion",
+                            "arguments"
+                          ]
+                        },
                         "results": {
                           "type": "object",
                           "patternProperties": {
                             "[A-Za-z0-9 ]* Report": {
                               "type": "object",
-                              "patternProperties":{
+                              "patternProperties": {
                                 "[0-9]*": {
                                   "type": "object",
-                                  "patternProperties":{
+                                  "patternProperties": {
                                     "[0-9]*": {
-                                      "type": ["integer", "null"]
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
                                     }
                                   }
                                 }

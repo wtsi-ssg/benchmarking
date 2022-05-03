@@ -50,8 +50,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         return "multithreaded_{tag}".format(tag=self.tag)
 
     def run(self):
-        results = {"program": self.program,
-                   "programversion": self.programversion,
+        results = {
                    "configurations": []
                   }
 
@@ -66,7 +65,6 @@ class MultiThread(benchmarkessentials.Benchmark):
             if th == "N":
                 th = str(get_cpu_info()["count"])
 
-            pt_key = "p{}.t{}".format(ps,th)
             configuration = { "processes" : int(ps),
                         "threads" : int(th),
                         "runs" : []
