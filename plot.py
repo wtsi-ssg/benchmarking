@@ -15,7 +15,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 def yield_processthreadlabels(model:str, data:list):
     for m in data['configurations']:
         for i in range(0, len(m['runs'])):
-            yield f" p{m['processes']}t{m['threads']}"
+            yield f"{m['processes']}*{m['threads']}"
 
 def yield_time(data:list, type:str):
     for keyData in data['configurations']:
@@ -31,27 +31,44 @@ def plot_CPU(results : dict, pdf : PdfPages):
         x_sys = list(yield_time(data[0],'system'))
         x_elapsed = list(yield_time(data[0],'elapsed'))
 
-        # plot
+        # CPU times plot
         fig, ax = plt.subplots()
 
         ind = np.arange(len(x_user))    # the x locations for the groups
         width = 0.20         # the width of the bars
 
-        rects1 = ax.bar(ind-1.3*width, x_user, width, label='User')
-        rects2 = ax.bar(ind, x_sys, width, label='System')
-        rects3 = ax.bar(ind+1.3*width, x_elapsed, width, label='Elapsed')
+        rects1 = ax.bar(ind, x_user, width, label='User')
+        rects2 = ax.bar(ind, x_sys, width, label='System', bottom=x_user)
 
         ax.set_xticks(ind)
         ax.set_xticklabels(x_labels)
-        ax.set_title(report)
-        ax.set_xlabel('Platform')
-        ax.set_ylabel('User-mode runtime (Seconds)')
+        ax.set_title(f'CPU time of {report}')
+        ax.set_xlabel('Platform (Processes * Threads)')
+        ax.set_ylabel('User-mode + System runtime (Seconds)')
 
         ax.bar_label(rects1, padding=3)
         ax.bar_label(rects2, padding=3)
+
+        pdf.savefig(fig)
+        plt.close()
+
+        # wall times plot
+        fig, ax = plt.subplots()
+
+        ind = np.arange(len(x_user))    # the x locations for the groups
+        width = 0.20         # the width of the bars
+
+        rects3 = ax.bar(ind, x_elapsed, width, label='Elapsed')
+
+        ax.set_xticks(ind)
+        ax.set_xticklabels(x_labels)
+        ax.set_title(f'Walltime of {report}')
+        ax.set_xlabel('Platform (Processes * Threads)')
+        ax.set_ylabel('Walltime (Seconds)')
+
         ax.bar_label(rects3, padding=3)
 
-        pdf.savefig()
+        pdf.savefig(fig)
         plt.close()
 
 def plot_MBW(results : dict, pdf : PdfPages):
@@ -75,7 +92,7 @@ def plot_MBW(results : dict, pdf : PdfPages):
 
         ax.bar_label(rects1, padding=3)
 
-        pdf.savefig()
+        pdf.savefig(fig)
         plt.close()
 
 def plot_disk(results : dict, pdf : PdfPages):
@@ -87,7 +104,8 @@ def plot_disk(results : dict, pdf : PdfPages):
         x.sort_index(axis = 1, inplace=True)
 
         # plot
-        ax = sns.heatmap(x)
+        fig, ax = plt.subplots()
+        sns.heatmap(x, ax=ax)
 
         ax.set_xticklabels(x.columns.values)
         ax.set_yticklabels(x.index.values)
@@ -96,7 +114,7 @@ def plot_disk(results : dict, pdf : PdfPages):
         ax.set_xlabel('Kb record')
         ax.set_ylabel('Kb file')
 
-        pdf.savefig()
+        pdf.savefig(fig)
         plt.close()
 
 def plot_iperf(results : dict, pdf : PdfPages):
@@ -117,7 +135,7 @@ def plot_iperf(results : dict, pdf : PdfPages):
     ax.set_xlabel('Protocol')
     ax.set_ylabel('bits per second')
 
-    pdf.savefig()
+    pdf.savefig(fig)
     plt.close()
 
 
