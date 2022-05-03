@@ -15,7 +15,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 def yield_processthreadlabels(model:str, data:list):
     for m in data['configurations']:
         for i in range(0, len(m['runs'])):
-            yield f"{m['processes']}*{m['threads']}"
+            yield f"{i+1}:{m['processes']}*{m['threads']}"
 
 def yield_time(data:list, type:str):
     for keyData in data['configurations']:
@@ -24,8 +24,10 @@ def yield_time(data:list, type:str):
 
 def plot_CPU(results : dict, pdf : PdfPages):
     for report, data in results['results']['CPU']['benchmarks'].items():
-        if not re.match('multithreaded_.*', report):
+        matchdata = re.match(r'multithreaded_(.*)', report)
+        if matchdata is None:
             continue
+        tool = matchdata.group(1)
         x_labels = list(yield_processthreadlabels(results['system-info']['model'],data[0]))
         x_user = list(yield_time(data[0],'user'))
         x_sys = list(yield_time(data[0],'system'))
@@ -42,8 +44,8 @@ def plot_CPU(results : dict, pdf : PdfPages):
 
         ax.set_xticks(ind)
         ax.set_xticklabels(x_labels)
-        ax.set_title(f'CPU time of {report}')
-        ax.set_xlabel('Platform (Processes * Threads)')
+        ax.set_title(f'CPU time of {tool}')
+        ax.set_xlabel('Platform replicate:(Processes * Threads)')
         ax.set_ylabel('User-mode + System runtime (Seconds)')
 
         ax.bar_label(rects1, padding=3)
@@ -62,7 +64,7 @@ def plot_CPU(results : dict, pdf : PdfPages):
 
         ax.set_xticks(ind)
         ax.set_xticklabels(x_labels)
-        ax.set_title(f'Walltime of {report}')
+        ax.set_title(f'Walltime of {tool}')
         ax.set_xlabel('Platform (Processes * Threads)')
         ax.set_ylabel('Walltime (Seconds)')
 
