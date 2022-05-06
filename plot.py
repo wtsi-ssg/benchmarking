@@ -107,14 +107,15 @@ def plot_disk(results : dict, pdf : PdfPages):
 
         # plot
         fig, ax = plt.subplots()
-        sns.heatmap(x, ax=ax)
+        sns.heatmap(x, ax=ax, cbar_kws={'label': 'Performance (Kb/sec)'})
 
         ax.set_xticklabels(x.columns.values)
         ax.set_yticklabels(x.index.values)
 
         ax.set_title(f'IOZone - {report}')
-        ax.set_xlabel('Kb record')
-        ax.set_ylabel('Kb file')
+        ax.set_xlabel('Transfer size (Kb)')
+        ax.set_ylabel('File size (Kb)')
+        ax.set
 
         pdf.savefig(fig)
         plt.close()
