@@ -7,6 +7,7 @@ import sys
 
 import cpuinfo
 import numa
+import psutil
 
 
 class Suite(object):
@@ -50,7 +51,9 @@ class Suite(object):
                   "OS":                 platform.platform(),
                   "model":              cpuinfo.get_cpu_info()['brand_raw'],
                   "arch":               platform.processor(),
-                  "NUMAtopology":       self.get_numa_topology()
+                  "cpuinfo":            cpuinfo.get_cpu_info_json(),
+                  "NUMAtopology":       self.get_numa_topology(),
+                  "totalRAM":           psutil.virutal_memory()[0]
                 }
 
     def clear_cache(self):
