@@ -13,12 +13,12 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 def yield_processthreadlabels(model:str, data:list):
-    for m in data['configurations']:
+    for m in data['results']['configurations']:
         for i in range(0, len(m['runs'])):
             yield f"{i+1}:{m['processes']}*{m['threads']}"
 
 def yield_time(data:list, type:str):
-    for keyData in data['configurations']:
+    for keyData in data['results']['configurations']:
         for m in keyData['runs']:
             yield m[type]
 
