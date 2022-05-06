@@ -21,6 +21,137 @@
         "arch": {
           "type": "string"
         },
+        "cpuinfo":{
+          "type": "object",
+          "properties": {
+            "python_version": {
+              "type": "string"
+            },
+            "cpuinfo_version": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "cpuinfo_version_string": {
+              "type": "string"
+            },
+            "arch": {
+              "type": "string"
+            },
+            "bits": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "arch_string_raw": {
+              "type": "string"
+            },
+            "vendor_id_raw": {
+              "type": "string"
+            },
+            "brand_raw": {
+              "type": "string"
+            },
+            "hz_advertised_friendly": {
+              "type": "string"
+            },
+            "hz_actual_friendly": {
+              "type": "string"
+            },
+            "hz_advertised": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "hz_actual": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "stepping": {
+              "type": "integer"
+            },
+            "model": {
+              "type": "integer"
+            },
+            "family": {
+              "type": "integer"
+            },
+            "flags": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "l3_cache_size": {
+              "type": "integer"
+            },
+            "l2_cache_size": {
+              "type": "string"
+            },
+            "l1_data_cache_size": {
+              "type": "string"
+            },
+            "l1_instruction_cache_size": {
+              "type": "string"
+            },
+            "l2_cache_line_size": {
+              "type": "integer"
+            },
+            "l2_cache_associativity": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "python_version",
+            "cpuinfo_version",
+            "cpuinfo_version_string",
+            "arch",
+            "bits",
+            "count",
+            "arch_string_raw",
+            "vendor_id_raw",
+            "brand_raw",
+            "hz_advertised_friendly",
+            "hz_actual_friendly",
+            "hz_advertised",
+            "hz_actual",
+            "stepping",
+            "model",
+            "family",
+            "flags",
+            "l3_cache_size",
+            "l2_cache_size",
+            "l1_data_cache_size",
+            "l1_instruction_cache_size",
+            "l2_cache_line_size",
+            "l2_cache_associativity"
+          ]
+        },
         "NUMAtopology": {
           "type": "array",
           "items": [
@@ -35,7 +166,7 @@
           ]
         },
         "totalRAM": {
-          "type": "string"
+          "type": "integer"
         }
       },
       "required": [
@@ -43,6 +174,7 @@
         "OS",
         "model",
         "arch",
+        "cpuinfo",
         "NUMAtopology",
         "totalRAM"
       ]
