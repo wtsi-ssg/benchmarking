@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
-import platform
-import sys
 import datetime
-import cpuinfo
+import platform
 import subprocess
+import sys
+
+import cpuinfo
+import numa
+
 
 class Suite(object):
     """
@@ -31,12 +34,23 @@ class Suite(object):
         
         return results
 
+    def get_numa_topology(self):
+        numa_topology = []
+        number_of_nodes = numa.get_max_node() + 1
+        print("-Number of nodes:", number_of_nodes)
+        for node in range(number_of_nodes):
+            print("-Node id: {0}\n--cpus: {1}".format(node, numa.node_to_cpus(node)), file=sys.stderr)
+            numa_topology.append(list(numa.node_to_cpus(node)))
+
+        return numa_topology
+
     def _get_system_info(self):
         return {  
-                  "host":        platform.node(),
-                  "OS":          platform.platform(),
-                  "model":       cpuinfo.get_cpu_info()['brand_raw'],
-                  "arch":        platform.processor()
+                  "host":               platform.node(),
+                  "OS":                 platform.platform(),
+                  "model":              cpuinfo.get_cpu_info()['brand_raw'],
+                  "arch":               platform.processor(),
+                  "NUMAtopology":       self.get_numa_topology()
                 }
 
     def clear_cache(self):

@@ -20,13 +20,27 @@
         },
         "arch": {
           "type": "string"
+        },
+        "NUMAtopology": {
+          "type": "array",
+          "items": [
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          ]
         }
       },
       "required": [
         "host",
         "OS",
         "model",
-        "arch"
+        "arch",
+        "NUMAtopology"
       ]
     },
     "results": {
@@ -177,19 +191,6 @@
                   ]
                 }
               }
-            },
-            "NUMAtopology": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "array",
-                  "items": [
-                    {
-                      "type": "integer"
-                    }
-                  ]
-                }
-              ]
             }
           },
           "required": [

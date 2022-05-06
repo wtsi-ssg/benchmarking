@@ -140,6 +140,12 @@ def plot_iperf(results : dict, pdf : PdfPages):
     pdf.savefig(fig)
     plt.close()
 
+def plot_title(results : dict, pdf : PdfPages):
+    fig = plt.figure() 
+    plt.axis('off')
+    plt.text(0.5,0.5,f"Benchmarking results for {results['system-info']['model']}\n{results['date']}",ha='center',va='center')
+    pdf.savefig(fig)
+    plt.close() 
 
 parser = argparse.ArgumentParser(description='Create plot for results file.')
 parser.add_argument('results_file', metavar='results_file', type=pathlib.Path, nargs='?',
@@ -152,6 +158,7 @@ args = parser.parse_args()
 results = json.load(open(args.results_file))
 
 with PdfPages(str(args.plot_file)) as pdf:
+    plot_title(results, pdf)
     if 'CPU' in results['results']:
         plot_CPU(results, pdf)
         plot_MBW(results, pdf)
