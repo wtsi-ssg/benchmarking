@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import datetime
+import json
 import platform
 import subprocess
 import sys
@@ -51,7 +52,7 @@ class Suite(object):
                   "OS":                 platform.platform(),
                   "model":              cpuinfo.get_cpu_info()['brand_raw'],
                   "arch":               platform.processor(),
-                  "cpuinfo":            cpuinfo.get_cpu_info_json(),
+                  "cpuinfo":            json.loads(cpuinfo.get_cpu_info_json()),
                   "NUMAtopology":       self.get_numa_topology(),
                   "totalRAM":           psutil.virtual_memory()[0]
                 }
