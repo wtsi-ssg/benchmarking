@@ -1,3 +1,4 @@
+psutil
 numa==1.4.6
 PyYAML==5.3.1
 Yapsy==1.11.223

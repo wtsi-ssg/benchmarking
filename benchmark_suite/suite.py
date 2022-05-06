@@ -53,7 +53,7 @@ class Suite(object):
                   "arch":               platform.processor(),
                   "cpuinfo":            cpuinfo.get_cpu_info_json(),
                   "NUMAtopology":       self.get_numa_topology(),
-                  "totalRAM":           psutil.virutal_memory()[0]
+                  "totalRAM":           psutil.virtual_memory()[0]
                 }
 
     def clear_cache(self):
