@@ -178,7 +178,7 @@ def download_bwa_data(settings_dict):
             else:
                 if args.verbose:
                     print(file_name+" is not downloaded. Downloading now...")
-                subprocess.check_call(["wget -q "+required_file_name+" -O "+datadir+file_name], shell=True)
+                subprocess.check_call(["wget "+required_file_name+" -O "+datadir+file_name], shell=True)
 
     print("Required dataset is downloaded.")
 
@@ -210,14 +210,14 @@ def download_salmon_data(settings_dict):
                             if not check_md5sum(datadir+required_file_name, correct_md5sum):
                                 if args.verbose:
                                     print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
-                                subprocess.check_call(["wget -q https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
+                                subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
                             else:
                                 if args.verbose:
                                     print(required_file_name+" is already downloaded.")
                         else:
                             if args.verbose:
                                 print(required_file_name+" is not downloaded. Downloading now...")
-                            subprocess.check_call(["wget -q https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
+                            subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
 
 def get_path_to_program(program_name, required_version):
     """get the path to the program"""
