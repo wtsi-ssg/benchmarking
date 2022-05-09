@@ -120,7 +120,7 @@ def post_results(raw_result_file : str, jsondata : str):
     # POST results JSON to fetched URL
     files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
     resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
-    if not resp.status_code == requests.codes.ok:
+    if not resp.ok:
         print(f'Error {r.status_code} uploading results: {r.text}')
     else:
         print('Results returned successfully.')

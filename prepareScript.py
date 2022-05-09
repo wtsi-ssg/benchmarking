@@ -110,7 +110,7 @@ def download_and_install_programs(settings_list, install_dir):
                 if pro_ver == name_and_version:
                     file_name = Path(url).name
                     if not os.path.exists(install_dir+file_name):
-                        rc = subprocess.call(["wget -q -O "+file_name+" "+ url], shell=True, cwd=install_dir)
+                        rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
                     #if the directory to install the program in does not exist, create it
                     os.makedirs(install_dir+name_and_version, exist_ok=True)
                     file_extension = Path(file_name).suffix
