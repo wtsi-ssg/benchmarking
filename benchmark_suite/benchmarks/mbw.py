@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 
-import json
-import os
-import pathlib
 import subprocess
-import time
 
 from benchmark_suite import benchmarkessentials
-import pandas as pd
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):

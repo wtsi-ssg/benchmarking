@@ -5,7 +5,6 @@ import sys
 import os
 import platform
 from benchmark_suite import benchmarkessentials
-from benchmark_suite import suite
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):

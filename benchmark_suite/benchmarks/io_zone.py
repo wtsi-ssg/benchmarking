@@ -5,9 +5,9 @@ import os
 import subprocess
 import time
 
-from benchmark_suite import benchmarkessentials
-import pandas as pd
 import numpy as np
+import pandas as pd
+from benchmark_suite import benchmarkessentials
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-from benchmark_suite import benchmarkessentials
-import subprocess
 import json
+import subprocess
 import sys
+
+from benchmark_suite import benchmarkessentials
+
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self):

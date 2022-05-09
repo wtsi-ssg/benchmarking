@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 import subprocess
+
 import yaml
+
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CLoader as Loader
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import Loader
+
 import argparse
-import sys
 import os.path
-from os import path
+import sys
 from pathlib import Path
 
 from benchmark_suite.utility import Utility
@@ -97,7 +99,7 @@ def download_and_install_programs(settings_list, install_dir):
         
         print("Required program name and version: "+name_and_version)
         path_to_program = get_path_to_program(program_name, required_version)
-        if path.exists(path_to_program):
+        if os.path.exists(path_to_program):
             print("{} is already installed at {}".format(name_and_version, path_to_program))
             continue
         
@@ -107,7 +109,7 @@ def download_and_install_programs(settings_list, install_dir):
                  
                 if pro_ver == name_and_version:
                     file_name = Path(url).name
-                    if not path.exists(install_dir+file_name):
+                    if not os.path.exists(install_dir+file_name):
                         rc = subprocess.call(["wget -q -O "+file_name+" "+ url], shell=True, cwd=install_dir)
                     #if the directory to install the program in does not exist, create it
                     os.makedirs(install_dir+name_and_version, exist_ok=True)
@@ -140,7 +142,7 @@ def download_and_install_programs(settings_list, install_dir):
                     if program_name in ["bwa-mem2"]:
                         subprocess.check_call(["make arch=native"], shell=True, cwd=install_dir+name_and_version)
 
-        if not path.exists(path_to_program):
+        if not os.path.exists(path_to_program):
             print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
             sys.exit(1)
 
@@ -165,7 +167,7 @@ def download_bwa_data(settings_dict):
             required_file_name, correct_md5sum = line.strip().split(',')
             file_name = Path(required_file_name).name
             
-            if path.exists(datadir+file_name):
+            if os.path.exists(datadir+file_name):
                 if not check_md5sum(datadir+file_name, correct_md5sum):
                     if args.verbose:
                         print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
@@ -204,7 +206,7 @@ def download_salmon_data(settings_dict):
                     for line in data_f:
                         required_file_name, correct_md5sum = line.strip().split(',')
                         
-                        if path.exists(datadir+required_file_name):
+                        if os.path.exists(datadir+required_file_name):
                             if not check_md5sum(datadir+required_file_name, correct_md5sum):
                                 if args.verbose:
                                     print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
