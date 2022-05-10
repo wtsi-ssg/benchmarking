@@ -53,6 +53,11 @@ def get_args():
         type=str,
         help="""Executable to drop test host cache"""
     )
+    parser.add_argument(
+        '-n', '--nickname',
+        type=str,
+        help="""Nickname for host being evaluated"""
+    )
     
     return parser.parse_args()
 
@@ -167,7 +172,7 @@ if __name__ == '__main__':
 
     loaded_benchmarks = load_all_benchmarks()
     
-    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin)
+    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.nickname)
     
     set_wd(config_file)
     

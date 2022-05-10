@@ -30,7 +30,7 @@ def yield_time(data:list, type:str):
 def find_matching_reports(report, compare_results):
     for compare_result in compare_results:
         if report in compare_result['results']['CPU']['benchmarks']:
-            yield compare_result['system-info']['model'], compare_result['results']['CPU']['benchmarks'][report]
+            yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
  
 def get_result_cpu_data(model, data):
     return list(yield_processthreadlabels(model, data)), list(yield_time(data,'user')), list(yield_time(data,'system')), list(yield_time(data,'elapsed'))
@@ -79,7 +79,7 @@ def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
         tool = matchdata.group(1)
 
         x_labels, x_user, x_sys, x_elapsed = get_result_cpu_data(results['system-info']['model'], data[0])
-        x_models = np.tile(results['system-info']['model'], len(x_labels))
+        x_models = np.tile(results['nickname'], len(x_labels))
         for model, matching_result in find_matching_reports(report, compare_results):
             m_labels, m_user, m_sys, m_elapsed = get_result_cpu_data(model, matching_result[0])
             x_labels = x_labels + m_labels
@@ -163,7 +163,7 @@ def plot_MBW(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
             continue
 
         x_bandwidth = list(float(x['copy'].split(' ')[0]) for x in data[0]['results'] if x['method'] == 'MEMCPY')
-        x_models = np.tile(results['system-info']['model'], len(x_bandwidth))
+        x_models = np.tile(results['nickname'], len(x_bandwidth))
 
         for model, matching_result in find_matching_reports(report, compare_results):
             m_user = list(float(x['copy'].split(' ')[0]) for x in matching_result[0]['results'] if x['method'] == 'MEMCPY')
