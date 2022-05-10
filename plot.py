@@ -9,6 +9,7 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.transforms as transforms
 import numpy as np
+import numpy_indexed as npi
 import pandas as pd
 import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
@@ -19,7 +20,7 @@ from matplotlib.patches import Rectangle
 def yield_processthreadlabels(model:str, data:list):
     for m in data['results']['configurations']:
         for i in range(0, len(m['runs'])):
-            yield f"{i+1}:{m['processes']}*{m['threads']}"
+            yield f"{m['processes']}*{m['threads']}"
 
 def yield_time(data:list, type:str):
     for keyData in data['results']['configurations']:
@@ -79,38 +80,48 @@ def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
         tool = matchdata.group(1)
 
         x_labels, x_user, x_sys, x_elapsed = get_result_cpu_data(results['system-info']['model'], data[0])
-        models = [results['system-info']['model']]
-        n_res = [len(x_labels)] #number of results in each group
+        x_models = np.tile(results['system-info']['model'], len(x_labels))
         for model, matching_result in find_matching_reports(report, compare_results):
             m_labels, m_user, m_sys, m_elapsed = get_result_cpu_data(model, matching_result[0])
             x_labels = x_labels + m_labels
             x_user = x_user + m_user
             x_sys = x_sys + m_sys
             x_elapsed = x_elapsed + m_elapsed
-            models.append(model)
-            n_res.append(len(m_labels))
+            m_models = np.tile(model, len(m_labels))
+            x_models = np.hstack([x_models, m_models])
+
+        a = np.array([x_models,x_labels]).T
+        grp_model_pt = npi.group_by(a)
+
+        x_unique, x_user_mean = grp_model_pt.mean(x_user)
+        _, x_user_std = grp_model_pt.std(x_user)
+        _, x_sys_mean = grp_model_pt.mean(x_sys)
+        _, x_sys_std = grp_model_pt.std(x_sys)
+        grp_model = npi.group_by(x_unique[:,0])
 
         # CPU times plot
         fig, ax = plt.subplots()
         fig.subplots_adjust(bottom=0.2)
 
-        ind = np.arange(len(x_user))    # the x locations for the groups
+        ind = np.arange(len(x_unique))    # the x locations for the groups
         width = 0.20         # the width of the bars
 
-        rects1 = ax.bar(ind, x_user, width, label='User')
-        rects2 = ax.bar(ind, x_sys, width, label='System', bottom=x_user)
+        rects1 = ax.bar(ind, x_user_mean, width, label='User')
+        rects2 = ax.bar(ind, x_sys_mean, width, label='System', bottom=x_user_mean)
 
         ax.set_xticks(ind)
-        ax.set_xticklabels(x_labels)
+        ax.set_xticklabels(f'{x[1]}' for x in x_unique)
         ax.set_title(f'CPU time of {tool}')
-        ax.set_xlabel('Platform replicate:(Processes * Threads)')
+        ax.set_xlabel('Platform (Processes * Threads)')
         ax.set_ylabel('User-mode + System runtime (Seconds)')
 
         ax.bar_label(rects1, padding=3)
-        ax.bar_label(rects2, padding=3)
+        ax.bar_label(rects2, padding=5)
+
+        n_res = grp_model.count
         accum_x = 0
         for i in range(0,len(n_res)):
-            annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, models[i], ax=ax)
+            annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax)
             accum_x = accum_x + n_res[i]
 
         pdf.savefig(fig)
