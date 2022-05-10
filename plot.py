@@ -41,7 +41,6 @@ def annotate_xrange(xmin, xmax,
                     offset=-0.1,
                     width=-0.1,
                     ax=None,
-                    patch_kwargs={'facecolor':'yellow'},
                     line_kwargs={'color':'black'},
                     text_kwargs={'rotation':'horizontal'}
 ):
@@ -97,6 +96,8 @@ def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
         _, x_user_std = grp_model_pt.std(x_user)
         _, x_sys_mean = grp_model_pt.mean(x_sys)
         _, x_sys_std = grp_model_pt.std(x_sys)
+        _, x_elapsed_mean = grp_model_pt.mean(x_elapsed)
+        _, x_elapsed_std = grp_model_pt.std(x_elapsed)
         grp_model = npi.group_by(x_unique[:,0])
 
         # CPU times plot
@@ -106,22 +107,24 @@ def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
         ind = np.arange(len(x_unique))    # the x locations for the groups
         width = 0.20         # the width of the bars
 
-        rects1 = ax.bar(ind, x_user_mean, width, label='User')
-        rects2 = ax.bar(ind, x_sys_mean, width, label='System', bottom=x_user_mean)
+        rects1 = ax.bar(ind+width*-.5, x_user_mean, width, label='User')
+        rects1a = ax.errorbar(ind+width*-.5, x_user_mean, yerr=x_user_std, fmt='o', ecolor='black')
+        rects2 = ax.bar(ind-width*-.5, x_sys_mean, width, label='System')
+        rects2a = ax.errorbar(ind-width*-.5, x_sys_mean, yerr=x_sys_std, fmt='o', ecolor='black')
 
         ax.set_xticks(ind)
         ax.set_xticklabels(f'{x[1]}' for x in x_unique)
         ax.set_title(f'CPU time of {tool}')
-        ax.set_xlabel('Platform (Processes * Threads)')
-        ax.set_ylabel('User-mode + System runtime (Seconds)')
+        ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
+        ax.set_ylabel('User-mode + System runtime (Seconds)', fontweight='semibold')
 
         ax.bar_label(rects1, padding=3)
-        ax.bar_label(rects2, padding=5)
+        ax.bar_label(rects2, padding=3)
 
         n_res = grp_model.count
         accum_x = 0
         for i in range(0,len(n_res)):
-            annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax)
+            annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
             accum_x = accum_x + n_res[i]
 
         pdf.savefig(fig)
@@ -129,19 +132,27 @@ def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
 
         # wall times plot
         fig, ax = plt.subplots()
+        fig.subplots_adjust(bottom=0.2)
 
-        ind = np.arange(len(x_user))    # the x locations for the groups
+        ind = np.arange(len(x_elapsed_mean))    # the x locations for the groups
         width = 0.20         # the width of the bars
 
-        rects3 = ax.bar(ind, x_elapsed, width, label='Elapsed')
+        rects3 = ax.bar(ind, x_elapsed_mean, width, label='Elapsed')
+        rects3a = ax.errorbar(ind, x_elapsed_mean, yerr=x_elapsed_std, fmt='o', ecolor='black')
 
         ax.set_xticks(ind)
-        ax.set_xticklabels(x_labels)
+        ax.set_xticklabels(f'{x[1]}' for x in x_unique)
         ax.set_title(f'Walltime of {tool}')
-        ax.set_xlabel('Platform (Processes * Threads)')
-        ax.set_ylabel('Walltime (Seconds)')
+        ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
+        ax.set_ylabel('Walltime (Seconds)', fontweight='semibold')
 
         ax.bar_label(rects3, padding=3)
+
+        n_res = grp_model.count
+        accum_x = 0
+        for i in range(0,len(n_res)):
+            annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
+            accum_x = accum_x + n_res[i]
 
         pdf.savefig(fig)
         plt.close()
@@ -150,22 +161,38 @@ def plot_MBW(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages)
     for report, data in main_results['results']['CPU']['benchmarks'].items():
         if not re.match('mbw', report):
             continue
-        x_user = list(float(x['copy'].split(' ')[0]) for x in data[0]['results'] if x['method'] == 'MEMCPY')
+
+        x_bandwidth = list(float(x['copy'].split(' ')[0]) for x in data[0]['results'] if x['method'] == 'MEMCPY')
+        x_models = np.tile(results['system-info']['model'], len(x_bandwidth))
+
+        for model, matching_result in find_matching_reports(report, compare_results):
+            m_user = list(float(x['copy'].split(' ')[0]) for x in matching_result[0]['results'] if x['method'] == 'MEMCPY')
+            m_models = np.tile(model, len(m_user))
+            x_bandwidth = x_bandwidth + m_user
+            x_models = np.hstack([x_models, m_models])
+
+        a = np.array(x_models)
+        grp_model_pt = npi.group_by(a)
+
+        x_unique, x_bandwidth_mean = grp_model_pt.mean(x_bandwidth)
+        _, x_user_std = grp_model_pt.std(x_bandwidth)
 
         # plot
         fig, ax = plt.subplots()
 
-        ind = np.arange(len(x_user))    # the x locations for the groups
-        width = 0.20         # the width of the bars
+        ind = np.arange(len(x_bandwidth_mean))    # the x locations for the groups
 
-        rects1 = ax.bar(ind, x_user, width)
+        rects1 = ax.bar(ind, x_bandwidth_mean, width=0.4)
+        rects2 = ax.errorbar(ind, x_bandwidth_mean, yerr=x_user_std, fmt='o')
 
+        ax.set_ylim(bottom=0)
         ax.set_xticks(ind)
-        ax.set_title(f'Memory Bandwidth (mbw)')
-        ax.set_xlabel('Replicate Number')
-        ax.set_ylabel('Bandwidth (MiB/sec)')
+        ax.set_xticklabels(x_unique)
+        ax.set_title(f'Mean Memory Bandwidth (mbw)')
+        ax.set_xlabel('Platform', fontweight='semibold')
+        ax.set_ylabel('Bandwidth (MiB/sec)', fontweight='semibold')
 
-        ax.bar_label(rects1, padding=3)
+        #ax.errorbar_label(rects1, padding=3)
 
         pdf.savefig(fig)
         plt.close()
@@ -186,8 +213,8 @@ def plot_disk(results : dict, pdf : PdfPages):
         ax.set_yticklabels(x.index.values)
 
         ax.set_title(f'IOZone - {report}')
-        ax.set_xlabel('Transfer size (Kb)')
-        ax.set_ylabel('File size (Kb)')
+        ax.set_xlabel('Transfer size (Kb)', fontweight='semibold')
+        ax.set_ylabel('File size (Kb)', fontweight='semibold')
         ax.set
 
         pdf.savefig(fig)
@@ -208,8 +235,8 @@ def plot_iperf(results : dict, pdf : PdfPages):
     ax.set_xticks(ind)
     ax.set_xticklabels(x_labels)
     ax.set_title('IPerf')
-    ax.set_xlabel('Protocol')
-    ax.set_ylabel('bits per second')
+    ax.set_xlabel('Protocol', fontweight='semibold')
+    ax.set_ylabel('bits per second', fontweight='semibold')
 
     pdf.savefig(fig)
     plt.close()
