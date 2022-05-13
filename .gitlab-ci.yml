@@ -28,8 +28,7 @@ buildtest-job:       # This job runs in the build stage, which runs first.
     - docker build -t wsisci/benchmarking .
     - echo "Build complete, testing."
 #    - docker run --privileged -v /data/:/data wsisci/benchmarking threaded # Need priv docker for this
-#    - docker run --privileged -v /data/:/data wsisci/benchmarking timed_command # Need priv docker for this
-    - docker run -v /data/:/data wsisci/benchmarking disk
+    - docker run -v /data/:/data wsisci/benchmarking disk 'CI test'
     - echo "Testing complete."
 
 include:
