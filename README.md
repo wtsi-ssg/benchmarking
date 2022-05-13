@@ -70,12 +70,13 @@ Currently for this version, all the benchmark configuration files are pre-define
 
 #### Types of benchmarks:
 - Runnable program
-  * `threaded` (BWA+NUMA)
-  * `timed_command` (BWA, Salmon)
+  * `threaded` (BWA, Salmon)
 - IO test
   * `disk` (iozone)
 - Network test
   * `network` (iperf)
+- Memory test
+  * `mbw`
 
 The respective configuration files are named based on these types, and this is to be passed to `docker run` command. Please refer [Running different benchmarks](## Running different benchmarks) section below for further details about each one.
 
@@ -103,11 +104,11 @@ Similar to docker, singularity container also follows the same format to run the
 
 Benchmarks can be run by passing their type to the `docker run` or `singularity run` commands as:
 
-`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark>`
+`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark> <machine nickname>`
 
 or 
 
-`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark>` 
+`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark> <machine nickname>` 
 
 
 ### Runnable program
@@ -120,16 +121,16 @@ or
 The benchmarking suite requires the installation directory for the programs to be set. 
 
 #### `threaded` (BWA+NUMA)
-This benchmark is for running numactl in a multi process-threaded setup.
+This benchmark is for running in a multi process-threaded setup, measuring the time taken to run a command on the dataset.
 
 **Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks. 
 Eg.
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded
+docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded 'Special machine'
 ```
 
 Example config:
@@ -156,51 +157,6 @@ Additionally, multiple variations of the process_thread can be used in the same 
 
 The test will be run `repeat` number of times and an average will be stored in result file. If `clear_cache` is set to True, it'd clear the system cache between each run.
 
-#### `timed_command` (BWA, Salmon)
-This benchmark is for measuring the time taken to run a bwa and salmon command on the dataset.
-
-**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the timed_command related benchmarks. 
-Eg.
-```
-docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 timed_command
-```
-Or
-```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg timed_command
-```
-
-Example config:
-```
----
-- type: cpu
-  benchmarks:
-    - type: command
-      settings:
-        tag: bwa
-        command: "/benchmarking/scripts/bwa.sh"
-        program: "bwa"
-        programversion: "0.7.17"
-        shell: True
-        dataset_tag: "bwa"
-        dataset_file: "/benchmarking/setup/bwa_data.txt"
-        datadir: "/data/datasets/bwa/"
-        result_dir: "/data/results/runs/"
-        repeats: 2
-        clear_caches: True
-    - type: command
-      settings:
-        tag: salmon-1.0.0
-        command: "/benchmarking/scripts/salmon.sh"
-        program: "salmon"
-        programversion: "1.0.0"
-        shell: True
-        dataset_tag: "default"
-        datadir: "/data/datasets/salmon/"
-        result_dir: "/data/results/runs/"
-        repeats: 2
-        clear_caches: True
-```
-
 
 ### IO test
 
@@ -208,11 +164,11 @@ Example config:
 This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at http://www.iozone.org/ for more information. 
 
 ```
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk 'Special machine'
 ```
 
 Example config:
@@ -243,11 +199,11 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
 ```
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 network <iperf_server_address> <iperf_port>
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 network <iperf_server_address> <iperf_port> 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg network <iperf_server_address> <iperf_port>
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg network <iperf_server_address> <iperf_port> 'Special machine'
 ```
 
 Example config:
@@ -382,8 +338,5 @@ Example result file for network test:
 
 
 ## **TODOs**
-1. Provide an option to save the results into a database.
-2. Generate local comparison charts.
-3. Add functionality to take user-defined configuration file as an input. 
-4. Add functionality to add a new benchmark type.
-5. CI for building docker & singularity images
+1. Add functionality to take user-defined configuration file as an input. 
+2. CI for building docker & singularity images
