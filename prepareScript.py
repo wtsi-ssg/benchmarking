@@ -76,6 +76,7 @@ def get_settings():
                 dataset_file = None
 
             #get mode for streams benchmark
+            #FIXME: hard coding for specific benchmark
             if program_name == "streams":
                 mode = doc[n]['benchmarks'][m]['settings']['mode']
             else:
@@ -124,22 +125,20 @@ def download_and_install_programs(settings_list, install_dir):
                     elif file_extension in [".zip"]:
                         rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
 
+                    # FIXME: hardcoded benchmark building
                     if program_name == "iozone":
                         subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/src/current")
                         subprocess.check_call(["make linux"], shell=True, cwd=install_dir+name_and_version+"/src/current")
-
-                    if program_name == "mbw":
+                    elif program_name == "mbw":
                         subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/")
-
-                    if program_name == "streams":
+                    elif program_name == "streams":
                         if mode == "single_processing":
                             subprocess.call("gcc -O stream.c -o stream", shell=True, cwd=install_dir)
                         if mode == "multi_processing":
                             subprocess.call("gcc -fopenmp -D_OPENMP stream.c -o stream", shell=True, cwd=install_dir)
-
-                    if program_name in ["bwa"]:
+                    elif program_name in ["bwa"]:
                         subprocess.check_call(["make CFLAGS='-g -Wall -Wno-unused-function -O3 -march=native'"], shell=True, cwd=install_dir+name_and_version)
-                    if program_name in ["bwa-mem2"]:
+                    elif program_name in ["bwa-mem2"]:
                         subprocess.check_call(["make arch=native"], shell=True, cwd=install_dir+name_and_version)
 
         if not os.path.exists(path_to_program):
@@ -238,21 +237,22 @@ if  __name__ == '__main__':
 
     yml_input_file = args.yml_file
 
+    # FIXME: hardcoded benchmark versions
     #Set a dictionary variable for all the default versions of programs
     default_version = { "salmon" : "1.0.0",
                         "iozone" : "3.488",
                         "iperf" : "3.1.3" }
 
+    # FIXME: hardcoded benchmark list
     #set a dictionary variable for all programs that do not require a program setting
     implicit_program_type_benchmarks_list=(["iperf",
                                             "iozone",
                                             "streams"])
 
     #set a dictionary variable for all benchmarks that require data to be downloaded
-    data_dependent_type_benchmarks_list=(["numactl",
-                                          "command",
-                                          "multithreaded"])
+    data_dependent_type_benchmarks_list=(["multithreaded"])
 
+    #FIXME: hardcoded dataset index
     dataset_index = { "index_format_1" : "referenceGenome_index1",
                       "index_format_2" : "referenceGenome_index2",
                       "index_format_3" : "referenceGenome_index3",
@@ -262,6 +262,7 @@ if  __name__ == '__main__':
     #set a dictionary variable saying which version of the salmon index is required ifor a given version
     dataset_required = {}
 
+    #FIXME: hardcoded dataset version link
     dataset_required["index_format_1"] = ["0.3.2", "0.4.0", "0.4.1", "0.4.2", "0.5.0", "0.5.1", "0.6.0", "0.6.1-pre", "0.7.0-pre", "0.7.0", "0.7.1", "0.7.2", "0.8.0", "0.8.1" , "0.8.2", "0.9.0", "0.9.1"]
     dataset_required["index_format_2"] = ["0.10.0", "0.10.1", "0.10.2", "0.11.1", "0.11.2", "0.11.3", "0.12.0-alpha", "0.12.0", "0.13.0"]
     dataset_required["index_format_3"] = ["0.14.0", "0.14.1", "0.14.2", "0.14.2-1", "0.15.0"]
@@ -273,6 +274,7 @@ if  __name__ == '__main__':
     
     install_dir = Utility.get_install_dir(yml_input_file)
 
+    #FIXME: hardcode path_to_program_dict
     path_to_program_dict= {}
     path_to_program_dict["salmon"] = ["{}name_and_version/bin/salmon".format(install_dir)]
     path_to_program_dict["iozone"] = ["{}name_and_version/src/current/iozone".format(install_dir)]
@@ -291,7 +293,8 @@ if  __name__ == '__main__':
  
     for st in range(0, len(settings_list)):
         if settings_list[st]["dataset_file"] != "None":
+            #FIXME: hardcoded data downloader
             if settings_list[st]["program_name"] == "salmon":
                 download_salmon_data(settings_list[st])
-            if settings_list[st]["program_name"] == "bwa":
+            elif settings_list[st]["program_name"] == "bwa":
                 download_bwa_data(settings_list[st])
