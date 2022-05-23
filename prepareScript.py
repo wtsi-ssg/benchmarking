@@ -21,7 +21,7 @@ base_dir = os.path.dirname(os.path.realpath(__file__))
 
 class DataPreparer:
 
-    def get_benchmark_list_settings(self, settings_doc) -> Dict:
+    def get_benchmark_list_settings(self, settings_doc) -> list:
         """ this function gets a list of all programs, programversions, and datasets used by tests in the yml file"""
         settings_list = []
         set_keys = ["program_name", "required_version", "dataset_tag", "dataset_file", "datadir", "mode"]
@@ -211,7 +211,7 @@ class DataPreparer:
         # TODO: redo this with templated strings
         name_and_version = program_name+"-v"+required_version
         if program_name in self.path_to_program_dict.keys():
-            path_to_program= self.path_to_program_dict[program_name][0]
+            path_to_program = self.path_to_program_dict[program_name]
         else:
             path_to_program = "/"
         iperfvar = "iperf"+required_version[0]
@@ -256,19 +256,12 @@ class DataPreparer:
         }
         self.install_dir = Utility.get_install_dir(settings_yml_input_file)
 
-        #FIXME: hardcode path_to_program_dict
-        self.path_to_program_dict= {
-            "salmon" : ["{}name_and_version/bin/salmon".format(self.install_dir)],
-            "iozone" : ["{}name_and_version/src/current/iozone".format(self.install_dir)],
-            "iperf" : ["{}name_and_version/usr/bin/iperfvar".format(self.install_dir)],
-            "bwa" : ["{}name_and_version/bwa".format(self.install_dir)],
-            "bwa-mem2" : ["{}name_and_version/bwa-mem2".format(self.install_dir)],
-            "streams" : ["{}name_and_version/stream".format(self.install_dir)],
-            "mbw" : ["{}name_and_version/mbw".format(self.install_dir)],
-        }
+    def loadDefaults(self, defaults_doc):
+        self.path_to_program_dict = { key:f'{self.install_dir}{value}' for key, value in defaults_doc['path_to_program'].items() }
 
     def prepareData(self) -> bool:
         defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
+        self.loadDefaults(defaults_doc)
 
         settings_doc = yaml.load(open(self.settings_yml_input_file, 'rb'), Loader=Loader)
 
