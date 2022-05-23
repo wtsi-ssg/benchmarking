@@ -17,6 +17,7 @@ RUN apt-get update && \
 RUN mkdir /benchmarking
 
 #copy files required for benchmarking and install requirements.txt
+COPY ./defaults.yml /benchmarking/
 COPY ./setup/ /benchmarking/setup
 COPY ./benchmark_suite /benchmarking/benchmark_suite
 COPY ./runbenchmarks.sh /benchmarking/
