@@ -272,7 +272,7 @@ class DataPreparer:
 
         settings_doc = yaml.load(open(self.settings_yml_input_file, 'rb'), Loader=Loader)
 
-        settings_list = self.get_benchmark_list_settings(settings_doc, defaults_doc)
+        settings_list = self.get_benchmark_list_settings(settings_doc)
 
         if settings_list is None:
             return False
@@ -283,13 +283,13 @@ class DataPreparer:
 
         self.download_and_install_programs(settings_list, self.install_dir)
 
-        for st in range(0, len(settings_list)):
-            if settings_list[st]["dataset_file"] != "None":
+        for st in settings_list:
+            if st["dataset_file"] != "None":
                 #FIXME: hardcoded data downloader
-                if settings_list[st]["program_name"] == "salmon":
-                    self.download_salmon_data(settings_list[st])
-                elif settings_list[st]["program_name"] == "bwa":
-                    self.download_bwa_data(settings_list[st])
+                if st["program_name"] == "salmon":
+                    self.download_salmon_data(st)
+                elif st["program_name"] == "bwa":
+                    self.download_bwa_data(st)
 
         return True
 
