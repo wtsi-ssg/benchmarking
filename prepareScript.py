@@ -76,14 +76,14 @@ class DataPreparer:
         return settings_list
 
 
-    def download_and_install_programs(self, settings_list, install_dir) -> bool:
+    def download_and_install_programs(self, settings_list : list, install_dir) -> bool:
         #check and create tools directory if doesn't exist
         os.makedirs(install_dir, exist_ok=True)
 
-        for st in range(len(settings_list)):
-            program_name = settings_list[st]["program_name"]
-            required_version = settings_list[st]["required_version"]
-            mode = settings_list[st]["mode"]
+        for st in settings_list:
+            program_name = st["program_name"]
+            required_version = st["required_version"]
+            mode = st["mode"]
             name_and_version = program_name+'-v'+required_version
             
             print("Required program name and version: "+name_and_version)
@@ -258,7 +258,7 @@ class DataPreparer:
 
         #FIXME: hardcode path_to_program_dict
         self.path_to_program_dict= {
-            "salmon" : ["{}name_and_version/bin/salmon".format(self.nstall_dir)],
+            "salmon" : ["{}name_and_version/bin/salmon".format(self.install_dir)],
             "iozone" : ["{}name_and_version/src/current/iozone".format(self.install_dir)],
             "iperf" : ["{}name_and_version/usr/bin/iperfvar".format(self.install_dir)],
             "bwa" : ["{}name_and_version/bwa".format(self.install_dir)],
