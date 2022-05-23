@@ -33,3 +33,4 @@ buildtest-job:       # This job runs in the build stage, which runs first.
 
 include:
 - template: Security/Secret-Detection.gitlab-ci.yml
+- template: Security/SAST.gitlab-ci.yml
