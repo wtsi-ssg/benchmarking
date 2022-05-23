@@ -1,7 +1,8 @@
-#!/bin/bash -e
-ymlFileName="/benchmarking/setup/config_files/${1}.yml"
+#!/bin/bash
+set -euo pipefail
+settingsFileName="/benchmarking/setup/config_files/${1}.yml"
 cd /benchmarking
-python3 /benchmarking/prepareScript.py -y $ymlFileName
+python3 /benchmarking/prepareScript.py -s $settingsFileName
 
 export PYTHONPATH=/benchmarking
 

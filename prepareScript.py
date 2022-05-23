@@ -21,41 +21,41 @@ base_dir = os.path.dirname(os.path.realpath(__file__))
 
 class DataPreparer:
 
-    def get_settings(self, doc) -> Dict:
+    def get_benchmark_list_settings(self, settings_doc) -> Dict:
         """ this function gets a list of all programs, programversions, and datasets used by tests in the yml file"""
         settings_list = []
         set_keys = ["program_name", "required_version", "dataset_tag", "dataset_file", "datadir", "mode"]
-        for n in range(1, len(doc)) :
-            for m in range(0, len(doc[n]['benchmarks'])):
-                if doc[n]['benchmarks'][m]['type'] in self.implicit_program_type_benchmarks_list:
-                    program_name = doc[n]['benchmarks'][m]['type']
+        for n in range(1, len(settings_doc)) :
+            for m in range(0, len(settings_doc[n]['benchmarks'])):
+                if settings_doc[n]['benchmarks'][m]['type'] in self.implicit_program_type_benchmarks_list:
+                    program_name = settings_doc[n]['benchmarks'][m]['type']
                 else:
-                    if 'program' in doc[n]['benchmarks'][m]['settings'].keys():
-                        program_name = doc[n]['benchmarks'][m]['settings']['program']
+                    if 'program' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                        program_name = settings_doc[n]['benchmarks'][m]['settings']['program']
                     else:
                         print("no program setting given")
                         return None
 
                 #get program version
-                required_version = doc[n]['benchmarks'][m]['settings']['programversion']
+                required_version = settings_doc[n]['benchmarks'][m]['settings']['programversion']
                 #It uses a predefined default_version dictionary for each program if default version is mentioned
                 if required_version == "default" and program_name in self.default_version.keys():
                     required_version = self.default_version[program_name]
 
                 #get dataset_tag and datadir
-                if doc[n]['benchmarks'][m]['type'] in self.data_dependent_type_benchmarks_list:
-                    if 'dataset_tag' in doc[n]['benchmarks'][m]['settings'].keys():
-                        dataset_tag = doc[n]['benchmarks'][m]['settings']['dataset_tag']
+                if settings_doc[n]['benchmarks'][m]['type'] in self.data_dependent_type_benchmarks_list:
+                    if 'dataset_tag' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                        dataset_tag = settings_doc[n]['benchmarks'][m]['settings']['dataset_tag']
                     else:
                         print("dataset_tag setting required, none set.")
                         return None
-                    if 'datadir' in doc[n]['benchmarks'][m]['settings'].keys():
-                        datadir = doc[n]['benchmarks'][m]['settings']['datadir']
+                    if 'datadir' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                        datadir = settings_doc[n]['benchmarks'][m]['settings']['datadir']
                     else:
                         print("datadir setting required, none set.")
                         return None
-                    if 'dataset_file' in doc[n]['benchmarks'][m]['settings'].keys():
-                        dataset_file = doc[n]['benchmarks'][m]['settings']['dataset_file']
+                    if 'dataset_file' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                        dataset_file = settings_doc[n]['benchmarks'][m]['settings']['dataset_file']
                     else:
                         dataset_file = ""
                 else:
@@ -66,7 +66,7 @@ class DataPreparer:
                 #get mode for streams benchmark
                 #FIXME: hard coding for specific benchmark
                 if program_name == "streams":
-                    mode = doc[n]['benchmarks'][m]['settings']['mode']
+                    mode = settings_doc[n]['benchmarks'][m]['settings']['mode']
                 else:
                     mode = None
 
@@ -220,8 +220,9 @@ class DataPreparer:
 
         return path_to_program
 
-    def __init__(self, yml_input_file : pathlib.Path):
-        self.yml_input_file = yml_input_file
+    def __init__(self, defaults_yml_input_file : pathlib.Path, settings_yml_input_file : pathlib.Path):
+        self.defaults_yml_input_file = defaults_yml_input_file
+        self.settings_yml_input_file = settings_yml_input_file
         # FIXME: hardcoded benchmark versions
         #Set a dictionary variable for all the default versions of programs
         self.default_version = { "salmon" : "1.0.0",
@@ -253,7 +254,7 @@ class DataPreparer:
             "index_format_3" : ["0.14.0", "0.14.1", "0.14.2", "0.14.2-1", "0.15.0"],
             "index_format_4" : ["0.99.0-beta1", "0.99.0-beta1", "1.0.0", "1.1.0"]
         }
-        self.install_dir = Utility.get_install_dir(yml_input_file)
+        self.install_dir = Utility.get_install_dir(settings_yml_input_file)
 
         #FIXME: hardcode path_to_program_dict
         self.path_to_program_dict= {
@@ -267,9 +268,11 @@ class DataPreparer:
         }
 
     def prepareData(self) -> bool:
-        doc = yaml.load(open(self.yml_input_file, 'rb'), Loader=Loader)
+        defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
 
-        settings_list = self.get_settings(doc)
+        settings_doc = yaml.load(open(self.settings_yml_input_file, 'rb'), Loader=Loader)
+
+        settings_list = self.get_benchmark_list_settings(settings_doc, defaults_doc)
 
         if settings_list is None:
             return False
@@ -294,14 +297,18 @@ class DataPreparer:
 def get_args():
     description = "Benchmarking suite for disk, cpu and network benchmarks!"
     verbose_help = "Increase output verbosity"
-    yml_file_help = "YML file name"
+    defaults_file_help = "Defaults YML file name"
+    settings_file_help = "Settings YML file name"
 
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
         '-v','--verbose', help=verbose_help,
         action="store_true")
     parser.add_argument(
-        '-y','--yml_file', help=yml_file_help,
+        '-d','--defaults_file', help=defaults_file_help,
+        default="defaults.yml")
+    parser.add_argument(
+        '-s','--settings_file', help=settings_file_help,
         required=True)
 
     return parser.parse_args()
@@ -310,6 +317,6 @@ if  __name__ == '__main__':
     #Get arguments
     args = get_args()
 
-    dp = DataPreparer(args.yml_file)
+    dp = DataPreparer(args.defaults_file, args.settings_file)
     if dp.prepareData() == False:
         exit(1)
