@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pathlib
+import string
 import subprocess
 from typing import Dict
 
@@ -208,15 +209,14 @@ class DataPreparer:
 
     def get_path_to_program(self, program_name, required_version):
         """get the path to the program"""
-        # TODO: redo this with templated strings
-        name_and_version = program_name+"-v"+required_version
+        name_and_version = f'{program_name}-v{required_version}'
         if program_name in self.path_to_program_dict.keys():
-            path_to_program = self.path_to_program_dict[program_name]
+            path_to_program_template = self.path_to_program_dict[program_name]
         else:
-            path_to_program = "/"
+            path_to_program_template = "/"
         iperfvar = "iperf"+required_version[0]
-        path_to_program = path_to_program.replace("name_and_version", name_and_version)
-        path_to_program = path_to_program.replace("iperfvar",iperfvar)
+        string.Template(path_to_program_template)
+        path_to_program = path_to_program_template.substitute(name_and_version=name_and_version,iperfvar=iperfvar)
 
         return path_to_program
 
