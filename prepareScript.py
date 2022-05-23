@@ -28,7 +28,7 @@ class DataPreparer:
         set_keys = ["program_name", "required_version", "dataset_tag", "dataset_file", "datadir", "mode"]
         for n in range(1, len(settings_doc)) :
             for m in range(0, len(settings_doc[n]['benchmarks'])):
-                if settings_doc[n]['benchmarks'][m]['type'] in self.implicit_program_type_benchmarks_list:
+                if settings_doc[n]['benchmarks'][m]['type'] in self.implicit_program_type_benchmarks:
                     program_name = settings_doc[n]['benchmarks'][m]['type']
                 else:
                     if 'program' in settings_doc[n]['benchmarks'][m]['settings'].keys():
@@ -44,7 +44,7 @@ class DataPreparer:
                     required_version = self.default_version[program_name]
 
                 #get dataset_tag and datadir
-                if settings_doc[n]['benchmarks'][m]['type'] in self.data_dependent_type_benchmarks_list:
+                if settings_doc[n]['benchmarks'][m]['type'] in self.data_dependent_type_benchmarks:
                     if 'dataset_tag' in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         dataset_tag = settings_doc[n]['benchmarks'][m]['settings']['dataset_tag']
                     else:
@@ -211,11 +211,10 @@ class DataPreparer:
         """get the path to the program"""
         name_and_version = f'{program_name}-v{required_version}'
         if program_name in self.path_to_program_dict.keys():
-            path_to_program_template = self.path_to_program_dict[program_name]
+            path_to_program_template = string.Template(self.path_to_program_dict[program_name])
         else:
-            path_to_program_template = "/"
+            path_to_program_template = string.Template("/")
         iperfvar = "iperf"+required_version[0]
-        string.Template(path_to_program_template)
         path_to_program = path_to_program_template.substitute(name_and_version=name_and_version,iperfvar=iperfvar)
 
         return path_to_program
@@ -223,41 +222,26 @@ class DataPreparer:
     def __init__(self, defaults_yml_input_file : pathlib.Path, settings_yml_input_file : pathlib.Path):
         self.defaults_yml_input_file = defaults_yml_input_file
         self.settings_yml_input_file = settings_yml_input_file
-        # FIXME: hardcoded benchmark versions
-        #Set a dictionary variable for all the default versions of programs
-        self.default_version = { "salmon" : "1.0.0",
-                            "iozone" : "3.488",
-                            "iperf" : "3.1.3" }
 
-        # FIXME: hardcoded benchmark list
         #set a dictionary variable for all programs that do not require a program setting
-        self.implicit_program_type_benchmarks_list=(["iperf",
+        self.implicit_program_type_benchmarks=(["iperf",
                                                 "iozone",
                                                 "streams"])
 
         #set a dictionary variable for all benchmarks that require data to be downloaded
-        self.data_dependent_type_benchmarks_list=(["multithreaded"])
+        self.data_dependent_type_benchmarks=(["multithreaded"])
 
-        #FIXME: hardcoded dataset index
-        self.dataset_index = {
-            "index_format_1" : "referenceGenome_index1",
-            "index_format_2" : "referenceGenome_index2",
-            "index_format_3" : "referenceGenome_index3",
-            "index_format_4" : "referenceGenome_index4"
-        }
-
-        #set a dictionary variable saying which version of the salmon index is required ifor a given version
-        #FIXME: hardcoded dataset version link
-        self.dataset_required = {
-            "index_format_1" : ["0.3.2", "0.4.0", "0.4.1", "0.4.2", "0.5.0", "0.5.1", "0.6.0", "0.6.1-pre", "0.7.0-pre", "0.7.0", "0.7.1", "0.7.2", "0.8.0", "0.8.1" , "0.8.2", "0.9.0", "0.9.1"],
-            "index_format_2" : ["0.10.0", "0.10.1", "0.10.2", "0.11.1", "0.11.2", "0.11.3", "0.12.0-alpha", "0.12.0", "0.13.0"],
-            "index_format_3" : ["0.14.0", "0.14.1", "0.14.2", "0.14.2-1", "0.15.0"],
-            "index_format_4" : ["0.99.0-beta1", "0.99.0-beta1", "1.0.0", "1.1.0"]
-        }
         self.install_dir = Utility.get_install_dir(settings_yml_input_file)
 
     def loadDefaults(self, defaults_doc):
+        # Set a dictionary to show where executable will be stored
         self.path_to_program_dict = { key:f'{self.install_dir}{value}' for key, value in defaults_doc['path_to_program'].items() }
+        #Set a dictionary variable for all the default versions of programs
+        self.default_version = defaults_doc['default_version']
+        #set a dictionary variable saying which version of the salmon index is required for a given version
+        self.dataset_required = defaults_doc['dataset_required']
+        # dataset index
+        self.dataset_index = defaults_doc['dataset_index']
 
     def prepareData(self) -> bool:
         defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
