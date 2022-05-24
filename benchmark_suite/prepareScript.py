@@ -2,7 +2,6 @@
 import pathlib
 import string
 import subprocess
-from typing import Dict
 
 import yaml
 
@@ -16,7 +15,7 @@ import os.path
 import sys
 from pathlib import Path
 
-from benchmark_suite.utility import Utility
+from .utility import Utility
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
