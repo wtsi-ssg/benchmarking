@@ -20,3 +20,22 @@ dataset_index:
     "index_format_2" : "referenceGenome_index2"
     "index_format_3" : "referenceGenome_index3"
     "index_format_4" : "referenceGenome_index4"
+build_command:
+  "iozone":
+    "cmd": "make && make linux"
+    "cwd": "${install_dir}${name_and_version}/src/current")
+  "mbw":
+    "cmd": "make"
+    "cwd": "${install_dir}${name_and_version}/")
+  "streams-single_processing":
+    "cmd":"gcc -O stream.c -o stream"
+    "cwd":"$install_dir"
+  "streams-multi_processing":
+    "cmd":"gcc -fopenmp -D_OPENMP stream.c -o stream"
+    "cwd":"$install_dir"
+  "bwa"]:
+    "cmd": "make CFLAGS='-g -Wall -Wno-unused-function -O3 -march=native'"
+    "cwd": "$install_dir$name_and_version"
+  "bwa-mem2"]:
+    "cmd": "make arch=native"
+    "cwd": "$install_dir$name_and_version"

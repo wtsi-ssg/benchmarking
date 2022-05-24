@@ -110,22 +110,10 @@ class DataPreparer:
                         elif file_extension in [".zip"]:
                             rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
 
-                        # FIXME: hardcoded benchmark building
-                        if program_name == "iozone":
-                            subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/src/current")
-                            subprocess.check_call(["make linux"], shell=True, cwd=install_dir+name_and_version+"/src/current")
-                        elif program_name == "mbw":
-                            subprocess.check_call(["make"], shell=True, cwd=install_dir+name_and_version+"/")
-                        elif program_name == "streams":
-                            if mode == "single_processing":
-                                subprocess.call("gcc -O stream.c -o stream", shell=True, cwd=install_dir)
-                            if mode == "multi_processing":
-                                subprocess.call("gcc -fopenmp -D_OPENMP stream.c -o stream", shell=True, cwd=install_dir)
-                        elif program_name in ["bwa"]:
-                            subprocess.check_call(["make CFLAGS='-g -Wall -Wno-unused-function -O3 -march=native'"], shell=True, cwd=install_dir+name_and_version)
-                        elif program_name in ["bwa-mem2"]:
-                            subprocess.check_call(["make arch=native"], shell=True, cwd=install_dir+name_and_version)
-
+                        # Invoke build command
+                        build_cmd = self.build_command[program_name]['cmd']
+                        build_cwd = string.Template(self.build_command[program_name][cwd]).substitute(install_dir=install_dir, name_and_version=name_and_version)
+                        subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
             if not os.path.exists(path_to_program):
                 print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
                 sys.exit(1)
@@ -240,6 +228,8 @@ class DataPreparer:
         self.dataset_required = defaults_doc['dataset_required']
         # dataset index
         self.dataset_index = defaults_doc['dataset_index']
+        # command to build program
+        self.build_command = defaults_doc['build_command']
 
     def prepareData(self) -> bool:
         defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
