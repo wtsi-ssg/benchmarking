@@ -10,7 +10,6 @@ try:
 except ImportError:
     from yaml import Loader
 
-import argparse
 import os.path
 import sys
 from pathlib import Path

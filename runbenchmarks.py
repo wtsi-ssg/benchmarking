@@ -15,7 +15,7 @@ import yapsy.PluginManager as pm
 from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
-from benchmark_suite.prepareScript import DataPreparer
+from benchmark_suite.datapreparer import DataPreparer
 
 sys.path.insert(1, f'{sys.path[0]}/setup/')
 from benchmark_suite.utility import Utility
