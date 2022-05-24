@@ -20,7 +20,6 @@ RUN mkdir /benchmarking
 COPY ./defaults.yml /benchmarking/
 COPY ./setup/ /benchmarking/setup
 COPY ./benchmark_suite /benchmarking/benchmark_suite
-COPY ./runbenchmarks.sh /benchmarking/
 COPY ./runbenchmarks.py /benchmarking/
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /benchmarking/setup/requirements.txt
@@ -31,4 +30,3 @@ RUN mkdir /data
 ENV PYTHONPATH /benchmarking
 
 ENTRYPOINT ./benchmarking/runbenchmarks.py
-
