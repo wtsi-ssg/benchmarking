@@ -4,7 +4,7 @@ settingsFileName="/benchmarking/setup/config_files/${1}.yml"
 cd /benchmarking
 
 export PYTHONPATH=/benchmarking
-python3 /benchmarking/suite/prepareScript.py -s $settingsFileName
+python3 /benchmarking/benchmark_suite/prepareScript.py -s $settingsFileName
 
 if [ $? == 0 ]; then
         if [ "$1" == "network" ]; then
