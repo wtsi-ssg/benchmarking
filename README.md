@@ -104,11 +104,11 @@ Similar to docker, singularity container also follows the same format to run the
 
 Benchmarks can be run by passing their type to the `docker run` or `singularity run` commands as:
 
-`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark> <machine nickname>`
+`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark> <outputfile.json> <machine nickname>`
 
 or 
 
-`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark> <machine nickname>` 
+`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark> <outputfile.json> <machine nickname>` 
 
 
 ### Runnable program
@@ -126,11 +126,11 @@ This benchmark is for running in a multi process-threaded setup, measuring the t
 **Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks. 
 Eg.
 ```
-docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded 'Special machine'
+docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded output.json 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded 'Special machine'
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded output.json 'Special machine'
 ```
 
 Example config:
@@ -164,11 +164,11 @@ The test will be run `repeat` number of times and an average will be stored in r
 This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at http://www.iozone.org/ for more information. 
 
 ```
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk 'Special machine'
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk output.json 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk 'Special machine'
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk output.json 'Special machine'
 ```
 
 Example config:
@@ -199,11 +199,11 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
 ```
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 network <iperf_server_address> <iperf_port> 'Special machine'
+docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
 ```
 Or
 ```
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg network <iperf_server_address> <iperf_port> 'Special machine'
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
 ```
 
 Example config:
