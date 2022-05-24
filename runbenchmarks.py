@@ -155,7 +155,7 @@ def update_iperf_server_address(config, server_address, port):
 if __name__ == '__main__':
     args = get_args()
 
-    dp = DataPreparer('defaults.yml', args.type)
+    dp = DataPreparer('defaults.yml', f'/benchmarking/setup/config_files/{args.type}.yml')
     if not dp.prepareData():
         sys.exit(1)
  
