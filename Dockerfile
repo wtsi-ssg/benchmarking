@@ -29,4 +29,6 @@ RUN mkdir /data
 
 ENV PYTHONPATH /benchmarking
 
-ENTRYPOINT ./benchmarking/runbenchmarks.py
+WORKDIR /benchmarking
+
+ENTRYPOINT ["/benchmarking/runbenchmarks.py"]
