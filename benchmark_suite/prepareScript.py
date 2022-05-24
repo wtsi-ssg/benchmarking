@@ -17,8 +17,6 @@ from pathlib import Path
 
 from .utility import Utility
 
-base_dir = os.path.dirname(os.path.realpath(__file__))
-
 class DataPreparer:
 
     def get_benchmark_list_settings(self, settings_doc) -> list:
@@ -92,7 +90,7 @@ class DataPreparer:
                 print("{} is already installed at {}".format(name_and_version, path_to_program))
                 continue
 
-            with open(base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
+            with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
                 for line in binary_url:
                     pro_ver, url = line.strip().split(',')
 
@@ -156,14 +154,14 @@ class DataPreparer:
 
                 if os.path.exists(datadir+file_name):
                     if not self.check_md5sum(datadir+file_name, correct_md5sum):
-                        if args.verbose:
+                        if self.verbose:
                             print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
                         subprocess.check_call(["wget -q https://it_randd.cog.sanger.ac.uk/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
                     else:
-                        if args.verbose:
+                        if self.verbose:
                             print(required_file_name+" is already downloaded.")
                 else:
-                    if args.verbose:
+                    if self.verbose:
                         print(file_name+" is not downloaded. Downloading now...")
                     subprocess.check_call(["wget "+required_file_name+" -O "+datadir+file_name], shell=True)
 
@@ -189,20 +187,20 @@ class DataPreparer:
                     os.makedirs(datadir+index_name, exist_ok=True)
                     os.makedirs(datadir+"SRR10103759", exist_ok=True)
 
-                    with open(base_dir+"/setup/"+ds+".txt", 'r') as data_f:
+                    with open(self.base_dir+"/setup/"+ds+".txt", 'r') as data_f:
                         for line in data_f:
                             required_file_name, correct_md5sum = line.strip().split(',')
 
                             if os.path.exists(datadir+required_file_name):
                                 if not self.check_md5sum(datadir+required_file_name, correct_md5sum):
-                                    if args.verbose:
+                                    if self.verbose:
                                         print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
                                     subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
                                 else:
-                                    if args.verbose:
+                                    if self.verbose:
                                         print(required_file_name+" is already downloaded.")
                             else:
-                                if args.verbose:
+                                if self.verbose:
                                     print(required_file_name+" is not downloaded. Downloading now...")
                                 subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
 
@@ -218,9 +216,11 @@ class DataPreparer:
 
         return path_to_program
 
-    def __init__(self, defaults_yml_input_file : pathlib.Path, settings_yml_input_file : pathlib.Path):
+    def __init__(self, defaults_yml_input_file : pathlib.Path, settings_yml_input_file : pathlib.Path, basedir : pathlib.Path, verbose : bool):
         self.defaults_yml_input_file = defaults_yml_input_file
         self.settings_yml_input_file = settings_yml_input_file
+        self.base_dir = basedir
+        self.verbose = verbose
 
         #set a dictionary variable for all programs that do not require a program setting
         self.implicit_program_type_benchmarks=(["iperf",
@@ -242,7 +242,7 @@ class DataPreparer:
         # dataset index
         self.dataset_index = defaults_doc['dataset_index']
 
-    def prepareData(self, verbose :bool) -> bool:
+    def prepareData(self) -> bool:
         defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
         self.loadDefaults(defaults_doc)
 
@@ -254,7 +254,7 @@ class DataPreparer:
             return False
 
         #Print the program list if verbose is set
-        if verbose:
+        if self.verbose:
             print("List of programs from yml file :\n{}".format(settings_list))
 
         self.download_and_install_programs(settings_list, self.install_dir)
@@ -268,31 +268,3 @@ class DataPreparer:
                     self.download_bwa_data(st)
 
         return True
-
-# Parse arguments if this is run as a standalone tool
-def get_args():
-    description = "Benchmarking suite for disk, cpu and network benchmarks!"
-    verbose_help = "Increase output verbosity"
-    defaults_file_help = "Defaults YML file name"
-    settings_file_help = "Settings YML file name"
-
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(
-        '-v','--verbose', help=verbose_help,
-        action="store_true")
-    parser.add_argument(
-        '-d','--defaults_file', help=defaults_file_help,
-        default="defaults.yml")
-    parser.add_argument(
-        '-s','--settings_file', help=settings_file_help,
-        required=True)
-
-    return parser.parse_args()
-
-if  __name__ == '__main__':
-    #Get arguments
-    args = get_args()
-
-    dp = DataPreparer(args.defaults_file, args.settings_file)
-    if dp.prepareData(args.verbose) == False:
-        exit(1)
