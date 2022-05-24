@@ -23,7 +23,7 @@ dataset_index:
 build_command:
   "iozone":
     "cmd": "make && make linux"
-    "cwd": "${install_dir}${name_and_version}/src/current")
+    "cwd": "${install_dir}${name_and_version}/src/current"
   "mbw":
     "cmd": "make"
     "cwd": "${install_dir}${name_and_version}/")
