@@ -242,7 +242,7 @@ class DataPreparer:
         # dataset index
         self.dataset_index = defaults_doc['dataset_index']
 
-    def prepareData(self) -> bool:
+    def prepareData(self, verbose :bool) -> bool:
         defaults_doc = yaml.load(open(self.defaults_yml_input_file, 'rb'), Loader=Loader)
         self.loadDefaults(defaults_doc)
 
@@ -254,7 +254,7 @@ class DataPreparer:
             return False
 
         #Print the program list if verbose is set
-        if args.verbose:
+        if verbose:
             print("List of programs from yml file :\n{}".format(settings_list))
 
         self.download_and_install_programs(settings_list, self.install_dir)
@@ -294,5 +294,5 @@ if  __name__ == '__main__':
     args = get_args()
 
     dp = DataPreparer(args.defaults_file, args.settings_file)
-    if dp.prepareData() == False:
+    if dp.prepareData(args.verbose) == False:
         exit(1)

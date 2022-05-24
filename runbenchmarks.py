@@ -156,7 +156,7 @@ if __name__ == '__main__':
     args = get_args()
 
     dp = DataPreparer('defaults.yml', f'/benchmarking/setup/config_files/{args.type}.yml')
-    if not dp.prepareData():
+    if not dp.prepareData(args.verbose):
         sys.exit(1)
  
     if args.type == "network" and not (args.server_ip and args.server_port):
