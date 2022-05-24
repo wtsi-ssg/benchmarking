@@ -28,5 +28,7 @@ RUN pip3 install -r /benchmarking/setup/requirements.txt
 #create data directory
 RUN mkdir /data
 
-ENTRYPOINT ["./benchmarking/runbenchmarks.sh"]
+ENV PYTHONPATH /benchmarking
+
+ENTRYPOINT ./benchmarking/runbenchmarks.py
 

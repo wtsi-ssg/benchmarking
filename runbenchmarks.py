@@ -28,15 +28,21 @@ def get_args():
         action="store_true"
     )
     parser.add_argument(
-        '-t','--type',
+        'type',
         type=str,
         help="""Type of the benchmark""",
         required=True
     )
     parser.add_argument(
-        '-o', '--output_file_name',
+        'output_file_name',
         type=str,
         help="""The output file name""",
+        required=True
+    )
+    parser.add_argument(
+        'nickname',
+        type=str,
+        help="""Nickname for host being evaluated""",
         required=True
     )
     parser.add_argument(
@@ -53,11 +59,6 @@ def get_args():
         '-d', '--clear_cache_bin',
         type=str,
         help="""Executable to drop test host cache"""
-    )
-    parser.add_argument(
-        '-n', '--nickname',
-        type=str,
-        help="""Nickname for host being evaluated"""
     )
     
     return parser.parse_args()
