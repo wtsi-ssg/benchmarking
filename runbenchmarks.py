@@ -30,20 +30,17 @@ def get_args():
     parser.add_argument(
         'type',
         type=str,
-        help="""Type of the benchmark""",
-        required=True
+        help="""Type of the benchmark"""
     )
     parser.add_argument(
         'output_file_name',
         type=str,
-        help="""The output file name""",
-        required=True
+        help="""The output file name"""
     )
     parser.add_argument(
         'nickname',
         type=str,
-        help="""Nickname for host being evaluated""",
-        required=True
+        help="""Nickname for host being evaluated"""
     )
     parser.add_argument(
         '-i', '--server_ip',
