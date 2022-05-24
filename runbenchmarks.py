@@ -15,6 +15,7 @@ import yapsy.PluginManager as pm
 from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
+from benchmark_suite.prepareScript import DataPreparer
 
 sys.path.insert(1, f'{sys.path[0]}/setup/')
 from benchmark_suite.utility import Utility
@@ -153,6 +154,10 @@ def update_iperf_server_address(config, server_address, port):
 
 if __name__ == '__main__':
     args = get_args()
+
+    dp = DataPreparer('defaults.yml', args.type)
+    if not dp.prepareData():
+        sys.exit(1)
  
     if args.type == "network" and not (args.server_ip and args.server_port):
         print("-s_ip and -s_port required for iPerf network benchmark.")
