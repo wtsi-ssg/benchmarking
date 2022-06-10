@@ -11,6 +11,7 @@ import requests
 import yaml
 import yapsy.PluginFileLocator as pfl
 import yapsy.PluginManager as pm
+from benchmark_suite.plotresults import PlotResults
 
 from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
@@ -188,3 +189,8 @@ if __name__ == '__main__':
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
+
+    plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
+    pr = PlotResults(results_filename= result_fullpath, [], plot_fullpath)
+    pr.plot()
+    print(f"Plots in: {plot_file_path_to_local}")
