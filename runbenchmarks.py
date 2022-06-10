@@ -6,6 +6,7 @@ import os
 import pathlib
 import sys
 import time
+from typing import Tuple
 
 import requests
 import yaml
@@ -34,9 +35,9 @@ def get_args():
         help="""Type of the benchmark"""
     )
     parser.add_argument(
-        'output_file_name',
+        'output_file_basename',
         type=str,
-        help="""The output file name"""
+        help="""The output base file name"""
     )
     parser.add_argument(
         'nickname',
@@ -107,14 +108,17 @@ def add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks):
 
     return benchsuite
 
-def result_file_name(b_type, output_file):
+def result_filename(b_type, output_basefile) -> Tuple[str, str, pathlib.Path, pathlib.Path]:
     result_dir = os.path.join("/data/results", b_type)
     os.makedirs(result_dir, exist_ok=True)
 
-    result_file =  time.strftime("%Y-%m-%d-%H%M%S") + "_" + output_file
-    output_fullpath = os.path.join(result_dir,result_file) 
+    result_filebase =  time.strftime("%Y-%m-%d-%H%M%S") + "_" + output_basefile
+    result_filename = result_filebase + '.json'
+    plot_filename = result_filebase + '.pdf'
+    output_fullpath = os.path.join(result_dir,result_filename) 
+    plot_fullpath = os.path.join(result_dir,plot_filename) 
     
-    return [result_file, output_fullpath]
+    return [result_filename, plot_filename, output_fullpath, plot_fullpath]
 
 def post_results(raw_result_file : str, jsondata : str):
     # Fetch signed post URL from s3 cog
@@ -164,11 +168,13 @@ if __name__ == '__main__':
         sys.exit(1)
 
     config_file = get_config_file(args.type)
+
+    [raw_result_file, raw_plot_file, result_fullpath, plot_fullpath,] = result_filename(args.type, args.output_file_basename)
     
     if args.verbose:
         print("Chosen benchmark type:      {}".format(args.type))
         print("Configuration file used:    {}".format(config_file))
-        print("Output will be stored at:   {}".format(args.output_file_name))
+        print("Output will be stored at:   {}".format(args.output_file_basename))
 
     config = get_config(config_file)
 
@@ -183,14 +189,12 @@ if __name__ == '__main__':
     
     benchsuite = add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks)
     
-    [raw_result_file, result_fullpath] = result_file_name(args.type, args.output_file_name)
-
     run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file)
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
-    pr = PlotResults(results_filename= result_fullpath, [], plot_fullpath)
+    pr = PlotResults(plot_fullpath, [], plot_fullpath)
     pr.plot()
     print(f"Plots in: {plot_file_path_to_local}")
