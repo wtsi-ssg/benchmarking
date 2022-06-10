@@ -196,5 +196,5 @@ if __name__ == '__main__':
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
     pr = PlotResults(plot_fullpath, [], plot_fullpath)
-    pr.plot()
+    pr.plot_results()
     print(f"Plots in: {plot_file_path_to_local}")
