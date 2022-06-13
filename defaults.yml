@@ -39,3 +39,5 @@ build_command:
   "bwa-mem2":
     "cmd": "make arch=native"
     "cwd": "$install_dir$name_and_version"
+  "salmon":
+    "no_build": "True"

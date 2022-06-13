@@ -110,15 +110,23 @@ class DataPreparer:
                         elif file_extension in [".zip"]:
                             rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
 
-                        # Invoke build command
-                        build_cmd = self.build_command[program_name]['cmd']
-                        build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
-                        subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
+                        # Should we invoke build command?
+                        if not program_name in self.build_command:
+                            print(f"An entry for the build_commandfor {program_name} was not found. Please update your settings and try again.")
+                            sys.exit(1)
+                        elif "no_build" in self.build_command[program_name]:
+                            pass
+                        else:
+                            # Invoke build command
+                            build_cmd = self.build_command[program_name]['cmd']
+                            build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
+                            subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
             if not os.path.exists(path_to_program):
                 print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
                 sys.exit(1)
 
             print("Successfully installed {}.".format(name_and_version))
+        return True
 
     def check_md5sum(self, path, correct_sum):
         md5sumproc = subprocess.Popen(["md5sum "+path], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
