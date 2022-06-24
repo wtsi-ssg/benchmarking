@@ -1,0 +1,5 @@
+https://it_randd.cog.sanger.ac.uk/ref/b37_human_decoy_reference.dict,56d59e8b60c66341e251cb488bff3fc8
+https://it_randd.cog.sanger.ac.uk/ref/b37_human_decoy_reference.fasta,ac0a8e20a7212d42f31cd1a4bb4bb2ef
+https://it_randd.cog.sanger.ac.uk/ref/b37_human_decoy_reference.fasta.fai,8291ebdcba397015507e2221978e828c
+https://it_randd.cog.sanger.ac.uk/input/RMNISTHS_30xdownsample_chr22.cram,63a10000126385aecb05b967a77a6412
+https://it_randd.cog.sanger.ac.uk/input/RMNISTHS_30xdownsample_chr22.cram.crai,c537da308d6de78712bdbf8078859f2d

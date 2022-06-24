@@ -49,6 +49,19 @@
         program: "mbw"
         programversion: "1.4a"
         arguments: "512MiB"
+    - type: multithreaded
+      settings:
+        tag: bcftools-1.15.1
+        command: "${install_path}bcftools mpileup -Ou -f ${input_datapath}/b37_human_decoy_reference.fasta ${input_datapath}/RMNISTHS_30xdownsample_chr22.cram | ${install_path}bcftools call -mv -o ${result_path}output.${repeatn}.{}.vcf.gz"
+        program: "bcftools"
+        programversion: "1.15.1"
+        shell: True
+        dataset_tag: "default"
+        datadir: "/data/datasets/bcftools/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        process_thread: "1*N"
+        clear_caches: True
 - type: disk
   benchmarks:
     - type: iozone
