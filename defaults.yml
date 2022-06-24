@@ -6,7 +6,7 @@ path_to_program:
   "bwa-mem2": "${name_and_version}/bwa-mem2"
   "streams": "${name_and_version}/stream"
   "mbw": "${name_and_version}/mbw"
-  "mbw": "${name_and_version}/bcftools"
+  "bcftools": "${name_and_version}/bcftools"
 default_version:
   "salmon" : "1.0.0"
   "iozone" : "3.488"
