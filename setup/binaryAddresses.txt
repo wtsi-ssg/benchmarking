@@ -326,3 +326,5 @@ streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/stream.c
 streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c
 mbw-v1.4a, https://github.com/raas/mbw/archive/2a15026ff65160127204881263464b1740a57198.zip
 bwa-mem2-v2.2.1,https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.2.1/Source_code_including_submodules.tar.gz
+bcftools-v1.51.1,https://github.com/samtools/bcftools/releases/download/1.15.1/bcftools-1.15.1.tar.bz2
+samtools-v1.51.1,https://github.com/samtools/samtools/releases/download/1.15.1/samtools-1.15.1.tar.bz2
