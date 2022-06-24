@@ -122,7 +122,7 @@ class DataPreparer:
                             build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
                             subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
             if not os.path.exists(path_to_program):
-                print("Entry for this tool is not found in the binaryAddress list. Please update the list and run again!")
+                print(f"Entry for this tool (program_name) is not found in the binaryAddress list. Please update the list and run again!")
                 sys.exit(1)
 
             print("Successfully installed {}.".format(name_and_version))
