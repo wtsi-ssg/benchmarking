@@ -137,12 +137,8 @@ class DataPreparer:
         else:
             return False
 
-    def download_bwa_data(self, settings_dict):
-        datadir = settings_dict["datadir"]
-        #check and create datasets directory if doesn't exist
-        os.makedirs(datadir, exist_ok=True)
-
-        with open(settings_dict["dataset_file"], 'r') as data_f:
+    def get_file_data(self, list_filename : Path, datadir : Path):
+        with open(list_filename, 'r') as data_f:
             for line in data_f:
                 required_file_name, correct_md5sum = line.strip().split(',')
                 file_name = Path(required_file_name).name
@@ -150,19 +146,27 @@ class DataPreparer:
                 if os.path.exists(datadir+file_name):
                     if not self.check_md5sum(datadir+file_name, correct_md5sum):
                         if self.verbose:
-                            print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
-                        subprocess.check_call(["wget -q https://it_randd.cog.sanger.ac.uk/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
+                            print(f"{required_file_name} is not downloaded correctly. Trying to redownload now...")
+                        subprocess.check_call([f"wget {required_file_name} -O {datadir}{file_name}"], shell=True)
                     else:
                         if self.verbose:
-                            print(required_file_name+" is already downloaded.")
+                            print(f"{file_name} is already downloaded.")
                 else:
                     if self.verbose:
-                        print(file_name+" is not downloaded. Downloading now...")
-                    subprocess.check_call(["wget "+required_file_name+" -O "+datadir+file_name], shell=True)
+                        print(f"{file_name} is not downloaded. Downloading now...")
+                    subprocess.check_call([f"wget {required_file_name} -O {datadir}{file_name}"], shell=True)
+
+
+    def download_dataset_file(self, settings_dict):
+        datadir = settings_dict["datadir"]
+        #check and create datasets directory if doesn't exist
+        os.makedirs(datadir, exist_ok=True)
+
+        self.get_file_data(settings_dict["dataset_file"], datadir)
 
         print("Required dataset is downloaded.")
 
-    def download_salmon_data(self, settings_dict):
+    def download_default_tagged_dataset(self, settings_dict):
         program = settings_dict["program_name"]
         required_version = settings_dict["required_version"]
         dataset_tag = settings_dict["dataset_tag"]
@@ -173,8 +177,8 @@ class DataPreparer:
 
         #check if dataset_tag is default
         if dataset_tag == "default":
-            for ds in self.dataset_required:
-                if required_version in self.dataset_required[ds]:
+            for ds in self.dataset_required[program]:
+                if required_version in self.dataset_required[program][ds]:
                     print("Benchmark is using data_set: {} ".format(ds))
                     index_name = self.dataset_index[ds]
 
@@ -182,22 +186,7 @@ class DataPreparer:
                     os.makedirs(datadir+index_name, exist_ok=True)
                     os.makedirs(datadir+"SRR10103759", exist_ok=True)
 
-                    with open(self.base_dir+"/setup/"+ds+".txt", 'r') as data_f:
-                        for line in data_f:
-                            required_file_name, correct_md5sum = line.strip().split(',')
-
-                            if os.path.exists(datadir+required_file_name):
-                                if not self.check_md5sum(datadir+required_file_name, correct_md5sum):
-                                    if self.verbose:
-                                        print(required_file_name+" is not downloaded correctly. Trying to redownload now...")
-                                    subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
-                                else:
-                                    if self.verbose:
-                                        print(required_file_name+" is already downloaded.")
-                            else:
-                                if self.verbose:
-                                    print(required_file_name+" is not downloaded. Downloading now...")
-                                subprocess.check_call(["wget https://cl25-benchmarking.cog.sanger.ac.uk/data/"+required_file_name+" -O "+datadir+required_file_name], shell=True)
+                    self.get_file_data(self.base_dir+"/setup/"+ds+".txt", datadir)
 
     def get_path_to_program(self, program_name, required_version):
         """get the path to the program"""
@@ -256,12 +245,11 @@ class DataPreparer:
 
         self.download_and_install_programs(settings_list, self.install_dir)
 
+        # Download datasets
         for st in settings_list:
-            if st["dataset_file"] != "None":
-                #FIXME: hardcoded data downloader
-                if st["program_name"] == "salmon":
-                    self.download_salmon_data(st)
-                elif st["program_name"] == "bwa":
-                    self.download_bwa_data(st)
+            if st["dataset_tag"] == "default":
+                self.download_default_tagged_dataset(st)
+            if "dataset_file" in st:
+                self.download_dataset_file(st)
 
         return True
