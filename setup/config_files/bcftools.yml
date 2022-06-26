@@ -10,7 +10,6 @@
         program: "bcftools"
         programversion: "1.15.1"
         shell: True
-        dataset_tag: "default"
         dataset_file: "/benchmarking/setup/bcftools_data.txt"
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"

@@ -10,7 +10,6 @@
         program: "bwa"
         programversion: "0.7.17+b56db22"
         shell: True
-        dataset_tag: "bwa"
         dataset_file: "/benchmarking/setup/bwa_data.txt"
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
@@ -24,7 +23,6 @@
         program: "bwa-mem2"
         programversion: "2.2.1"
         shell: True
-        dataset_tag: "bwa"
         dataset_file: "/benchmarking/setup/bwa_data.txt"
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
@@ -56,7 +54,6 @@
         program: "bcftools"
         programversion: "1.15.1"
         shell: True
-        dataset_tag: "default"
         dataset_file: "/benchmarking/setup/bcftools_data.txt"
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"

@@ -10,7 +10,6 @@
         program: "bwa"
         programversion: "0.7.17+b56db22"
         shell: True
-        dataset_tag: "bwa"
         dataset_file: "/benchmarking/setup/bwa_data.txt"
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
