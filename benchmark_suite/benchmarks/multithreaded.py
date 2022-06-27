@@ -87,7 +87,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 start_time = time.perf_counter()
                 for i in range(1,int(ps)+1):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
-                    print(f"runstring is: '{runstring}'")
+                    # print(f"runstring is: '{runstring}'")
                     process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
                     t = TailChase(process.pid)
                     t.start()
