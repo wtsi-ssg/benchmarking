@@ -44,8 +44,7 @@ class DataPreparer:
                     if 'dataset_tag' in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         dataset_tag = settings_doc[n]['benchmarks'][m]['settings']['dataset_tag']
                     else:
-                        print("dataset_tag setting required, none set.")
-                        return None
+                        dataset_tag = None
                     if 'datadir' in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         datadir = settings_doc[n]['benchmarks'][m]['settings']['datadir']
                     else:
