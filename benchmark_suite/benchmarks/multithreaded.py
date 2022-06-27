@@ -85,7 +85,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                     def __init__(self, pid: int):
                         super(TailChase,self).__init__()
                         self.pid = pid
-                    def run():
+                    def run(self):
                         self.results = os.wait4(self.pid, 0)
                 start_time = time.perf_counter()
                 for i in range(1,int(ps)+1):
