@@ -82,8 +82,8 @@ class MultiThread(benchmarkessentials.Benchmark):
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
                 processes =[]
                 class TailChase(Thread):
-                    def __init__(pid: int):
-                        Thread.__init__()
+                    def __init__(self, pid: int):
+                        super.__init__()
                         self.pid = pid
                     def run():
                         self.results = os.wait4(self.pid, 0)
