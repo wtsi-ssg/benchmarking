@@ -104,7 +104,9 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult["maxrss"] = 0
 
                 for x in processes:
-                    if (os.waitstatus_to_exitcode(x.exitstatus) )
+                    if os.waitstatus_to_exitcode(x.exitstatus) != 0:
+                        print("Non-zero exit code from test")
+                        os.abort()
                     runresult["user"] = runresult["user"] + x.results.ru_utime
                     runresult["system"] = runresult["system"] + x.results.ru_stime
                     runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
