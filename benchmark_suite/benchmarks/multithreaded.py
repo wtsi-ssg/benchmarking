@@ -101,10 +101,12 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult["elapsed"] = time.perf_counter() - start_time
                 runresult["user"] = 0
                 runresult["system"] = 0
+                runresult["maxrss"] = 0
 
                 for x in processes:
-                    runresult["user"] = runresult["user"] + x.results.ru_utime
-                    runresult["user"] = runresult["user"] + x.results.ru_utime
+                    runresult["user"] = runresult["user"] + x.results[2].ru_utime
+                    runresult["system"] = runresult["system"] + x.results[2].ru_stime
+                    runresult["maxrss"] = runresult["maxrss"] + x.results[2].ru_maxrss
                 configuration["runs"].append(runresult)
             
             results["configurations"].append(configuration)
