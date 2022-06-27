@@ -299,12 +299,16 @@
                                         },
                                         "elapsed": {
                                           "type": "number"
+                                        },
+                                        "maxrss": {
+                                          "type": "number"
                                         }
                                       },
                                       "required": [
                                         "user",
                                         "system",
-                                        "elapsed"
+                                        "elapsed",
+                                        "maxrss"
                                       ]
                                     }
                                   }

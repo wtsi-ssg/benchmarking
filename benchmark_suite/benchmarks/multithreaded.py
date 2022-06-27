@@ -86,7 +86,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                         super(TailChase,self).__init__()
                         self.pid = pid
                     def run(self):
-                        self.results = os.wait4(self.pid, 0)
+                        _, self.exitstatus, self.results = os.wait4(self.pid, 0)
                 start_time = time.perf_counter()
                 for i in range(1,int(ps)+1):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
@@ -104,9 +104,10 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult["maxrss"] = 0
 
                 for x in processes:
-                    runresult["user"] = runresult["user"] + x.results[2].ru_utime
-                    runresult["system"] = runresult["system"] + x.results[2].ru_stime
-                    runresult["maxrss"] = runresult["maxrss"] + x.results[2].ru_maxrss
+                    if (os.waitstatus_to_exitcode(x.exitstatus) )
+                    runresult["user"] = runresult["user"] + x.results.ru_utime
+                    runresult["system"] = runresult["system"] + x.results.ru_stime
+                    runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
                 configuration["runs"].append(runresult)
             
             results["configurations"].append(configuration)
