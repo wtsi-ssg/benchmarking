@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL org.opencontainers.image.authors="Martin Pollard <mp15@sanger.ac.uk>"
 
@@ -31,4 +31,4 @@ ENV PYTHONPATH /benchmarking
 
 WORKDIR /benchmarking
 
-ENTRYPOINT ["/benchmarking/runbenchmarks.py"]
+ENTRYPOINT ["python3","/benchmarking/runbenchmarks.py"]
