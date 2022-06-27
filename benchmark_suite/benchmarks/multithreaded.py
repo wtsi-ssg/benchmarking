@@ -103,8 +103,8 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult["system"] = 0
 
                 for x in processes:
-                    runresult["user"] = runresult["user"] + x.report.ru_utime
-                    runresult["user"] = runresult["user"] + x.report.ru_utime
+                    runresult["user"] = runresult["user"] + x.results.ru_utime
+                    runresult["user"] = runresult["user"] + x.results.ru_utime
                 configuration["runs"].append(runresult)
             
             results["configurations"].append(configuration)
