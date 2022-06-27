@@ -8,7 +8,7 @@ from benchmark_suite import benchmarkessentials
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"iperf": IPerf}
 
 class IPerf(benchmarkessentials.Benchmark):
@@ -35,7 +35,7 @@ class IPerf(benchmarkessentials.Benchmark):
             }
 
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "iPerf"
 
     def run(self):

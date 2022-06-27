@@ -14,7 +14,7 @@ from cpuinfo import get_cpu_info
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
@@ -46,7 +46,7 @@ class MultiThread(benchmarkessentials.Benchmark):
             "arguments":command
             }
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "multithreaded_{tag}".format(tag=self.tag)
 
     def run(self):
@@ -54,7 +54,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                    "configurations": []
                   }
 
-        resulted_sam_dir, resulted_time_dir = self.create_result_dirs(self.get_name())
+        resulted_sam_dir = self.create_result_dirs(self.get_name())
 
         for pt in self.process_thread:
             if self.clear_caches:
@@ -113,17 +113,14 @@ class MultiThread(benchmarkessentials.Benchmark):
             
         return {"settings":self.settings,"results": results}
 
-    def create_result_dirs(self, subdir):
+    def create_result_dirs(self, subdir) -> str:
         timestamp = time.strftime("%Y-%m-%d-%H%M%S")
         resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
         os.makedirs(resulted_data_dir, exist_ok=True)
 
-        resulted_time_dir = os.path.join(self.result_dir, subdir,  self.tag, timestamp, "time_files", "")
-        os.makedirs(resulted_time_dir, exist_ok=True)
+        return resulted_data_dir
 
-        return resulted_data_dir, resulted_time_dir
-
-    def get_time_results_from_file(self, fileout):
+    def get_time_results_from_file(self, fileout) -> dict:
         timedict = {}
         with open(fileout, "r") as time_file:
             time_lines = time_file.readlines()
@@ -132,7 +129,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         
         return timedict
 
-    def generate_averages(self, time_list):
+    def generate_averages(self, time_list) -> dict:
         averages = {}
         for timetype in self.time_names:
             averages[timetype] = round(float(sum(d[timetype] for d in time_list)) / len(time_list) ,2)

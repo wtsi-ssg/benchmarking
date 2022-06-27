@@ -6,7 +6,7 @@ from benchmark_suite import benchmarkessentials
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"mbw": MBW}
 
 class MBW(benchmarkessentials.Benchmark):
@@ -21,7 +21,7 @@ class MBW(benchmarkessentials.Benchmark):
             }
 
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "mbw"
 
     def _parse_mbw_output(self, stdout_text: str):

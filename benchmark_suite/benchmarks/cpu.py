@@ -3,7 +3,7 @@
 from benchmark_suite import benchmarkessentials
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"cpu": CPU}
 
 class CPU(benchmarkessentials.ParentBenchmark):
@@ -11,7 +11,7 @@ class CPU(benchmarkessentials.ParentBenchmark):
         super().__init__(**kwargs)
         self.benchmarks = benchmarks if benchmarks else []
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "CPU"
 
     def add_benchmark(self, benchmark):

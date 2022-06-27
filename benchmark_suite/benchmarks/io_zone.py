@@ -11,7 +11,7 @@ from benchmark_suite import benchmarkessentials
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"iozone": IOZone}
 
 class IOZone(benchmarkessentials.Benchmark):
@@ -26,10 +26,10 @@ class IOZone(benchmarkessentials.Benchmark):
             "arguments":arguments
             }
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "IOZone"
 
-    def _get_iozone_xls(self):
+    def _get_iozone_xls(self) -> str:
         timestr = time.strftime("%Y-%m-%d-%H%M%S")
         result_file_path = os.path.join(self.result_dir, self.get_name())
         os.makedirs(result_file_path, exist_ok=True)

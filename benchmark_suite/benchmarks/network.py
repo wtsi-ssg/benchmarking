@@ -6,7 +6,7 @@ from benchmark_suite import benchmarkessentials
 
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"network": Network}
 
 class Network(benchmarkessentials.ParentBenchmark):
@@ -14,7 +14,7 @@ class Network(benchmarkessentials.ParentBenchmark):
         super().__init__(**kwargs)
         self.benchmarks = benchmarks if benchmarks else []
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "Network"
 
     def add_benchmark(self, benchmark):

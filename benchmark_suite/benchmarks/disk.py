@@ -7,7 +7,7 @@ import platform
 from benchmark_suite import benchmarkessentials
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
-    def get_benchmarks(self):
+    def get_benchmarks(self) -> benchmarkessentials.Benchmark:
         return {"disk": Disk}
 
 class Disk(benchmarkessentials.ParentBenchmark):
@@ -17,7 +17,7 @@ class Disk(benchmarkessentials.ParentBenchmark):
         self.target_dir = target_dir if target_dir else "/tmp"
         self.install_dir = install_dir
 
-    def get_name(self):
+    def get_name(self) -> str:
         return "Disk"
  
     def add_benchmark(self, benchmark):
