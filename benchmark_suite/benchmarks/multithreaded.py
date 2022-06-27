@@ -2,15 +2,12 @@
 
 import os
 import os.path
-import resource
-from threading import Thread
-import psutil
 import shlex
 import subprocess
 import sys
-import tempfile
 import time
 from string import Template
+from threading import Thread
 
 from benchmark_suite import benchmarkessentials
 from cpuinfo import get_cpu_info
@@ -91,7 +88,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 for i in range(1,int(ps)+1):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
                     print(f"runstring is: '{runstring}'")
-                    process =  psutil.Popen([runstring], shell=True, universal_newlines=True)
+                    process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
                     t = TailChase(process.pid)
                     t.start()
                     processes.append(t)
