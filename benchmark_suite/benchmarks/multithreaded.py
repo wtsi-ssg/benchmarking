@@ -81,27 +81,30 @@ class MultiThread(benchmarkessentials.Benchmark):
                 execstring = Template(self.execution_string)
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
                 processes =[]
-                def tailchase(pid):
-                    return os.wait4(pid, 0)
+                class TailChase(Thread):
+                    def __init__(pid: int):
+                        Thread.__init__()
+                        self.pid = pid
+                    def run():
+                        self.results = os.wait4(self.pid, 0)
                 start_time = time.perf_counter()
                 for i in range(1,int(ps)+1):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i) + '"'
                     print(f"runstring is: '{runstring}'")
                     process =  psutil.Popen([runstring], shell=True, universal_newlines=True)
-                    t = Thread(target=tailchase, args=process.pid)
+                    t = TailChase(process.pid)
                     t.start()
                     processes.append(t)
 
                 # wait for term
-                procreports = []
-                for x in processes: procreports.append(x.join())
+                for x in processes: x.join()
                 runresult["elapsed"] = time.perf_counter() - start_time
                 runresult["user"] = 0
                 runresult["system"] = 0
 
-                for report in procreports:
-                    runresult["user"] = runresult["user"] + report.ru_utime
-                    runresult["user"] = runresult["user"] + report.ru_utime
+                for x in processes:
+                    runresult["user"] = runresult["user"] + x.report.ru_utime
+                    runresult["user"] = runresult["user"] + x.report.ru_utime
                 configuration["runs"].append(runresult)
             
             results["configurations"].append(configuration)
