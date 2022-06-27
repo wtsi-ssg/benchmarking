@@ -2,6 +2,9 @@
 
 import os
 import os.path
+import resource
+from threading import Thread
+import psutil
 import shlex
 import subprocess
 import sys
@@ -75,17 +78,30 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 runresult = {}
 
-                timetempfd, timetemp = tempfile.mkstemp()
-                parallelstring = Template('/usr/bin/time -f "%U %S %e" -o $timetemp bash -c "(for i in $$(bash -c "echo {1..$processcount}"); do echo \\$$i; done)| parallel --verbose -j 0 -P +$processcount -- ')
                 execstring = Template(self.execution_string)
-                runstring =  parallelstring.substitute(timetemp=timetemp, processcount=ps) + execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir) + '"'
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
-                print(f"runstring is: '{runstring}'")
-                with os.fdopen(timetempfd, "w+") as timetempfo, subprocess.Popen([runstring], shell=True, stdout=subprocess.PIPE, universal_newlines=True) as process:
-                    stdout, _ = process.communicate()
-                    usr_sys_elp_list = timetempfo.readline().strip().split(" ")
-                    if len(usr_sys_elp_list) == 3:
-                        runresult["user"], runresult["system"], runresult["elapsed"] = list(map(float, usr_sys_elp_list))
+                processes =[]
+                def tailchase(pid):
+                    return os.wait4(pid, 0)
+                start_time = time.perf_counter()
+                for i in range(1,ps+1):
+                    runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i) + '"'
+                    print(f"runstring is: '{runstring}'")
+                    process =  psutil.Popen([runstring], shell=True, universal_newlines=True)
+                    t = Thread(tailchase, args=process.pid)
+                    t.start()
+                    processes.append(t)
+
+                # wait for term
+                procreports = []
+                for x in processes: procreports.append(x.join())
+                runresult["elapsed"] = time.perf_counter() - start_time
+                runresult["user"] = 0
+                runresult["system"] = 0
+
+                for report in procreports:
+                    runresult["user"] = runresult["user"] + report.ru_utime
+                    runresult["user"] = runresult["user"] + report.ru_utime
                 configuration["runs"].append(runresult)
             
             results["configurations"].append(configuration)
