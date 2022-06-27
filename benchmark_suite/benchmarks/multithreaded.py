@@ -88,7 +88,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i) + '"'
                     print(f"runstring is: '{runstring}'")
                     process =  psutil.Popen([runstring], shell=True, universal_newlines=True)
-                    t = Thread(tailchase, args=process.pid)
+                    t = Thread(target=tailchase, args=process.pid)
                     t.start()
                     processes.append(t)
 
