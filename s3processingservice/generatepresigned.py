@@ -13,7 +13,8 @@ res = client.generate_presigned_post('it_randd',
                                      Conditions=[{'acl':'private'},
                                                  {'Content-Type':'application/json'},
                                                  ["content-length-range", 1, 10485760],
-                                                 ["starts-with", "$key", "results/"]])
+                                                 ["starts-with", "$key", "results/"]],
+                                     ExpiresIn=604800)
 print(res)
 with open("post_signed_url.json", "a") as f:
     f.write(json.dumps(res))
