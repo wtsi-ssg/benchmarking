@@ -59,6 +59,13 @@ def get_args():
         type=str,
         help="""Executable to drop test host cache"""
     )
+    parser.add_argument(
+        '--return_results',
+        type=bool,
+        help="""Automatically upload results to Sanger""",
+        default=False,
+        action="store_true"
+    )
     
     return parser.parse_args()
 
@@ -137,16 +144,17 @@ def post_results(raw_result_file : str, jsondata : str):
     else:
         print('Results returned successfully.')
 
-def run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file):
+def run_benchsuite(benchsuite, config_file, result_fullpath):
     install_dir = Utility.get_install_dir(config_file)
     results = benchsuite.run()
     
     with open(result_fullpath, "w") as file:
         json.dump(results, file, indent=2)
-    post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
     
     if args.verbose:
         print(json.dumps(results, indent=2, sort_keys=True))
+
+    return results
 
 def update_iperf_server_address(config, server_address, port):
     for c in config:
@@ -192,12 +200,14 @@ if __name__ == '__main__':
     
     benchsuite = add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks)
     
-    run_benchsuite(benchsuite, config_file, result_fullpath, raw_result_file)
+    results = run_benchsuite(benchsuite, config_file, result_fullpath)
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
+    if args.return_results:
+        post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
     pr = PlotResults(result_fullpath, [], plot_fullpath)
     pr.plot_results()
-    print(f"Plots in: {plot_file_path_to_local}")
+    print(f"Plots in: <mount_point>/{plot_file_path_to_local}")
