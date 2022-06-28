@@ -61,7 +61,6 @@ def get_args():
     )
     parser.add_argument(
         '--return_results',
-        type=bool,
         help="""Automatically upload results to Sanger""",
         default=False,
         action="store_true"
