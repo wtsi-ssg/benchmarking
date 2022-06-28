@@ -124,13 +124,16 @@ def post_results(raw_result_file : str, jsondata : str):
     # Fetch signed post URL from s3 cog
     post_signed_url = "https://it_randd.cog.sanger.ac.uk/post_signed_url.json"
     r = requests.get(url=post_signed_url)
+    if not r.ok:
+        print(f'Fetch of POST URL for data return failed. Error {r.status_code}')
+        return
     myurl_raw = json.loads(r.text)
 
     # POST results JSON to fetched URL
     files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
     resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
     if not resp.ok:
-        print(f'Error {r.status_code} uploading results: {r.text}')
+        print(f'Error {resp.status_code} uploading results: {resp.text}')
     else:
         print('Results returned successfully.')
 
