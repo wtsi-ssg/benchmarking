@@ -6,21 +6,23 @@ import os
 import pathlib
 import sys
 import time
+from decimal import Decimal
 from typing import Tuple
 
 import requests
 import yaml
 import yapsy.PluginFileLocator as pfl
 import yapsy.PluginManager as pm
-from benchmark_suite.plotresults import PlotResults
 
-from benchmark_suite.suite import Suite
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
 from benchmark_suite.datapreparer import DataPreparer
+from benchmark_suite.plotresults import PlotResults
+from benchmark_suite.suite import Suite
 
 sys.path.insert(1, f'{sys.path[0]}/setup/')
 from benchmark_suite.utility import Utility
+
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -65,7 +67,12 @@ def get_args():
         default=False,
         action="store_true"
     )
-    
+    parser.add_argument(
+        '--cost_per_kwh',
+        type=Decimal,
+        help="""Cost of power per KWh for plots"""
+    )
+
     return parser.parse_args()
 
 def get_config_file(b_type):
@@ -207,6 +214,6 @@ if __name__ == '__main__':
         post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
-    pr = PlotResults(result_fullpath, [], plot_fullpath)
+    pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh)
     pr.plot_results()
     print(f"Plots in: <mount_point>/{plot_file_path_to_local}")

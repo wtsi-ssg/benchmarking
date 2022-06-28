@@ -1,6 +1,7 @@
 import json
 import pathlib
 import re
+from decimal import Decimal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,10 +13,11 @@ from matplotlib.lines import Line2D
 
 
 class PlotResults:
-    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path) -> None:
+    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : Decimal) -> None:
         self.results_filename = results_filename
         self.compare_filenames = compare_filenames
         self.plot_filename = plot_filename
+        self.cost_per_kwh = cost_per_kwh
 
     def yield_processthreadlabels(model:str, data:list):
         for m in data['results']['configurations']:

@@ -3,6 +3,7 @@
 import argparse
 import pathlib
 import sys
+from decimal import Decimal
 
 import benchmark_suite.plotresults
 
@@ -13,6 +14,11 @@ parser.add_argument('--compare_file', metavar='compare_file', type=pathlib.Path,
                     help='')
 parser.add_argument('plot_file', metavar='plot_file', type=pathlib.Path, nargs='?',
                     help='file to plot results to', default=sys.stdout)
+parser.add_argument(
+    '--cost_per_kwh',
+    type=Decimal,
+    help="""Cost of power per KWh for plots"""
+)
 
 args = parser.parse_args()
 
