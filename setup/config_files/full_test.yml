@@ -21,7 +21,7 @@
         tag: bwa-mem2
         command: "${install_path}bwa-mem2 mem -t ${threads} -K 100000000 -o ${result_path}/output.${repeatn}.${processn}.sam ${input_datapath}/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna ${input_datapath}/RMNISTHS_3xdownsample.fastq"
         program: "bwa-mem2"
-        programversion: "2.2.1"
+        programversion: "2.2.1+d48e1de"
         shell: True
         dataset_file: "/benchmarking/setup/bwa_data.txt"
         datadir: "/data/datasets/bwa/"
