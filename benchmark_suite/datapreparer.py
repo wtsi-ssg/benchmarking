@@ -179,7 +179,7 @@ class DataPreparer:
             for ds in self.dataset_required[program]:
                 if required_version in self.dataset_required[program][ds]:
                     print("Benchmark is using data_set: {} ".format(ds))
-                    index_name = self.dataset_index[ds]
+                    index_name = self.dataset_index[program][ds]
 
                     #check and create datasets directory if doesn't exist
                     os.makedirs(datadir+index_name, exist_ok=True)
