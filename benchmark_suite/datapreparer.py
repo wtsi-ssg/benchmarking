@@ -248,7 +248,7 @@ class DataPreparer:
         for st in settings_list:
             if st["dataset_tag"] == "default":
                 self.download_default_tagged_dataset(st)
-            if "dataset_file" in st and st["dataset_file"] is not None:
+            if "dataset_file" in st and st["dataset_file"] is not None and st["dataset_file"] != '':
                 self.download_dataset_file(st)
 
         return True
