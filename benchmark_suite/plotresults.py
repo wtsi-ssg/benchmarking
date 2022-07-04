@@ -36,7 +36,7 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
     
     def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_processthreadlabels(model, data)), list(PlotResults.yield_time(data,'user')), list(PlotResults.yield_time(data,'system')), list(PlotResults.yield_time(data,'elapsed'))
+        return list(PlotResults.yield_processthreadlabels(model, data)), list(PlotResults.yield_time(data,'user')), list(PlotResults.yield_time(data,'system')), list(PlotResults.yield_time(data,'elapsed')), list(PlotResults.yield_time(data,'maxrss'))
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
@@ -81,14 +81,15 @@ class PlotResults:
                 continue
             tool = matchdata.group(1)
 
-            x_labels, x_user, x_sys, x_elapsed = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
+            x_labels, x_user, x_sys, x_elapsed, x_rss = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_labels, m_user, m_sys, m_elapsed = PlotResults.get_result_cpu_data(model, matching_result[0])
+                m_labels, m_user, m_sys, m_elapsed, m_rss = PlotResults.get_result_cpu_data(model, matching_result[0])
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
                 x_sys = x_sys + m_sys
                 x_elapsed = x_elapsed + m_elapsed
+                x_rss = x_rss + m_rss
                 m_models = np.tile(model, len(m_labels))
                 x_models = np.hstack([x_models, m_models])
 
@@ -101,6 +102,8 @@ class PlotResults:
             _, x_sys_std = grp_model_pt.std(x_sys)
             _, x_elapsed_mean = grp_model_pt.mean(x_elapsed)
             _, x_elapsed_std = grp_model_pt.std(x_elapsed)
+            _, x_rss_mean = grp_model_pt.mean(x_rss)
+            _, x_rss_std = grp_model_pt.std(x_rss)
             grp_model = npi.group_by(x_unique[:,0])
 
             # CPU times plot
@@ -148,6 +151,33 @@ class PlotResults:
             ax.set_title(f'Walltime of {tool}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('Walltime (Seconds)', fontweight='semibold')
+
+            ax.bar_label(rects3, padding=3)
+
+            n_res = grp_model.count
+            accum_x = 0
+            for i in range(0,len(n_res)):
+                PlotResults.annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
+                accum_x = accum_x + n_res[i]
+
+            pdf.savefig(fig)
+            plt.close()
+
+            # RSS plot
+            fig, ax = plt.subplots()
+            fig.subplots_adjust(bottom=0.2)
+
+            ind = np.arange(len(x_rss_mean))    # the x locations for the groups
+            width = 0.20         # the width of the bars
+
+            rects3 = ax.bar(ind, x_rss_mean, width, label='Elapsed')
+            rects3a = ax.errorbar(ind, x_rss_mean, yerr=x_rss_std, fmt='o', ecolor='black')
+
+            ax.set_xticks(ind)
+            ax.set_xticklabels(f'{x[1]}' for x in x_unique)
+            ax.set_title(f'Max RSS of {tool}')
+            ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
+            ax.set_ylabel('Max RSS (kb)', fontweight='semibold')
 
             ax.bar_label(rects3, padding=3)
 
