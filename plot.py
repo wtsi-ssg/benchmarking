@@ -19,8 +19,14 @@ parser.add_argument(
     type=Decimal,
     help="""Cost of power per KWh for plots"""
 )
+parser.add_argument(
+    '--carbon_per_kwh',
+    type=Decimal,
+    help="""Carbon dioxide in Kg per KWh for plots"""
+)
+
 
 args = parser.parse_args()
 
-pr = benchmark_suite.plotresults.PlotResults(args.results_file, args.compare_file, args.plot_file)
+pr = benchmark_suite.plotresults.PlotResults(args.results_file, args.compare_file, args.plot_file, args.cost_per_kwh, args.carbon_per_kwh)
 pr.plot_results()
