@@ -72,6 +72,11 @@ def get_args():
         type=Decimal,
         help="""Cost of power per KWh for plots"""
     )
+    parser.add_argument(
+        '--carbon_per_kwh',
+        type=Decimal,
+        help="""Carbon dioxide in Kg per KWh for plots"""
+    )
 
     return parser.parse_args()
 
@@ -214,6 +219,6 @@ if __name__ == '__main__':
         post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
-    pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh)
+    pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh, args.carbon_per_kwh)
     pr.plot_results()
     print(f"Plots in: <mount_point>/{plot_file_path_to_local}")
