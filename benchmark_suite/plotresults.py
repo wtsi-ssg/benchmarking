@@ -81,7 +81,7 @@ class PlotResults:
                     clip_on=False, transform=trans, **text_kwargs)
 
 
-    def plot_CPU(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
+    def plot_CPU(self, main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
             matchdata = re.match(r'multithreaded_(.*)', report)
             if matchdata is None:
@@ -228,7 +228,12 @@ class PlotResults:
 
             pdf.savefig(fig)
             plt.close()
-
+            if self.cost_per_kwh:
+                # x_outputs_per_cost = [output / tco for output in x_outputs] FIXME
+                pass
+            if self.carbon_per_kwh
+                #x_outputs_per_kwh = [output * power/self.carbon_per_kwh for output in x_outputs] FIXME
+                pass
 
     def plot_MBW(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
@@ -331,7 +336,7 @@ class PlotResults:
         with PdfPages(str(self.plot_filename)) as pdf:
             PlotResults.plot_title(self.results, pdf)
             if 'CPU' in self.results['results']:
-                PlotResults.plot_CPU(self.results, self.comparison_results, pdf)
+                self.plot_CPU(self.results, self.comparison_results, pdf)
                 PlotResults.plot_MBW(self.results, self.comparison_results, pdf)
             if 'Disk' in self.results['results']:
                 PlotResults.plot_disk(self.results, pdf)
