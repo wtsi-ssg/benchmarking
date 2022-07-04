@@ -182,8 +182,10 @@ if __name__ == '__main__':
 
     dp = DataPreparer('defaults.yml', f'/benchmarking/setup/config_files/{args.type}.yml',
                       os.path.dirname(os.path.realpath(__file__)), args.verbose)
+    print('Preparing data for benchmarking...')
     if not dp.prepareData():
         sys.exit(1)
+    print('Benchmarking preparation complete.')
  
     if args.type == "network" and not (args.server_ip and args.server_port):
         print("-s_ip and -s_port required for iPerf network benchmark.")
@@ -211,6 +213,7 @@ if __name__ == '__main__':
     
     benchsuite = add_benchmark_to_benchsuite(benchsuite, config, loaded_benchmarks)
     
+    print ('Running benchmarks')
     results = run_benchsuite(benchsuite, config_file, result_fullpath)
 
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
