@@ -25,6 +25,11 @@ class PlotResults:
             for i in range(0, len(m['runs'])):
                 yield f"{m['processes']}*{m['threads']}"
 
+    def yield_process(data:list):
+        for m in data['results']['configurations']:
+            for i in range(0, len(m['runs'])):
+                yield m['processes']
+
     def yield_time(data:list, type:str):
         for keyData in data['results']['configurations']:
             for m in keyData['runs']:
@@ -36,7 +41,7 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
     
     def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_processthreadlabels(model, data)), list(PlotResults.yield_time(data,'user')), list(PlotResults.yield_time(data,'system')), list(PlotResults.yield_time(data,'elapsed')), list(PlotResults.yield_time(data,'maxrss'))
+        return list(PlotResults.yield_process(data)), list(PlotResults.yield_processthreadlabels(model, data)), list(PlotResults.yield_time(data,'user')), list(PlotResults.yield_time(data,'system')), list(PlotResults.yield_time(data,'elapsed')), list(PlotResults.yield_time(data,'maxrss'))
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
@@ -81,10 +86,11 @@ class PlotResults:
                 continue
             tool = matchdata.group(1)
 
-            x_labels, x_user, x_sys, x_elapsed, x_rss = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
+            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_labels, m_user, m_sys, m_elapsed, m_rss = PlotResults.get_result_cpu_data(model, matching_result[0])
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss = PlotResults.get_result_cpu_data(model, matching_result[0])
+                x_processes = x_processes + m_processes
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
                 x_sys = x_sys + m_sys
@@ -92,6 +98,8 @@ class PlotResults:
                 x_rss = x_rss + m_rss
                 m_models = np.tile(model, len(m_labels))
                 x_models = np.hstack([x_models, m_models])
+
+            x_outputs = [process / (elapsed/3600) for process, elapsed in zip(x_processes, x_elapsed)]
 
             a = np.array([x_models,x_labels]).T
             grp_model_pt = npi.group_by(a)
@@ -104,6 +112,8 @@ class PlotResults:
             _, x_elapsed_std = grp_model_pt.std(x_elapsed)
             _, x_rss_mean = grp_model_pt.mean(x_rss)
             _, x_rss_std = grp_model_pt.std(x_rss)
+            _, x_outputs_mean = grp_model_pt.mean(x_outputs)
+            _, x_outputs_std = grp_model_pt.std(x_outputs)
             grp_model = npi.group_by(x_unique[:,0])
 
             # CPU times plot
@@ -189,6 +199,34 @@ class PlotResults:
 
             pdf.savefig(fig)
             plt.close()
+
+            # outputs (genomes) per hour plot
+            fig, ax = plt.subplots()
+            fig.subplots_adjust(bottom=0.2)
+
+            ind = np.arange(len(x_outputs_mean))    # the x locations for the groups
+            width = 0.20         # the width of the bars
+
+            rects3 = ax.bar(ind, x_outputs_mean, width, label='Outputs per hour')
+            rects3a = ax.errorbar(ind, x_outputs_mean, yerr=x_outputs_std, fmt='o', ecolor='black')
+
+            ax.set_xticks(ind)
+            ax.set_xticklabels(f'{x[1]}' for x in x_unique)
+            ax.set_title(f'Outputs per Hour of {tool}')
+            ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
+            ax.set_ylabel('Outputs per hour', fontweight='semibold')
+
+            ax.bar_label(rects3, padding=3)
+
+            n_res = grp_model.count
+            accum_x = 0
+            for i in range(0,len(n_res)):
+                PlotResults.annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
+                accum_x = accum_x + n_res[i]
+
+            pdf.savefig(fig)
+            plt.close()
+
 
     def plot_MBW(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
