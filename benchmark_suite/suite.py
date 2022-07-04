@@ -17,15 +17,19 @@ class Suite(object):
 
      - supplies high level system information: host, OS, CPUs, Arch
     """
-    def __init__(self, benchmarks=None, install_dir=None, clear_cache_bin=None, nickname=None):
+    def __init__(self, benchmarks=None, install_dir=None, clear_cache_bin=None, nickname=None, override_power=None, tco=None):
         self.benchmarks = benchmarks if benchmarks else []
         self.install_dir = install_dir
         self.clear_cache_bin = clear_cache_bin
         self.nickname = nickname
+        self.override_power = override_power
+        self.tco = tco
 
     def run(self):
         results = {
                   "nickname": self.nickname,
+                  "tco": self.tco,
+                  "power": self.override_power,
                   "date": datetime.datetime.now().strftime("%Y-%m-%d"), 
                   "system-info": self._get_system_info(), 
                   "results": {}

@@ -6,6 +6,12 @@
     "nickname": {
       "type": "string"
     },
+    "tco": {
+      "type": "number"
+    },
+    "power": {
+      "type": "number"
+    },
     "date": {
       "type": "string"
     },

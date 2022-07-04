@@ -13,12 +13,14 @@ from matplotlib.lines import Line2D
 
 
 class PlotResults:
-    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : Decimal, carbon_per_kwh : Decimal) -> None:
+    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : Decimal, carbon_per_kwh : Decimal, override_power : Decimal, override_tco : Decimal) -> None:
         self.results_filename = results_filename
         self.compare_filenames = compare_filenames
         self.plot_filename = plot_filename
         self.cost_per_kwh = cost_per_kwh
         self.carbon_per_kwh = carbon_per_kwh
+        self.override_power = override_power
+        self.override_tco = override_tco
 
     def yield_processthreadlabels(model:str, data:list):
         for m in data['results']['configurations']:

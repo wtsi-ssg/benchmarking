@@ -77,6 +77,16 @@ def get_args():
         type=Decimal,
         help="""Carbon dioxide in Kg per KWh for plots"""
     )
+    parser.add_argument(
+        '--override_power',
+        type=Decimal,
+        help="""Override detected power consumption in watts"""
+    )
+    parser.add_argument(
+        '--tco',
+        type=Decimal,
+        help="""TCO of machine in £"""
+    )
 
     return parser.parse_args()
 
@@ -207,7 +217,7 @@ if __name__ == '__main__':
 
     loaded_benchmarks = load_all_benchmarks()
     
-    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.nickname)
+    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.nickname, override_power=args.override_power, tco=args.tco)
     
     set_wd(config_file)
     
