@@ -110,7 +110,9 @@ class MultiThread(benchmarkessentials.Benchmark):
                 perfprocess.communicate()
 
                 with os.fdopen(perftempfd, "w+") as perftempfo:
-                    power_list = [line.strip().split(",")[0] for line in perftempfo.readlines()]
+                    f = lambda x: {"value": x[0], "units": x[1], "measure": x[2].strip('\"')}
+                    power_string_list = [line.strip().split(",")for line in perftempfo.readlines()]
+                    power_list = [f(line) for line in power_string_list if len(line) == 7 ]
 
                     print(f'perf result: {power_list}')
 
@@ -119,6 +121,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 runresult["user"] = 0
                 runresult["system"] = 0
                 runresult["maxrss"] = 0
+                runresult["power"] = power_list
 
                 for x in processes:
                     if os.waitstatus_to_exitcode(x.exitstatus) != 0:
