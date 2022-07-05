@@ -5,6 +5,7 @@ import os.path
 import shlex
 import subprocess
 import sys
+import tempfile
 import time
 from string import Template
 from threading import Thread
@@ -87,7 +88,9 @@ class MultiThread(benchmarkessentials.Benchmark):
                 start_time = time.perf_counter()
 
                 # Launch perf to monitor power consumption
-                perfprocess = subprocess.Popen(['/usr/bin/perf', 'stat', '-a', '-e','"power/energy-pkg/","power/energy-ram/"','-x',','], stdout=subprocess.PIPE, universal_newlines=True)
+                perftempfd, perftemp = tempfile.mkstemp()
+
+                perfprocess = subprocess.Popen(['/usr/bin/perf', 'stat', '-a', '-e','"power/energy-pkg/","power/energy-ram/"','-x',',', '-o', perftemp])
                 # Run the processes to be evaluated
                 processes =[]
                 for i in range(1,int(ps)+1):
@@ -103,8 +106,11 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 # monitor power consumption: stop perf monitoring and collect result
                 perfprocess.terminate()
-                _, perf_stderr = perfprocess.communicate()
-                print(f'perf result: {perf_stderr}')
+
+                with os.fdopen(perftempfd, "w+") as perftempfo:
+                    power_list = [line.strip().split(",")[0] for line in perftempfo.readlines()]
+
+                    print(f'perf result: {power_list}')
 
                 # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time
