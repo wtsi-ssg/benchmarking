@@ -103,8 +103,8 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 # monitor power consumption: stop perf monitoring and collect result
                 perfprocess.terminate()
-                stdout, _ = perfprocess.communicate()
-                print(f'perf result: {stdout}')
+                _, perf_stderr = perfprocess.communicate()
+                print(f'perf result: {perf_stderr}')
 
                 # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time
