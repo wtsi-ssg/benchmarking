@@ -77,7 +77,7 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 execstring = Template(self.execution_string)
                 #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
-                processes =[]
+                # Subclass Thread to collect resource usage
                 class TailChase(Thread):
                     def __init__(self, pid: int):
                         super(TailChase,self).__init__()
@@ -85,6 +85,11 @@ class MultiThread(benchmarkessentials.Benchmark):
                     def run(self):
                         _, self.exitstatus, self.results = os.wait4(self.pid, 0)
                 start_time = time.perf_counter()
+
+                # Launch perf to monitor power consumption
+                perfprocess = subprocess.Popen(['/usr/bin/perf', 'stat', '-a', '-e','"power/energy-pkg/","power/energy-ram/"','-x',','], stdout=subprocess.PIPE, universal_newlines=True)
+                # Run the processes to be evaluated
+                processes =[]
                 for i in range(1,int(ps)+1):
                     runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
                     # print(f"runstring is: '{runstring}'")
@@ -93,8 +98,15 @@ class MultiThread(benchmarkessentials.Benchmark):
                     t.start()
                     processes.append(t)
 
-                # wait for term
+                # wait for all processes to terminate
                 for x in processes: x.join()
+
+                # monitor power consumption: stop perf monitoring and collect result
+                perfprocess.terminate()
+                stdout, _ = perfprocess.communicate()
+                print(f'perf result: {stdout}')
+
+                # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time
                 runresult["user"] = 0
                 runresult["system"] = 0
