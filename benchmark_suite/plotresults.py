@@ -231,7 +231,7 @@ class PlotResults:
             if self.cost_per_kwh:
                 # x_outputs_per_cost = [output / tco for output in x_outputs] FIXME
                 pass
-            if self.carbon_per_kwh
+            if self.carbon_per_kwh:
                 #x_outputs_per_kwh = [output * power/self.carbon_per_kwh for output in x_outputs] FIXME
                 pass
 
