@@ -25,11 +25,6 @@ parser.add_argument(
     help="""Carbon dioxide in Kg per KWh for plots"""
 )
 parser.add_argument(
-    '--carbon_per_kwh',
-    type=Decimal,
-    help="""Carbon dioxide in Kg per KWh for plots"""
-)
-parser.add_argument(
     '--override_power',
     type=Decimal,
     help="""Override power consumption in watts"""
