@@ -13,6 +13,7 @@ from matplotlib.lines import Line2D
 
 
 class PlotResults:
+    JOULES_TO_KILOWATTHOURS = 3600000
     def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : Decimal, carbon_per_kwh : Decimal, override_power : Decimal, override_tco : Decimal) -> None:
         self.results_filename = results_filename
         self.compare_filenames = compare_filenames
@@ -43,7 +44,7 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
     
     def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_process(data)), list(PlotResults.yield_processthreadlabels(model, data)), list(PlotResults.yield_time(data,'user')), list(PlotResults.yield_time(data,'system')), list(PlotResults.yield_time(data,'elapsed')), list(PlotResults.yield_time(data,'maxrss'))
+        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power'])/PlotResults.JOULES_TO_KILOWATTHOURS for keyData in data['results']['configurations'] for m in keyData['runs']])
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
@@ -88,16 +89,18 @@ class PlotResults:
                 continue
             tool = matchdata.group(1)
 
-            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
+            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
+            # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss = PlotResults.get_result_cpu_data(model, matching_result[0])
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_data(model, matching_result[0])
                 x_processes = x_processes + m_processes
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
                 x_sys = x_sys + m_sys
                 x_elapsed = x_elapsed + m_elapsed
                 x_rss = x_rss + m_rss
+                x_power_per_run = x_power_per_run + m_power_per_run
                 m_models = np.tile(model, len(m_labels))
                 x_models = np.hstack([x_models, m_models])
 
@@ -116,6 +119,8 @@ class PlotResults:
             _, x_rss_std = grp_model_pt.std(x_rss)
             _, x_outputs_mean = grp_model_pt.mean(x_outputs)
             _, x_outputs_std = grp_model_pt.std(x_outputs)
+            _, x_power_per_run_mean = grp_model_pt.mean(x_power_per_run)
+            _, x_power_per_run_std =  grp_model_pt.std(x_power_per_run)
             grp_model = npi.group_by(x_unique[:,0])
 
             # CPU times plot
@@ -228,12 +233,43 @@ class PlotResults:
 
             pdf.savefig(fig)
             plt.close()
-            if self.cost_per_kwh:
-                # x_outputs_per_cost = [output / tco for output in x_outputs] FIXME
-                pass
+
+            # Power per output(run)
+            fig, ax = plt.subplots()
+            fig.subplots_adjust(bottom=0.2)
+
+            ind = np.arange(len(x_power_per_run_mean))    # the x locations for the groups
+            width = 0.20         # the width of the bars
+
+            rects3 = ax.bar(ind, x_power_per_run_mean, width, label='Power per Output (kWh)')
+            rects3a = ax.errorbar(ind, x_power_per_run_mean, yerr=x_power_per_run_mean, fmt='o', ecolor='black')
+            # TODO: make this right hand axis if defined
             if self.carbon_per_kwh:
-                #x_outputs_per_kwh = [output * power/self.carbon_per_kwh for output in x_outputs] FIXME
+                # carbon per run
+                #x_outputs_per_kwh = [self.carbon_per_kwh * x_power_per_run_mean in x_outputs] FIXME
                 pass
+
+            ax.set_xticks(ind)
+            ax.set_xticklabels(f'{x[1]}' for x in x_unique)
+            ax.set_title(f'Power per output of {tool}')
+            ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
+            ax.set_ylabel('Power per output (kWh)', fontweight='semibold')
+
+            ax.bar_label(rects3, padding=3)
+
+            n_res = grp_model.count
+            accum_x = 0
+            for i in range(0,len(n_res)):
+                PlotResults.annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
+                accum_x = accum_x + n_res[i]
+
+            pdf.savefig(fig)
+            plt.close()
+
+            #if TCO
+                # TCO over 5 years di
+                # x_outputs_per_cost = [tco / output * 8760 * 5 for output in x_outputs] FIXME
+                #pass
 
     def plot_MBW(main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
