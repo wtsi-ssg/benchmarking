@@ -308,6 +308,23 @@
                                         },
                                         "maxrss": {
                                           "type": "number"
+                                        },
+                                        "power": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "value": {
+                                                "type": "number"
+                                              },
+                                              "units": {
+                                                "type": "string"
+                                              },
+                                              "measure": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          }
                                         }
                                       },
                                       "required": [
