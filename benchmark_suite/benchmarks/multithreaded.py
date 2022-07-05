@@ -114,8 +114,6 @@ class MultiThread(benchmarkessentials.Benchmark):
                     power_string_list = [line.strip().split(",")for line in perftempfo.readlines()]
                     power_list = [f(line) for line in power_string_list if len(line) == 7 ]
 
-                    print(f'perf result: {power_list}')
-
                 # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time
                 runresult["user"] = 0
