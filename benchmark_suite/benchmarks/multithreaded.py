@@ -3,6 +3,7 @@
 import os
 import os.path
 import shlex
+import signal
 import subprocess
 import sys
 import tempfile
@@ -105,7 +106,8 @@ class MultiThread(benchmarkessentials.Benchmark):
                 for x in processes: x.join()
 
                 # monitor power consumption: stop perf monitoring and collect result
-                perfprocess.terminate()
+                perfprocess.send_signal(signal.SIGINT)
+                perfprocess.communicate()
 
                 with os.fdopen(perftempfd, "w+") as perftempfo:
                     power_list = [line.strip().split(",")[0] for line in perftempfo.readlines()]
