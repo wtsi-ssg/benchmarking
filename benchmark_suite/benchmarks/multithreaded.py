@@ -57,9 +57,6 @@ class MultiThread(benchmarkessentials.Benchmark):
         resulted_sam_dir = self.create_result_dirs(self.get_name())
 
         for pt in self.process_thread:
-            if self.clear_caches:
-                print("--Clearing cache", file=sys.stderr)
-                self.suite.clear_cache()
 
             ps, th = list(map(str, pt.split("*")))
             if th == "N":
@@ -71,6 +68,9 @@ class MultiThread(benchmarkessentials.Benchmark):
                         }
 
             for repeat in range(1, self.repeats+1):
+                if self.clear_caches:
+                    print("--Clearing cache", file=sys.stderr)
+                    self.suite.clear_cache()
                 print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
 
                 runresult = {}
