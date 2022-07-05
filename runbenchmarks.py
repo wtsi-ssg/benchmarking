@@ -232,6 +232,6 @@ if __name__ == '__main__':
         post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
-    pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh, args.carbon_per_kwh)
+    pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh, args.carbon_per_kwh, override_power=None, override_tco=None)
     pr.plot_results()
     print(f"Plots in: <mount_point>/{plot_file_path_to_local}")
