@@ -1,7 +1,7 @@
+import decimal
 import json
 import pathlib
 import re
-from decimal import Decimal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,7 +14,7 @@ from matplotlib.lines import Line2D
 
 class PlotResults:
     JOULES_TO_KILOWATTHOURS = 3600000
-    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : Decimal, carbon_per_kwh : Decimal, override_power : Decimal, override_tco : Decimal) -> None:
+    def __init__(self, results_filename : pathlib.Path, compare_filenames :list, plot_filename : pathlib.Path, cost_per_kwh : decimal.Decimal, carbon_per_kwh : decimal.Decimal, override_power : decimal.Decimal, override_tco : decimal.Decimal) -> None:
         self.results_filename = results_filename
         self.compare_filenames = compare_filenames
         self.plot_filename = plot_filename
@@ -81,6 +81,10 @@ class PlotResults:
                     horizontalalignment='center', verticalalignment='center',
                     clip_on=False, transform=trans, **text_kwargs)
 
+    def kwh_to_co2(self, x):
+        return x*float(self.carbon_per_kwh)
+    def co2_to_kwh(self, x):
+        return x/float(self.carbon_per_kwh)
 
     def plot_CPU(self, main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
@@ -246,8 +250,9 @@ class PlotResults:
             # TODO: make this right hand axis if defined
             if self.carbon_per_kwh:
                 # carbon per run
+                ax2=ax.secondary_yaxis('right', functions=(self.kwh_to_co2, self.co2_to_kwh))
+                ax2.set_ylabel('$CO^2$ per output', fontweight='semibold')
                 #x_outputs_per_kwh = [self.carbon_per_kwh * x_power_per_run_mean in x_outputs] FIXME
-                pass
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
