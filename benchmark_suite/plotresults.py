@@ -374,7 +374,7 @@ class PlotResults:
             for compare_filename in self.compare_filenames:
                 self.comparison_results.append(json.load(open(compare_filename)))
 
-        with PdfPages(str(self.plot_filename)) as pdf:
+        with PdfPages(str(self.plot_filename), metadata={'Creator': 'Genomics Benchmark', 'Title': f"Benchmarking results for {self.results['system-info']['model']}\n{self.results['date']}"}) as pdf:
             PlotResults.plot_title(self.results, pdf)
             if 'CPU' in self.results['results']:
                 self.plot_CPU(self.results, self.comparison_results, pdf)
