@@ -10,3 +10,4 @@ pandas>=1.4.0
 xlrd>=2.0.1
 requests>=2.27
 seaborn>=0.11.2
+codecarbon>=2.1.3

@@ -3,15 +3,16 @@
 import os
 import os.path
 import shlex
-import signal
 import subprocess
 import sys
-import tempfile
 import time
 from string import Template
 from threading import Thread
 
+from numpy import power
+
 from benchmark_suite import benchmarkessentials
+from codecarbon import OfflineEmissionsTracker
 from cpuinfo import get_cpu_info
 
 
@@ -88,10 +89,10 @@ class MultiThread(benchmarkessentials.Benchmark):
                         _, self.exitstatus, self.results = os.wait4(self.pid, 0)
                 start_time = time.perf_counter()
 
-                # Launch perf to monitor power consumption
-                perftempfd, perftemp = tempfile.mkstemp()
+                # Launch CodeCarbon to monitor power consumption
+                tracker = OfflineEmissionsTracker(country_iso_code = "GBR", save_to_file=False, log_level = "warning")
+                tracker.start()
 
-                perfprocess = subprocess.Popen(['/usr/bin/perf', 'stat', '-a', '-e','"power/energy-pkg/","power/energy-ram/"','-x',',', '-o', perftemp])
                 # Run the processes to be evaluated
                 processes =[]
                 for i in range(1,int(ps)+1):
@@ -106,13 +107,12 @@ class MultiThread(benchmarkessentials.Benchmark):
                 for x in processes: x.join()
 
                 # monitor power consumption: stop perf monitoring and collect result
-                perfprocess.send_signal(signal.SIGINT)
-                perfprocess.communicate()
-
-                with os.fdopen(perftempfd, "w+") as perftempfo:
-                    f = lambda x: {"value": float(x[0]), "units": x[1], "measure": x[2].strip('\"')}
-                    power_string_list = [line.strip().split(",")for line in perftempfo.readlines()]
-                    power_list = [f(line) for line in power_string_list if len(line) == 7 ]
+                tracker.stop()
+                power_list = [
+                    {"value": tracker.final_emissions_data.cpu_energy, "units": "kWh", "measure": "cpu_energy"},
+                    {"value": tracker.final_emissions_data.gpu_energy, "units": "kWh", "measure": "gpu_energy"},
+                    {"value": tracker.final_emissions_data.ram_energy, "units": "kWh", "measure": "ram_energy"},
+                ]
 
                 # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time

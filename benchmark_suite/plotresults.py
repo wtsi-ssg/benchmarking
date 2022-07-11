@@ -44,7 +44,7 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
     
     def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power'])/PlotResults.JOULES_TO_KILOWATTHOURS for keyData in data['results']['configurations'] for m in keyData['runs']])
+        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power']) for keyData in data['results']['configurations'] for m in keyData['runs']])
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
@@ -246,7 +246,7 @@ class PlotResults:
             width = 0.20         # the width of the bars
 
             rects3 = ax.bar(ind, x_power_per_run_mean, width, label='Power per Output (kWh)')
-            rects3a = ax.errorbar(ind, x_power_per_run_mean, yerr=x_power_per_run_mean, fmt='o', ecolor='black')
+            rects3a = ax.errorbar(ind, x_power_per_run_mean, yerr=x_power_per_run_std, fmt='o', ecolor='black')
             # TODO: make this right hand axis if defined
             if self.carbon_per_kwh:
                 # carbon per run
