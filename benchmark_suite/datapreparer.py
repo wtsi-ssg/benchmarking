@@ -127,8 +127,8 @@ class DataPreparer:
             print("Successfully installed {}.".format(name_and_version))
         return True
 
-    def check_md5sum(self, path, correct_sum):
-        md5sumproc = subprocess.Popen(["md5sum "+path], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    def check_md5sum(self, path : Path, correct_sum):
+        md5sumproc = subprocess.Popen(["md5sum "+path.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         out, err = md5sumproc.communicate()
         md5sumcheck = out.split(" ")
         if md5sumcheck[0] == correct_sum:
@@ -142,26 +142,29 @@ class DataPreparer:
                 required_file_name, correct_md5sum = line.strip().split(',')
                 file_name = Path(required_file_name).name
 
-                if os.path.exists(datadir+file_name):
-                    if not self.check_md5sum(datadir+file_name, correct_md5sum):
+                if os.path.exists(datadir/file_name):
+                    if not self.check_md5sum(datadir/file_name, correct_md5sum):
                         if self.verbose:
                             print(f"{required_file_name} is not downloaded correctly. Trying to redownload now...")
-                        subprocess.check_call([f"wget {required_file_name} -O {datadir}{file_name}"], shell=True)
+                        subprocess.check_call([f"wget {required_file_name} -O {datadir/file_name}"], shell=True)
                     else:
                         if self.verbose:
                             print(f"{file_name} is already downloaded.")
                 else:
                     if self.verbose:
                         print(f"{file_name} is not downloaded. Downloading now...")
-                    subprocess.check_call([f"wget {required_file_name} -O {datadir}{file_name}"], shell=True)
+                    subprocess.check_call([f"wget {required_file_name} -O {datadir/file_name}"], shell=True)
 
 
     def download_dataset_file(self, settings_dict):
-        datadir = settings_dict["datadir"]
+        datadir = pathlib.Path(settings_dict["datadir"])
         #check and create datasets directory if doesn't exist
         os.makedirs(datadir, exist_ok=True)
 
-        self.get_file_data(settings_dict["dataset_file"], datadir)
+        if type(settings_dict["dataset_file"]) is dict:
+            self.get_file_data(settings_dict["dataset_file"]["file"], datadir/settings_dict["dataset_file"]["dest"])
+        else:
+            self.get_file_data(settings_dict["dataset_file"], datadir)
 
         print("Required dataset is downloaded.")
 
@@ -169,7 +172,7 @@ class DataPreparer:
         program = settings_dict["program_name"]
         required_version = settings_dict["required_version"]
         dataset_tag = settings_dict["dataset_tag"]
-        datadir = settings_dict["datadir"]
+        datadir = pathlib.Path(settings_dict["datadir"])
         
         #check and create datasets directory if doesn't exist
         os.makedirs(datadir, exist_ok=True)
@@ -179,15 +182,15 @@ class DataPreparer:
             for ds in self.dataset_required[program]:
                 if required_version in self.dataset_required[program][ds]:
                     print("Benchmark is using data_set: {} ".format(ds))
-                    index_name = self.dataset_index[program][ds]
+                    index_name = pathlib.Path(self.dataset_index[program][ds])
 
                     #check and create datasets directory if doesn't exist
-                    os.makedirs(datadir+index_name, exist_ok=True)
-                    os.makedirs(datadir+"SRR10103759", exist_ok=True)
+                    os.makedirs(datadir/index_name, exist_ok=True)
+                    os.makedirs(datadir/"SRR10103759", exist_ok=True)
 
-                    self.get_file_data(self.base_dir+"/setup/"+ds+".txt", datadir)
+                    self.get_file_data(self.base_dir+"/setup/"+ds+".txt", datadir/index_name)
 
-    def get_path_to_program(self, program_name, required_version):
+    def get_path_to_program(self, program_name : str, required_version : str) -> pathlib.Path:
         """get the path to the program"""
         name_and_version = f'{program_name}-v{required_version}'
         if program_name in self.path_to_program_dict.keys():
@@ -197,7 +200,7 @@ class DataPreparer:
         iperfvar = "iperf"+required_version[0]
         path_to_program = path_to_program_template.substitute(name_and_version=name_and_version,iperfvar=iperfvar)
 
-        return path_to_program
+        return pathlib.Path(path_to_program)
 
     def __init__(self, defaults_yml_input_file : pathlib.Path, settings_yml_input_file : pathlib.Path, basedir : pathlib.Path, verbose : bool):
         self.defaults_yml_input_file = defaults_yml_input_file

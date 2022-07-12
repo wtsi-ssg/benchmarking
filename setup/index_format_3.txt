@@ -7,5 +7,3 @@ https://cl25-benchmarking.cog.sanger.ac.uk/data/referenceGenome_index3/rsd.bin,0
 https://cl25-benchmarking.cog.sanger.ac.uk/data/referenceGenome_index3/sa.bin,8a3a112b1567f0fa0e390c9cb9f474db
 https://cl25-benchmarking.cog.sanger.ac.uk/data/referenceGenome_index3/txpInfo.bin,3ee7b32275f91bb6c10c087e18b052ae
 https://cl25-benchmarking.cog.sanger.ac.uk/data/referenceGenome_index3/versionInfo.json,001ef788a87a43e0d2ea8c7c8c09ef1d
-https://cl25-benchmarking.cog.sanger.ac.uk/data/SRR10103759/C1_1.fq.gz,2d5692e54b6edd0c6b962497d729e8d6
-https://cl25-benchmarking.cog.sanger.ac.uk/data/SRR10103759/C1_2.fq.gz,5d19f1d143afd6b4c4e54ba3de799b7b

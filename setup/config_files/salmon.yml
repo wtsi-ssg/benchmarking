@@ -10,6 +10,9 @@
         program: "salmon"
         programversion: "1.0.0"
         shell: True
+        dataset_file:
+          file: "/benchmarking/setup/salmon_input_data.txt"
+          dest: "SRR10103759"
         dataset_tag: "default"
         datadir: "/data/datasets/salmon/"
         result_dir: "/data/results/runs/"
