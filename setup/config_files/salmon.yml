@@ -1,0 +1,18 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: salmon-1.0.0
+        command: "${install_path}salmon quant --threads ${threads} -i ${input_datapath}/referenceGenome_index4/ -l A -1 ${input_datapath}/SRR10103759/C1_1.fq.gz -2 ${input_datapath}/SRR10103759/C1_2.fq.gz -o ${result_path}output.${repeatn}.${processn}.quant.sf"
+        program: "salmon"
+        programversion: "1.0.0"
+        shell: True
+        dataset_tag: "default"
+        datadir: "/data/datasets/salmon/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        process_thread: "1*N"
+        clear_caches: True
