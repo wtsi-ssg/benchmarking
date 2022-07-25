@@ -24,6 +24,11 @@ COPY ./runbenchmarks.py /benchmarking/
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /benchmarking/setup/requirements.txt
 
+#fork of codecarbon
+RUN git clone --single-branch -b rapl_wraparound https://github.com/mp15/codecarbon.git /benchmarking/codecarbon
+WORKDIR /benchmarking/codecarbon
+RUN python3 /benchmarking/codecarbon/setup.py install
+
 #create data directory
 RUN mkdir /data
 
