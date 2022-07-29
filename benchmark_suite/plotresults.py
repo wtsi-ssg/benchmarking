@@ -134,19 +134,21 @@ class PlotResults:
             ind = np.arange(len(x_unique))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects1 = ax.bar(ind+width*-.5, x_user_mean, width, label='User')
-            rects1a = ax.errorbar(ind+width*-.5, x_user_mean, yerr=x_user_std, fmt='o', ecolor='black')
-            rects2 = ax.bar(ind-width*-.5, x_sys_mean, width, label='System')
-            rects2a = ax.errorbar(ind-width*-.5, x_sys_mean, yerr=x_sys_std, fmt='o', ecolor='black')
+            rects1 = ax.bar(ind, x_user_mean, width, yerr=x_user_std, label='User')
+            rects1a = ax.errorbar(ind-width*-.5, x_user_mean, yerr=x_user_std, fmt='o', ecolor='black')
+            rects2 = ax.bar(ind, x_sys_mean, width, yerr=x_sys_std, bottom=x_user_mean, label='System')
+            rects2a = ax.errorbar(ind-width*-.5, x_sys_mean+x_user_mean, yerr=x_sys_std, fmt='o', ecolor='black')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
             ax.set_title(f'CPU time of {tool}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
-            ax.set_ylabel('User-mode + System runtime (Seconds)', fontweight='semibold')
+            ax.set_ylabel('User-mode + System CPU time (Seconds)', fontweight='semibold')
 
-            ax.bar_label(rects1, padding=3)
-            ax.bar_label(rects2, padding=3)
+            x_user_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_user_mean, x_user_std)]
+            x_sys_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_sys_mean, x_sys_std)]
+            ax.bar_label(rects1, labels=x_user_mean_label, padding=-3, label_type='center')
+            ax.bar_label(rects2, labels=x_sys_mean_label, padding=3, label_type='center')
 
             n_res = grp_model.count
             accum_x = 0
