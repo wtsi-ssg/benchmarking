@@ -374,6 +374,10 @@ class PlotResults:
             for compare_filename in self.compare_filenames:
                 self.comparison_results.append(json.load(open(compare_filename)))
 
+        # Set plot style sheet
+        plt.style.use('ggplot')
+
+        # Begin plot
         with PdfPages(str(self.plot_filename), metadata={'Creator': 'Genomics Benchmark', 'Title': f"Benchmarking results for {self.results['system-info']['model']}\n{self.results['date']}"}) as pdf:
             PlotResults.plot_title(self.results, pdf)
             if 'CPU' in self.results['results']:
