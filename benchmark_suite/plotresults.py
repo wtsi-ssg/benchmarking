@@ -147,8 +147,8 @@ class PlotResults:
 
             x_user_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_user_mean, x_user_std)]
             x_sys_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_sys_mean, x_sys_std)]
-            ax.bar_label(rects1, labels=x_user_mean_label, padding=-3, label_type='center')
-            ax.bar_label(rects2, labels=x_sys_mean_label, padding=3, label_type='center')
+            ax.bar_label(rects1, labels=x_user_mean_label, label_type='center')
+            ax.bar_label(rects2, labels=x_sys_mean_label, label_type='center')
 
             n_res = grp_model.count
             accum_x = 0
@@ -296,7 +296,7 @@ class PlotResults:
             grp_model_pt = npi.group_by(a)
 
             x_unique, x_bandwidth_mean = grp_model_pt.mean(x_bandwidth)
-            _, x_user_std = grp_model_pt.std(x_bandwidth)
+            _, x_bandwidth_std = grp_model_pt.std(x_bandwidth)
 
             # plot
             fig, ax = plt.subplots()
@@ -304,7 +304,7 @@ class PlotResults:
             ind = np.arange(len(x_bandwidth_mean))    # the x locations for the groups
 
             rects1 = ax.bar(ind, x_bandwidth_mean, width=0.4)
-            rects2 = ax.errorbar(ind, x_bandwidth_mean, yerr=x_user_std, fmt='o')
+            rects2 = ax.errorbar(ind, x_bandwidth_mean, yerr=x_bandwidth_std, fmt='o')
 
             ax.set_ylim(bottom=0)
             ax.set_xticks(ind)
