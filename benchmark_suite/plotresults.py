@@ -135,9 +135,7 @@ class PlotResults:
             width = 0.20         # the width of the bars
 
             rects1 = ax.bar(ind, x_user_mean, width, yerr=x_user_std, label='User')
-            rects1a = ax.errorbar(ind-width*-.5, x_user_mean, yerr=x_user_std, fmt='o', ecolor='black')
             rects2 = ax.bar(ind, x_sys_mean, width, yerr=x_sys_std, bottom=x_user_mean, label='System')
-            rects2a = ax.errorbar(ind-width*-.5, x_sys_mean+x_user_mean, yerr=x_sys_std, fmt='o', ecolor='black')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
@@ -166,8 +164,7 @@ class PlotResults:
             ind = np.arange(len(x_elapsed_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_elapsed_mean, width, label='Elapsed')
-            rects3a = ax.errorbar(ind, x_elapsed_mean, yerr=x_elapsed_std, fmt='o', ecolor='black')
+            rects3 = ax.bar(ind, x_elapsed_mean, width, yerr=x_elapsed_std, label='Elapsed')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
@@ -193,8 +190,7 @@ class PlotResults:
             ind = np.arange(len(x_rss_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_rss_mean, width, label='Elapsed')
-            rects3a = ax.errorbar(ind, x_rss_mean, yerr=x_rss_std, fmt='o', ecolor='black')
+            rects3 = ax.bar(ind, x_rss_mean, width, yerr=x_rss_std, label='Elapsed')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
@@ -220,8 +216,7 @@ class PlotResults:
             ind = np.arange(len(x_outputs_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_outputs_mean, width, label='Outputs per hour')
-            rects3a = ax.errorbar(ind, x_outputs_mean, yerr=x_outputs_std, fmt='o', ecolor='black')
+            rects3 = ax.bar(ind, x_outputs_mean, width, yerr=x_outputs_std, label='Outputs per hour')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
@@ -247,8 +242,7 @@ class PlotResults:
             ind = np.arange(len(x_power_per_run_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_power_per_run_mean, width, label='Power per Output (kWh)')
-            rects3a = ax.errorbar(ind, x_power_per_run_mean, yerr=x_power_per_run_std, fmt='o', ecolor='black')
+            rects3 = ax.bar(ind, x_power_per_run_mean, width, yerr=x_power_per_run_std, label='Power per Output (kWh)')
             # TODO: make this right hand axis if defined
             if self.carbon_per_kwh:
                 # carbon per run
@@ -303,8 +297,7 @@ class PlotResults:
 
             ind = np.arange(len(x_bandwidth_mean))    # the x locations for the groups
 
-            rects1 = ax.bar(ind, x_bandwidth_mean, width=0.4)
-            rects2 = ax.errorbar(ind, x_bandwidth_mean, yerr=x_bandwidth_std, fmt='o')
+            rects1 = ax.bar(ind, x_bandwidth_mean, yerr=x_bandwidth_std, width=0.4)
 
             ax.set_ylim(bottom=0)
             ax.set_xticks(ind)
