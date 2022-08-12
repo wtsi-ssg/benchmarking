@@ -3,6 +3,7 @@
 import os
 import os.path
 import shlex
+import string
 import subprocess
 import sys
 import time
@@ -21,7 +22,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread='1*1', *args, **kwargs):
+    def __init__(self, command, install_dir, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread={"processes":1,"threads":1}, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -42,7 +43,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         self.shell = shell
         self.clear_caches = clear_caches
         self.repeats = repeats
-        self.process_thread = process_thread.split(',')
+        self.process_thread = process_thread
         self.settings = {
             "program":program,
             "programversion":programversion,
@@ -61,9 +62,8 @@ class MultiThread(benchmarkessentials.Benchmark):
 
         for pt in self.process_thread:
 
-            ps, th = list(map(str, pt.split("*")))
-            if th == "N":
-                th = str(get_cpu_info()["count"])
+            ps = pt["processes"]
+            th = string.Template(pt["threads"]).substitute(N=str(get_cpu_info()["count"]))
 
             configuration = { "processes" : int(ps),
                         "threads" : int(th),

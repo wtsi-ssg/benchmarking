@@ -14,7 +14,11 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*1,1*N"
+        process_thread:
+          - processes: 1
+            threads: 1
+          - processes: 1
+            threads: $N
         clear_caches: True
     - type: multithreaded 
       settings:
@@ -27,7 +31,11 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*1,1*N"
+        process_thread:
+          - processes: 1
+            threads: 1
+          - processes: 1
+            threads: $N
         clear_caches: True
     - type: multithreaded
       settings:
@@ -43,7 +51,9 @@
         datadir: "/data/datasets/salmon/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*N"
+        process_thread:
+          - processes: 1
+            threads: $N
         clear_caches: True
     - type: mbw
       settings:
@@ -61,7 +71,9 @@
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*N"
+        process_thread: 
+          - processes: 1
+            threads: $N
         clear_caches: True
 - type: disk
   benchmarks:

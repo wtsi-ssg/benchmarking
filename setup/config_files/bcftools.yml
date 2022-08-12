@@ -14,5 +14,7 @@
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"
         repeats: 3
-        process_thread: "1*N"
+        process_thread:
+          - processes: 1
+            threads: $N
         clear_caches: True
