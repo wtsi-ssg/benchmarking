@@ -17,4 +17,6 @@
         process_thread:
           - processes: 1
             threads: $N
+          - processes: 2
+            threads: $N/2
         clear_caches: True

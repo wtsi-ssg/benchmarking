@@ -15,8 +15,8 @@
         result_dir: "/data/results/runs/"
         repeats: 2
         process_thread:
-          - processes: 1
-            threads: 1
+          - processes: 2
+            threads: $N/2
           - processes: 1
             threads: $N
         clear_caches: True
