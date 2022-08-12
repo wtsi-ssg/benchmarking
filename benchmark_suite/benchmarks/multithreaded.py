@@ -62,11 +62,11 @@ class MultiThread(benchmarkessentials.Benchmark):
 
         for pt in self.process_thread:
 
-            ps = pt["processes"]
-            th = string.Template(pt["threads"]).substitute(N=str(get_cpu_info()["count"]))
+            ps = int(pt["processes"])
+            th = int(string.Template(str(pt["threads"])).substitute(N=str(get_cpu_info()["count"])))
 
-            configuration = { "processes" : int(ps),
-                        "threads" : int(th),
+            configuration = { "processes" :ps,
+                        "threads" : th,
                         "runs" : []
                         }
 
