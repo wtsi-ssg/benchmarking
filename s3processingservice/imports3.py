@@ -7,6 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 import jsonschema
 import psycopg2
+import psycopg2.extras
 from amqp import Connection
 
 DSN = "dbname=benchmarking user=postgres password=postgres"
