@@ -56,6 +56,8 @@ def dump_message(message):
                 except ClientError as ex:
                     pass
     pgconn.close()
+    channel.basic_ack(message.delivery_tag)
+
 
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
 parser.add_argument('host', metavar='host', type=str, nargs='?',
