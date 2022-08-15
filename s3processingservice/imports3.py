@@ -36,7 +36,7 @@ def dump_message(message):
                 except boto3.S3.Client.exceptions.NoSuchKey:
                     next
                 # Validate it against schema
-                doc = res['Body'].read()
+                doc = json.load(res['Body'])
                 res['Body'].close()
                 try:
                     jsonschema.validate(instance = doc, schema=schema)
