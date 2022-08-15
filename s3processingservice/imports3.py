@@ -36,14 +36,15 @@ def dump_message(message):
                 except boto3.S3.Client.exceptions.NoSuchKey:
                     next
                 # Validate it against schema
-                doc = json.load(res['Body'])
+                doc = res['Body'].read()
+                docconv = json.loads(doc)
                 res['Body'].close()
                 try:
-                    jsonschema.validate(instance = doc, schema=schema)
+                    jsonschema.validate(instance = docconv, schema=schema)
                     print(f'File {filename} has passed validation')
                     # It has passed? Send it to postgres database
                     # TODO: Catch exceptions from this and if it fails don't delete
-                    curs.execute("insert into returned_results (jsondata) values (%s)", json.dumps(doc))
+                    curs.execute("insert into returned_results (jsondata) values (%s)", doc)
                 except jsonschema.exceptions.ValidationError as err:
                     print(f'Downloaded file does not validate: {err.message}')
                     pass
