@@ -7,10 +7,10 @@
       "type": "string"
     },
     "tco": {
-      "type": "number"
+      "type": [ "number", "null" ]
     },
     "power": {
-      "type": "number"
+      "type": [ "number", "null" ]
     },
     "date": {
       "type": "string"
@@ -38,17 +38,11 @@
             },
             "cpuinfo_version": {
               "type": "array",
-              "items": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
+              "items": {
+                "type": "integer"
+              },
+              "minItems" : 3,
+              "maxItems" : 3
             },
             "cpuinfo_version_string": {
               "type": "string"
@@ -79,25 +73,19 @@
             },
             "hz_advertised": {
               "type": "array",
-              "items": [
-                {
+              "items": {
                   "type": "integer"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
+              },
+              "minItems" : 2,
+              "maxItems" : 2
             },
             "hz_actual": {
               "type": "array",
-              "items": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
+              "items": {
+                "type": "integer"
+              },
+              "minItems" : 2,
+              "maxItems" : 2
             },
             "stepping": {
               "type": "integer"
@@ -110,11 +98,9 @@
             },
             "flags": {
               "type": "array",
-              "items": [
-                {
-                  "type": "string"
-                }
-              ]
+              "items": {
+                "type": "string"
+              }
             },
             "l3_cache_size": {
               "type": "integer"
@@ -163,16 +149,12 @@
         },
         "NUMAtopology": {
           "type": "array",
-          "items": [
-            {
-              "type": "array",
-              "items": [
-                {
-                  "type": "integer"
-                }
-              ]
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
             }
-          ]
+          }
         },
         "totalRAM": {
           "type": "integer"
@@ -199,162 +181,156 @@
               "properties": {
                 "mbw": {
                   "type": "array",
-                  "items": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "settings": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "object",
+                        "properties": {
+                          "program": {
+                            "type": "string"
+                          },
+                          "programversion": {
+                            "type": "string"
+                          },
+                          "arguments": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "program",
+                          "programversion",
+                          "arguments"
+                        ]
+                      },
+                      "results": {
+                        "type": "array",
+                        "items": {
                           "type": "object",
                           "properties": {
-                            "program": {
+                            "MiB": {
                               "type": "string"
                             },
-                            "programversion": {
+                            "copy": {
                               "type": "string"
                             },
-                            "arguments": {
+                            "elapsed": {
+                              "type": "string"
+                            },
+                            "iteration": {
+                              "type": "integer"
+                            },
+                            "method": {
                               "type": "string"
                             }
-                          },
-                          "required": [
-                            "program",
-                            "programversion",
-                            "arguments"
-                          ]
-                        },
-                        "results": {
-                          "type": "array",
-                          "items": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "MiB": {
-                                  "type": "string"
-                                },
-                                "copy": {
-                                  "type": "string"
-                                },
-                                "elapsed": {
-                                  "type": "string"
-                                },
-                                "iteration": {
-                                  "type": "integer"
-                                },
-                                "method": {
-                                  "type": "string"
-                                }
-                              }
-                            }
-                          ]
+                          }
                         }
                       }
                     }
-                  ]
+                  }
                 }
               },
               "patternProperties": {
                 "multithreaded_[A-Za-z0-9]*": {
                   "type": "array",
-                  "items": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "settings": {
-                          "type": "object",
-                          "properties": {
-                            "program": {
-                              "type": "string"
-                            },
-                            "programversion": {
-                              "type": "string"
-                            },
-                            "arguments": {
-                              "type": "string"
-                            }
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "object",
+                        "properties": {
+                          "program": {
+                            "type": "string"
                           },
-                          "required": [
-                            "program",
-                            "programversion",
-                            "arguments"
-                          ]
+                          "programversion": {
+                            "type": "string"
+                          },
+                          "arguments": {
+                            "type": "string"
+                          }
                         },
-                        "results": {
-                          "type": "object",
-                          "properties": {
-                            "configurations": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "processes": {
-                                    "type": "integer"
-                                  },
-                                  "threads": {
-                                    "type": "integer"
-                                  },
-                                  "runs": {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "user": {
-                                          "type": "number"
-                                        },
-                                        "system": {
-                                          "type": "number"
-                                        },
-                                        "elapsed": {
-                                          "type": "number"
-                                        },
-                                        "maxrss": {
-                                          "type": "number"
-                                        },
-                                        "power": {
-                                          "type": "array",
-                                          "items": {
-                                            "type": "object",
-                                            "properties": {
-                                              "value": {
-                                                "type": "number"
-                                              },
-                                              "units": {
-                                                "type": "string"
-                                              },
-                                              "measure": {
-                                                "type": "string"
-                                              }
+                        "required": [
+                          "program",
+                          "programversion",
+                          "arguments"
+                        ]
+                      },
+                      "results": {
+                        "type": "object",
+                        "properties": {
+                          "configurations": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "processes": {
+                                  "type": "integer"
+                                },
+                                "threads": {
+                                  "type": "integer"
+                                },
+                                "runs": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "user": {
+                                        "type": "number"
+                                      },
+                                      "system": {
+                                        "type": "number"
+                                      },
+                                      "elapsed": {
+                                        "type": "number"
+                                      },
+                                      "maxrss": {
+                                        "type": "number"
+                                      },
+                                      "power": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "value": {
+                                              "type": "number"
+                                            },
+                                            "units": {
+                                              "type": "string"
+                                            },
+                                            "measure": {
+                                              "type": "string"
                                             }
                                           }
                                         }
-                                      },
-                                      "required": [
-                                        "user",
-                                        "system",
-                                        "elapsed",
-                                        "maxrss"
-                                      ]
-                                    }
+                                      }
+                                    },
+                                    "required": [
+                                      "user",
+                                      "system",
+                                      "elapsed",
+                                      "maxrss"
+                                    ]
                                   }
                                 }
-                              },
-                              "required": [
-                                "processes",
-                                "threads",
-                                "runs"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "configurations"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "settings",
-                        "results"
-                      ]
-                    }
-                  ]
+                              }
+                            },
+                            "required": [
+                              "processes",
+                              "threads",
+                              "runs"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "configurations"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "settings",
+                      "results"
+                    ]
+                  }
                 }
               }
             }
@@ -371,44 +347,42 @@
               "properties": {
                 "IOZone": {
                   "type": "array",
-                  "items": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "settings": {
-                          "type": "object",
-                          "properties": {
-                            "program": {
-                              "type": "string"
-                            },
-                            "programversion": {
-                              "type": "string"
-                            },
-                            "arguments": {
-                              "type": "string"
-                            }
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "object",
+                        "properties": {
+                          "program": {
+                            "type": "string"
                           },
-                          "required": [
-                            "program",
-                            "programversion",
-                            "arguments"
-                          ]
+                          "programversion": {
+                            "type": "string"
+                          },
+                          "arguments": {
+                            "type": "string"
+                          }
                         },
-                        "results": {
-                          "type": "object",
-                          "patternProperties": {
-                            "[A-Za-z0-9 ]* Report": {
-                              "type": "object",
-                              "patternProperties": {
-                                "[0-9]*": {
-                                  "type": "object",
-                                  "patternProperties": {
-                                    "[0-9]*": {
-                                      "type": [
-                                        "integer",
-                                        "null"
-                                      ]
-                                    }
+                        "required": [
+                          "program",
+                          "programversion",
+                          "arguments"
+                        ]
+                      },
+                      "results": {
+                        "type": "object",
+                        "patternProperties": {
+                          "[A-Za-z0-9 ]* Report": {
+                            "type": "object",
+                            "patternProperties": {
+                              "[0-9]*": {
+                                "type": "object",
+                                "patternProperties": {
+                                  "[0-9]*": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
                                   }
                                 }
                               }
@@ -417,7 +391,7 @@
                         }
                       }
                     }
-                  ]
+                  }
                 }
               }
             }
