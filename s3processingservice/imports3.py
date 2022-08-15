@@ -28,8 +28,9 @@ def dump_message(message):
                 # Check it is for us
                 if record['eventName'] != 's3:ObjectCreated:Post' or record['s3']['bucket']['name'] != 'it_randd':
                     next
-
+                filename = record['s3']['object']['key']
                 # Download new file from S3
+                print(f'Downloading file {filename}')
                 try:
                     res = client.get_object(Bucket='it_randd', Key=record['s3']['object']['key'])
                 except boto3.S3.Client.exceptions.NoSuchKey:
@@ -39,12 +40,14 @@ def dump_message(message):
                 res['Body'].close()
                 try:
                     jsonschema.validate(instance = doc, schema=schema)
+                    print(f'File {filename} has passed validation')
                     # It has passed? Send it to postgres database
-                    # TODO: Check return from this and if it fails don't delete
+                    # TODO: Catch exceptions from this and if it fails don't delete
                     curs.execute("insert into returned_results (jsondata) values (%s)", doc)
                 except jsonschema.exceptions.ValidationError as err:
+                    print(f'Downloaded file does not validate: {err.message}')
                     pass
-
+                print(f'Deleting file {filename}')
                 # Delete it from S3
                 try:
                     res_del = client.delete_object(Bucket='it_randd', Key=record['s3']['object']['key'])
