@@ -4,6 +4,7 @@ import argparse
 import json
 
 import boto3
+from botocore.exceptions import ClientError
 import jsonschema
 import psycopg2
 from amqp import Connection
@@ -47,7 +48,7 @@ def dump_message(message):
                 # Delete it from S3
                 try:
                     res_del = client.delete_object(Bucket='it_randd', Key=record['s3']['object']['key'])
-                except boto3.S3.Client.exceptions.NoSuchKey:
+                except ClientError as ex:
                     pass
     pgconn.close()
 
@@ -58,7 +59,7 @@ parser.add_argument('user', metavar='user', type=str, nargs='?',
                     help='rabbitmq username', default='guest')
 parser.add_argument('password', metavar='password', type=str, nargs='?',
                     help='rabbitmq password', default='password')
-parser.add_argument('dsn', metavar='host', type=str, nargs='?',
+parser.add_argument('dsn', metavar='dsn', type=str, nargs='?',
                     help='postgres host', default='dbname=benchmarking user=postgres password=postgres')
 
 args = parser.parse_args()
