@@ -49,7 +49,6 @@ def dump_message(message):
                     res_del = client.delete_object(Bucket='it_randd', Key=record['s3']['object']['key'])
                 except boto3.S3.Client.exceptions.NoSuchKey:
                     pass
-            message.ack()
     pgconn.close()
 
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
