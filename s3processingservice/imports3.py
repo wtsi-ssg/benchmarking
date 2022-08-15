@@ -44,7 +44,7 @@ def dump_message(message):
                     print(f'File {filename} has passed validation')
                     # It has passed? Send it to postgres database
                     # TODO: Catch exceptions from this and if it fails don't delete
-                    curs.execute("insert into returned_results (jsondata) values (%s)", (docconv,))
+                    curs.execute("insert into returned_results (jsondata) values (%s)", (psycopg2.extras.Json(docconv),))
                 except jsonschema.exceptions.ValidationError as err:
                     print(f'Downloaded file does not validate: {err.message}')
                     pass
