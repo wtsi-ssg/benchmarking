@@ -16,14 +16,18 @@ CREATE TABLE public.returned_results
 ALTER TABLE IF EXISTS public.returned_results
     OWNER to benchmarking;
 
--- View: public.cpu_results
-
--- DROP MATERIALIZED VIEW IF EXISTS public.cpu_results;
-
 CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_results
 TABLESPACE pg_default
 AS
- SELECT benchmark_runs.nickname,
+ SELECT     benchmark_data.benchmark_type,
+    benchmark_data.processes,
+    benchmark_data.threads,
+    benchmark_data.usercpu,
+    benchmark_data.elapsed,
+    benchmark_data.maxrss,
+    benchmark_data.powerl -> 'cpu_energy' -> 'value'::text AS cpu_energy,
+	benchmark_data.powerl -> 'ram_energy' -> 'value'::text AS ram_energy
+	FROM (SELECT benchmark_runs.nickname,
     benchmark_runs.benchmark_type,
     benchmark_runs.processes,
     benchmark_runs.threads,
@@ -44,7 +48,7 @@ AS
                             ((maindata.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text AS benchmark_types
                            FROM ( SELECT returned_results.jsondata
                                    FROM returned_results) maindata) hosts
-                  WHERE hosts.benchmark_type ~~ 'multithreaded_%'::text) benchmarks) benchmark_runs
+                  WHERE hosts.benchmark_type ~~ 'multithreaded_%'::text) benchmarks) benchmark_runs ) benchmark_data
 WITH DATA;
 
 ALTER TABLE IF EXISTS public.cpu_results
