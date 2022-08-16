@@ -137,11 +137,11 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                 # monitor power consumption: stop perf monitoring and collect result
                 tracker.stop()
-                power_list = [
-                    {"value": tracker.final_emissions_data.cpu_energy, "units": "kWh", "measure": "cpu_energy"},
-                    {"value": tracker.final_emissions_data.gpu_energy, "units": "kWh", "measure": "gpu_energy"},
-                    {"value": tracker.final_emissions_data.ram_energy, "units": "kWh", "measure": "ram_energy"},
-                ]
+                power_list = {
+                    "cpu_energy" : {"value": tracker.final_emissions_data.cpu_energy, "units": "kWh"},
+                    "gpu_energy" : {"value": tracker.final_emissions_data.gpu_energy, "units": "kWh"},
+                    "ram_energy" : {"value": tracker.final_emissions_data.ram_energy, "units": "kWh"},
+                }
 
                 # Total rusage
                 runresult["elapsed"] = time.perf_counter() - start_time
