@@ -44,7 +44,7 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
     
     def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power']) for keyData in data['results']['configurations'] for m in keyData['runs']])
+        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] for m in keyData['runs']])
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
