@@ -3,7 +3,7 @@
 import argparse
 import json
 
-from matplotlib.font_manager import json_dump
+from amqp import Connection
 
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
 parser.add_argument('host', metavar='host', type=str, nargs='?',
@@ -33,3 +33,12 @@ record = {
     ]
     }
 print(json.dumps(record))
+
+# Connect to Rabbit MQ server providing S3 notifications
+conn = Connection(host=args.host, userid=args.user,
+                  password=args.password, virtual_host="/")
+conn.connect()
+
+# Set up channel to send to queue
+channel = conn.channel()
+channel.basic_publish(routing_key='returned_results', msg=record)
