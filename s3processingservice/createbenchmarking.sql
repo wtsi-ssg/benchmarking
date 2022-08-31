@@ -23,11 +23,12 @@ TABLESPACE pg_default
 AS
  SELECT benchmark_data.nickname,
     benchmark_data.benchmark_type,
-    benchmark_data.processes::integer,
-    benchmark_data.threads::integer,
-    benchmark_data.usercpu::numeric,
-    benchmark_data.elapsed::numeric,
-    benchmark_data.maxrss::integer,
+    benchmark_data.processes::integer AS processes,
+    benchmark_data.threads::integer AS threads,
+    benchmark_data.usercpu::numeric AS usercpu,
+    benchmark_data.syscpu::numeric AS syscpu,
+    benchmark_data.elapsed::numeric AS elapsed,
+    benchmark_data.maxrss::integer AS maxrss,
     ((benchmark_data.powerl -> 'cpu_energy'::text) ->> 'value'::text)::numeric AS cpu_energy,
     ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy
    FROM ( SELECT benchmark_runs.nickname,
@@ -35,6 +36,7 @@ AS
             benchmark_runs.processes,
             benchmark_runs.threads,
             benchmark_runs.runs ->> 'user'::text AS usercpu,
+            benchmark_runs.runs ->> 'system'::text AS syscpu,
             benchmark_runs.runs ->> 'elapsed'::text AS elapsed,
             benchmark_runs.runs ->> 'maxrss'::text AS maxrss,
             benchmark_runs.runs -> 'power'::text AS powerl
@@ -55,7 +57,6 @@ WITH DATA;
 
 ALTER TABLE IF EXISTS public.cpu_results
     OWNER TO benchmarking;
-
 -- View: public.mbw_results
 
 -- DROP MATERIALIZED VIEW IF EXISTS public.mbw_results;
