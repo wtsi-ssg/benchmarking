@@ -80,3 +80,36 @@ WITH DATA;
 
 ALTER TABLE IF EXISTS public.mbw_results
     OWNER TO benchmarking;
+
+CREATE MATERIALIZED VIEW public.iozone_results
+AS
+SELECT 
+nickname,
+iz_report_types,
+x,
+y::integer,
+(y_data ->> y)::integer z
+FROM (
+SELECT
+nickname,
+iz_report_types,
+x::integer,
+jsonb_object_keys(x_data -> x) y,
+x_data -> x as y_data
+FROM(
+	SELECT nickname,
+iz_report_types,
+jsonb_object_keys(iz_report_type -> iz_report_types) x,
+iz_report_type -> iz_report_types AS x_data
+FROM
+(SELECT nickname,
+jsonb_object_keys(iozone_benchmarks -> 'results') as iz_report_types,
+iozone_benchmarks -> 'results' AS iz_report_type
+FROM
+(SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
+                                    jsonb_array_elements(returned_results.jsondata -> 'results'::text -> 'Disk'::text  -> 'benchmarks' -> 'IOZone'::text) AS iozone_benchmarks
+                                   FROM returned_results) as izb) as isbr) isbr_x ) isbr_xy
+WITH DATA;
+
+ALTER TABLE IF EXISTS public.iozone_results
+    OWNER TO benchmarking;
