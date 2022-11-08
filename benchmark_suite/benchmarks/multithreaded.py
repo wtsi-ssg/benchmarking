@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import ast
+import operator as op
 import os
 import os.path
 import shlex
@@ -10,21 +12,17 @@ import time
 from string import Template
 from threading import Thread
 
-from numpy import power
-
-from benchmark_suite import benchmarkessentials
 from codecarbon import OfflineEmissionsTracker
 from cpuinfo import get_cpu_info
 
-import ast
-import operator as op
+from benchmark_suite import benchmarkessentials
 
 # supported operators
 operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
              ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
              ast.USub: op.neg}
 
-def eval_expr(expr):
+def eval_expr(expr : str):
     """
     >>> eval_expr('2^6')
     4
@@ -44,7 +42,6 @@ def eval_(node):
         return operators[type(node.op)](eval_(node.operand))
     else:
         raise TypeError(node)
-
 
 class Plugin(benchmarkessentials.BenchmarkPlugin):
     def get_benchmarks(self) -> benchmarkessentials.Benchmark:
