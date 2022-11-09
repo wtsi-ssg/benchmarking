@@ -25,8 +25,8 @@ class PlotResults:
         self.override_tco = override_tco
 
     def get_result_cpu_single_data(model, data) -> tuple[list, list, list, list, list, list, list]:
-        return [zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1), # processes
-                zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1), # process thread labels
+        return [list(zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # processes
+                list(zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # process thread labels
                 (m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
                 (m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
                 (m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
@@ -39,8 +39,8 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
 
     def get_result_cpu_throughput_data(model, data):
-        return [zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count']), # processes
-                zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count']), # process thread labels
+        return [list(zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # processes
+                list(zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # process thread labels
                 (m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
                 (m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
                 (m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
