@@ -32,7 +32,7 @@ parser.add_argument(
 parser.add_argument(
     '--override_tco',
     type=Decimal,
-    help="""TCO of machine in £"""
+    help="""TCO of machine in GBP"""
 )
 
 args = parser.parse_args()
