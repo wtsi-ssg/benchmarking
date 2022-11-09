@@ -24,9 +24,8 @@ class PlotResults:
         self.override_power = override_power
         self.override_tco = override_tco
 
-    def get_result_cpu_single_data(main_results, data) -> tuple[list, list, list, list, list, list, list]:
-        return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # processes
-                list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # process thread labels
+    def get_result_cpu_single_data(main_results, data) -> tuple[list, list, list, list, list, list]:
+        return [list(itertools.chain.from_iterable(itertools.repeat(m['threads'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # thread labels
                 list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
                 list(m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
                 list(m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
@@ -94,12 +93,11 @@ class PlotResults:
                 continue
             tool = matchdata.group(1)
 
-            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
+            x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(main_results, compare_results):
-                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(main_results, matching_result[0])
-                x_processes = x_processes + m_processes
+                m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(main_results, matching_result[0])
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
                 x_sys = x_sys + m_sys
@@ -109,7 +107,7 @@ class PlotResults:
                 m_models = np.tile(model, len(m_labels))
                 x_models = np.hstack([x_models, m_models])
 
-            x_outputs = [process / (elapsed/3600) for process, elapsed in zip(x_processes, x_elapsed)]
+            x_outputs = [1 / (elapsed/3600) for elapsed in x_elapsed]
 
             a = np.array([x_models,x_labels]).T
             grp_model_pt = npi.group_by(a)
@@ -140,7 +138,7 @@ class PlotResults:
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'CPU time of {tool}')
+            ax.set_title(f'Single Process CPU time of {tool}')
             ax.set_xlabel('(Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('User-mode + System CPU time (Seconds)', fontweight='semibold')
 
