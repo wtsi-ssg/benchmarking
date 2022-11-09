@@ -24,7 +24,7 @@ class PlotResults:
         self.override_power = override_power
         self.override_tco = override_tco
 
-    def get_result_cpu_single_data(model, data) -> tuple[list, list, list, list, list, list, list]:
+    def get_result_cpu_single_data(main_results, data) -> tuple[list, list, list, list, list, list, list]:
         return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # processes
                 list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1)), # process thread labels
                 list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
@@ -38,7 +38,7 @@ class PlotResults:
             if report in compare_result['results']['CPU']['benchmarks']:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
 
-    def get_result_cpu_throughput_data(model, data):
+    def get_result_cpu_throughput_data(main_results, data):
         return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # processes
                 list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # process thread labels
                 list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
@@ -97,8 +97,8 @@ class PlotResults:
             x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
-            for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(model, matching_result[0])
+            for model, matching_result in PlotResults.find_matching_reports(main_results, compare_results):
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(main_results, matching_result[0])
                 x_processes = x_processes + m_processes
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
@@ -165,11 +165,11 @@ class PlotResults:
                 continue
             tool = matchdata.group(1)
 
-            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results['system-info']['model'], data[0])
+            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_throughput_data(model, matching_result[0])
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, matching_result[0])
                 x_processes = x_processes + m_processes
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
