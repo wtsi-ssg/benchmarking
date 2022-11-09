@@ -39,13 +39,13 @@ class PlotResults:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
 
     def get_result_cpu_throughput_data(main_results, data):
-        return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # processes
-                list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count'])), # process thread labels
-                list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
-                list(m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
-                list(m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
-                list(m['maxrss'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
-                list(sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] if keyData['processes'] * keyData['threads'] == data['system-info']['cpuinfo']['count'] for m in keyData['runs'])]
+        return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == main_results['system-info']['cpuinfo']['count'])), # processes
+                list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == main_results['system-info']['cpuinfo']['count'])), # process thread labels
+                list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == main_results['system-info']['cpuinfo']['count']),
+                list(m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == main_results['system-info']['cpuinfo']['count']),
+                list(m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == main_results['system-info']['cpuinfo']['count']),
+                list(m['maxrss'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == main_results['system-info']['cpuinfo']['count']),
+                list(sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] if keyData['processes'] * keyData['threads'] == main_results['system-info']['cpuinfo']['count'] for m in keyData['runs'])]
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
