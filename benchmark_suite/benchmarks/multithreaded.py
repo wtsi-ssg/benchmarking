@@ -15,6 +15,7 @@ from collections.abc import Iterable
 from cpuinfo import get_cpu_info
 
 from benchmark_suite import benchmarkessentials
+from codecarbon import OfflineEmissionsTracker
 
 # supported operators
 operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
