@@ -1,4 +1,5 @@
 import decimal
+import itertools
 import json
 import pathlib
 import re
@@ -23,28 +24,28 @@ class PlotResults:
         self.override_power = override_power
         self.override_tco = override_tco
 
-    def yield_processthreadlabels(model:str, data:list):
-        for m in data['results']['configurations']:
-            for i in range(0, len(m['runs'])):
-                yield f"{m['processes']}*{m['threads']}"
-
-    def yield_process(data:list):
-        for m in data['results']['configurations']:
-            for i in range(0, len(m['runs'])):
-                yield m['processes']
-
-    def yield_time(data:list, type:str):
-        for keyData in data['results']['configurations']:
-            for m in keyData['runs']:
-                yield m[type]
+    def get_result_cpu_single_data(model, data) -> tuple[list, list, list, list, list, list, list]:
+        return tuple(zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1), # processes
+            zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] == 1), # process thread labels
+            (m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
+            (m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
+            (m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
+            (m['maxrss'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1),
+            (sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == 1 ))
 
     def find_matching_reports(report, compare_results):
         for compare_result in compare_results:
             if report in compare_result['results']['CPU']['benchmarks']:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
-    
-    def get_result_cpu_data(model, data):
-        return list(PlotResults.yield_process(data)),list(PlotResults.yield_processthreadlabels(model, data)),list(PlotResults.yield_time(data,'user')),list(PlotResults.yield_time(data,'system')),list(PlotResults.yield_time(data,'elapsed')),list(PlotResults.yield_time(data,'maxrss')),list([sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] for m in keyData['runs']])
+
+    def get_result_cpu_throughput_data(model, data):
+        return tuple(zip(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count']), # processes
+            zip(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == data['system-info']['cpuinfo']['count']), # process thread labels
+            (m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
+            (m['system'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
+            (m['elapsed'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
+            (m['maxrss'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] == data['system-info']['cpuinfo']['count']),
+            (sum(float(x['value']) for x in m['power'].values()) for keyData in data['results']['configurations'] if keyData['processes'] * keyData['threads'] == data['system-info']['cpuinfo']['count'] for m in keyData['runs']))
 
     #based on: https://github.com/matplotlib/matplotlib/issues/6321#issuecomment-555587961
     def annotate_xrange(xmin, xmax,
@@ -86,18 +87,18 @@ class PlotResults:
     def co2_to_kwh(self, x):
         return x/float(self.carbon_per_kwh)
 
-    def plot_CPU(self, main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
+    def plot_CPU_single_process(self, main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
         for report, data in main_results['results']['CPU']['benchmarks'].items():
             matchdata = re.match(r'multithreaded_(.*)', report)
             if matchdata is None:
                 continue
             tool = matchdata.group(1)
 
-            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_data(main_results['system-info']['model'], data[0])
+            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
-                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_data(model, matching_result[0])
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(model, matching_result[0])
                 x_processes = x_processes + m_processes
                 x_labels = x_labels + m_labels
                 x_user = x_user + m_user
@@ -140,6 +141,77 @@ class PlotResults:
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
             ax.set_title(f'CPU time of {tool}')
+            ax.set_xlabel('(Threads)\nPlatform', labelpad=15, fontweight='semibold')
+            ax.set_ylabel('User-mode + System CPU time (Seconds)', fontweight='semibold')
+
+            x_user_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_user_mean, x_user_std)]
+            x_sys_mean_label = [f"{x:.2f}\nSE+- {y:.2f}" for x, y in zip(x_sys_mean, x_sys_std)]
+            ax.bar_label(rects1, labels=x_user_mean_label, label_type='center')
+            ax.bar_label(rects2, labels=x_sys_mean_label, label_type='center')
+
+            n_res = grp_model.count
+            accum_x = 0
+            for i in range(0,len(n_res)):
+                PlotResults.annotate_xrange(accum_x-0.5, accum_x+n_res[i]-0.5, grp_model.unique[i], ax=ax, offset=-0.07, width=-0.05)
+                accum_x = accum_x + n_res[i]
+
+            pdf.savefig(fig)
+            plt.close()
+
+    def plot_CPU_throughput(self, main_results : dict, compare_results: 'list[dict]', pdf : PdfPages):
+        for report, data in main_results['results']['CPU']['benchmarks'].items():
+            matchdata = re.match(r'multithreaded_(.*)', report)
+            if matchdata is None:
+                continue
+            tool = matchdata.group(1)
+
+            x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results['system-info']['model'], data[0])
+            x_models = np.tile(main_results['nickname'], len(x_labels))
+            # bring in results from matching tests in comparison reports
+            for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
+                m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_throughput_data(model, matching_result[0])
+                x_processes = x_processes + m_processes
+                x_labels = x_labels + m_labels
+                x_user = x_user + m_user
+                x_sys = x_sys + m_sys
+                x_elapsed = x_elapsed + m_elapsed
+                x_rss = x_rss + m_rss
+                x_power_per_run = x_power_per_run + m_power_per_run
+                m_models = np.tile(model, len(m_labels))
+                x_models = np.hstack([x_models, m_models])
+
+            x_outputs = [process / (elapsed/3600) for process, elapsed in zip(x_processes, x_elapsed)]
+
+            a = np.array([x_models,x_labels]).T
+            grp_model_pt = npi.group_by(a)
+
+            x_unique, x_user_mean = grp_model_pt.mean(x_user)
+            _, x_user_std = grp_model_pt.std(x_user)
+            _, x_sys_mean = grp_model_pt.mean(x_sys)
+            _, x_sys_std = grp_model_pt.std(x_sys)
+            _, x_elapsed_mean = grp_model_pt.mean(x_elapsed)
+            _, x_elapsed_std = grp_model_pt.std(x_elapsed)
+            _, x_rss_mean = grp_model_pt.mean(x_rss)
+            _, x_rss_std = grp_model_pt.std(x_rss)
+            _, x_outputs_mean = grp_model_pt.mean(x_outputs)
+            _, x_outputs_std = grp_model_pt.std(x_outputs)
+            _, x_power_per_run_mean = grp_model_pt.mean(x_power_per_run)
+            _, x_power_per_run_std =  grp_model_pt.std(x_power_per_run)
+            grp_model = npi.group_by(x_unique[:,0])
+
+            # CPU times plot
+            fig, ax = plt.subplots()
+            fig.subplots_adjust(bottom=0.2)
+
+            ind = np.arange(len(x_unique))    # the x locations for the groups
+            width = 0.20         # the width of the bars
+
+            rects1 = ax.bar(ind, x_user_mean, width, yerr=x_user_std, label='User')
+            rects2 = ax.bar(ind, x_sys_mean, width, yerr=x_sys_std, bottom=x_user_mean, label='System')
+
+            ax.set_xticks(ind)
+            ax.set_xticklabels(f'{x[1]}' for x in x_unique)
+            ax.set_title(f'CPU throughput of {tool}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('User-mode + System CPU time (Seconds)', fontweight='semibold')
 
@@ -376,7 +448,8 @@ class PlotResults:
         with PdfPages(str(self.plot_filename), metadata={'Creator': 'Genomics Benchmark', 'Title': f"Benchmarking results for {self.results['system-info']['model']}\n{self.results['date']}"}) as pdf:
             PlotResults.plot_title(self.results, pdf)
             if 'CPU' in self.results['results']:
-                self.plot_CPU(self.results, self.comparison_results, pdf)
+                self.plot_CPU_single_process(self.results, self.comparison_results, pdf)
+                self.plot_CPU_throughput(self.results, self.comparison_results, pdf)
                 PlotResults.plot_MBW(self.results, self.comparison_results, pdf)
             if 'Disk' in self.results['results']:
                 PlotResults.plot_disk(self.results, pdf)
