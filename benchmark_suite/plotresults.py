@@ -94,6 +94,8 @@ class PlotResults:
             tool = matchdata.group(1)
 
             x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
+            if len(x_labels) == 0:
+                continue
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(main_results, compare_results):
@@ -164,6 +166,8 @@ class PlotResults:
             tool = matchdata.group(1)
 
             x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, data[0])
+            if len(x_processes) == 0:
+                continue
             x_models = np.tile(main_results['nickname'], len(x_labels))
             # bring in results from matching tests in comparison reports
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
