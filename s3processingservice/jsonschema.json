@@ -103,19 +103,34 @@
               }
             },
             "l3_cache_size": {
-              "type": "integer"
+              "oneOf": [
+		{ "type": "string" },
+		{ "type": "integer" }
+	      ]
             },
             "l2_cache_size": {
-              "type": "string"
+              "oneOf": [
+		{ "type": "string" },
+		{ "type": "integer" }
+	      ]
             },
             "l1_data_cache_size": {
-              "type": "string"
+              "oneOf": [
+		{ "type": "string" },
+		{ "type": "integer" }
+	      ]
             },
             "l1_instruction_cache_size": {
-              "type": "string"
+              "oneOf": [
+		{ "type": "string" },
+		{ "type": "integer" }
+	      ]
             },
             "l2_cache_line_size": {
-              "type": "integer"
+              "oneOf": [
+		{ "type": "string" },
+		{ "type": "integer" }
+	      ]
             },
             "l2_cache_associativity": {
               "type": "integer"
