@@ -1,8 +1,11 @@
 #!/bin/env python
 
+# Manually create dummy s3 message
+# e.g. python create_test.py 192.168.3.1 user MxRwazxoAhn55aicDK9T7SPU6YAOhosqLK60SYxAPBM= 2022-11-09-175119_single_process_ranging.json
+
 import argparse
 import json
-
+import amqp
 from amqp import Connection
 
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
@@ -41,4 +44,5 @@ conn.connect()
 
 # Set up channel to send to queue
 channel = conn.channel()
-channel.basic_publish(routing_key='returned_results', msg=record)
+message = amqp.basic_message.Message(body=json.dumps(record))
+channel.basic_publish(routing_key='returned_results', msg=message)
