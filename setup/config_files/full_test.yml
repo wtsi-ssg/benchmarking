@@ -40,7 +40,7 @@
             threads: $N/4
           - processes: 1
             threads: range(2,$N,4)
-         clear_caches: True
+        clear_caches: True
     - type: multithreaded
       settings:
         tag: salmon-1.0.0
