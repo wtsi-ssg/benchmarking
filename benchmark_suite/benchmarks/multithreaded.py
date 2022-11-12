@@ -99,6 +99,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                 th_list = [th_list]
 
             for th in th_list:
+                th = int(th)
                 configuration = { "processes" :ps,
                             "threads" : int(th),
                             "runs" : []
