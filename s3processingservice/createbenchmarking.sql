@@ -16,6 +16,23 @@ CREATE TABLE public.returned_results
 ALTER TABLE IF EXISTS public.returned_results
     OWNER to benchmarking;
 
+-- Table: public.nickname_year
+
+-- DROP TABLE IF EXISTS public.nickname_year;
+
+CREATE TABLE IF NOT EXISTS public.nickname_year
+(
+    id bigint NOT NULL DEFAULT nextval('nickname_year_id_seq'::regclass),
+    nickname character varying COLLATE pg_catalog."default" NOT NULL,
+    year integer NOT NULL,
+    CONSTRAINT nickname_year_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.nickname_year
+    OWNER to benchmarking;
+
 -- View: public.cpu_results
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_results
@@ -112,4 +129,21 @@ FROM
 WITH DATA;
 
 ALTER TABLE IF EXISTS public.iozone_results
+    OWNER TO benchmarking;
+
+-- View: public.cpu_corecount
+
+-- DROP MATERIALIZED VIEW IF EXISTS public.cpu_corecount;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_corecount
+TABLESPACE pg_default
+AS
+ SELECT DISTINCT returned_results.jsondata ->> 'nickname'::text AS nickname,
+    (((returned_results.jsondata -> 'system-info'::text) -> 'cpuinfo'::text) ->> 'count'::text)::integer AS corecount,
+    nickname_year.year
+   FROM returned_results
+     LEFT JOIN nickname_year ON (returned_results.jsondata ->> 'nickname'::text) = nickname_year.nickname::text
+WITH DATA;
+
+ALTER TABLE IF EXISTS public.cpu_corecount
     OWNER TO benchmarking;
