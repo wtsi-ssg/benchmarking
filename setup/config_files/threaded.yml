@@ -14,6 +14,7 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 2
+        units: 3x WGS
         process_thread:
           - processes: 2
             threads: $N/2

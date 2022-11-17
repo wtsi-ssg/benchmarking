@@ -14,6 +14,7 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 3
+        units: 3x WGS
         process_thread:
           - processes: 2
             threads: $N/2
@@ -33,6 +34,7 @@
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"
         repeats: 3
+        units: 3x WGS
         process_thread:
           - processes: 2
             threads: $N/2
@@ -55,6 +57,7 @@
         datadir: "/data/datasets/salmon/"
         result_dir: "/data/results/runs/"
         repeats: 3
+        units: run
         process_thread:
           - processes: 1
             threads: $N
@@ -79,6 +82,7 @@
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"
         repeats: 3
+        units: Chr22 @ 30x from WGS
         process_thread:
           - processes: 1
             threads: $N
