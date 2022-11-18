@@ -262,7 +262,10 @@
                           },
                           "arguments": {
                             "type": "string"
-                          }
+                          },
+                          "units": {
+                            "type": "string"
+                          }              
                         },
                         "required": [
                           "program",
