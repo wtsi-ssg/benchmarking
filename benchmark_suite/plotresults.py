@@ -91,7 +91,7 @@ class PlotResults:
             matchdata = re.match(r'multithreaded_(.*)', report)
             if matchdata is None:
                 continue
-            tool = matchdata.group(1)
+            tool = f"{data['settings']['program']} - {data['settings']['programversion']} per {data['settings']['units']}"
 
             x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], data[0])
             if len(x_labels) == 0:
@@ -163,7 +163,8 @@ class PlotResults:
             matchdata = re.match(r'multithreaded_(.*)', report)
             if matchdata is None:
                 continue
-            tool = matchdata.group(1)
+            tool = f"{data['settings']['program']} - {data['settings']['programversion']}"
+            units = data['settings']['units']
 
             x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, data[0])
             if len(x_processes) == 0:
@@ -213,7 +214,7 @@ class PlotResults:
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'CPU throughput of {tool}')
+            ax.set_title(f'CPU throughput of {tool} per {units}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('User-mode + System CPU time (Seconds)', fontweight='semibold')
 
@@ -242,7 +243,7 @@ class PlotResults:
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'Walltime of {tool}')
+            ax.set_title(f'Walltime of {tool} per {units}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('Walltime (Seconds)', fontweight='semibold')
 
@@ -268,7 +269,7 @@ class PlotResults:
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'Max RSS of {tool}')
+            ax.set_title(f'Max RSS of {tool} per {units}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
             ax.set_ylabel('Max RSS (kb)', fontweight='semibold')
 
@@ -290,13 +291,13 @@ class PlotResults:
             ind = np.arange(len(x_outputs_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_outputs_mean, width, yerr=x_outputs_std, label='Outputs per hour')
+            rects3 = ax.bar(ind, x_outputs_mean, width, yerr=x_outputs_std, label=f'{} per hour')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'Outputs per Hour of {tool}')
+            ax.set_title(f'{units} per Hour of {tool}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
-            ax.set_ylabel('Outputs per hour', fontweight='semibold')
+            ax.set_ylabel(f'{units} per hour', fontweight='semibold')
 
             ax.bar_label(rects3, padding=3)
 
@@ -326,9 +327,9 @@ class PlotResults:
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
-            ax.set_title(f'Power per output of {tool}')
+            ax.set_title(f'Power per {units} of {tool}')
             ax.set_xlabel('(Processes * Threads)\nPlatform', labelpad=15, fontweight='semibold')
-            ax.set_ylabel('Power per output (kWh)', fontweight='semibold')
+            ax.set_ylabel(f'Power per {units} (kWh)', fontweight='semibold')
 
             ax.bar_label(rects3, padding=3)
 
