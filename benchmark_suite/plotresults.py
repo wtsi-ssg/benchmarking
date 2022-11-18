@@ -291,7 +291,7 @@ class PlotResults:
             ind = np.arange(len(x_outputs_mean))    # the x locations for the groups
             width = 0.20         # the width of the bars
 
-            rects3 = ax.bar(ind, x_outputs_mean, width, yerr=x_outputs_std, label=f'{} per hour')
+            rects3 = ax.bar(ind, x_outputs_mean, width, yerr=x_outputs_std, label=f'{units} per hour')
 
             ax.set_xticks(ind)
             ax.set_xticklabels(f'{x[1]}' for x in x_unique)
