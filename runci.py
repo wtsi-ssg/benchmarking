@@ -26,6 +26,11 @@ def get_args():
         action="store_true"
     )
     parser.add_argument(
+        '-d', '--clear_cache_bin',
+        type=str,
+        help="""Executable to drop test host cache"""
+    )
+    parser.add_argument(
         '-n', '--name',
         type=str,
         help="""Name of program being tested"""

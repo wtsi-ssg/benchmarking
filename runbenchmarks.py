@@ -57,7 +57,7 @@ def get_args():
         help="""Server Port for iPerf server""",
     )
     parser.add_argument(
-        '-d', '--clear_cache_bin',
+        '-c', '--clear_cache_bin',
         type=str,
         help="""Executable to drop test host cache"""
     )
