@@ -33,7 +33,8 @@ def get_args():
     parser.add_argument(
         '-n', '--name',
         type=str,
-        help="""Name of program being tested"""
+        help="""Name of program being tested""",
+        required=True
     )
     parser.add_argument(
         '-r', '--revision',
@@ -48,12 +49,14 @@ def get_args():
     parser.add_argument(
         '-e', '--executable',
         type=str,
-        help="""Executable to test"""
+        help="""Executable to test""",
+        required=True
     )
     parser.add_argument(
         '-a', '--arguments',
         type=str,
-        help="""Arguments to executable being tested"""
+        help="""Arguments to executable being tested""",
+        default=""
     )
     parser.add_argument(
         '--override_power',
@@ -66,6 +69,7 @@ def get_args():
         help="""TCO of machine in £"""
     )
     return parser.parse_args()
+
 args = get_args()
 
 # Setup benchsuite
