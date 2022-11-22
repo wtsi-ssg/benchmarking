@@ -26,7 +26,7 @@ def get_args():
         action="store_true"
     )
     parser.add_argument(
-        '-d', '--clear_cache_bin',
+        '-c', '--clear_cache_bin',
         type=str,
         help="""Executable to drop test host cache"""
     )
@@ -41,7 +41,7 @@ def get_args():
         help="""Git revision hash of program being tested"""
     )
     parser.add_argument(
-        '-d', '--datetime',
+        '-t', '--datetime',
         type=str,
         help="""Commit date and time of program being tested"""
     )
