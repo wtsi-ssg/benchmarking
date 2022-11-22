@@ -79,7 +79,7 @@ benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.name, ove
 pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
 pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmark_suite/benchmarks"])
 pluginmanager.collectPlugins()
-benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_dir="/data/tools/"))
+benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_path=args.executable))
 
 # Run benchmark and create JSON output
 output = {
