@@ -59,6 +59,12 @@ def get_args():
         default=""
     )
     parser.add_argument(
+        '-w', '--working',
+        type=str,
+        help="""Working dir""",
+        required=True
+    )
+    parser.add_argument(
         '--override_power',
         type=Decimal,
         help="""Override detected power consumption in watts"""
@@ -79,7 +85,7 @@ benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.name, ove
 pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
 pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmark_suite/benchmarks"])
 pluginmanager.collectPlugins()
-benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_path=args.executable))
+benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_path=args.executable, result_dir=args.working))
 
 # Run benchmark and create JSON output
 output = {
