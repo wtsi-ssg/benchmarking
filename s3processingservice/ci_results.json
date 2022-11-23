@@ -7,10 +7,10 @@
             "type": "string"
           },
           "revision": {
-            "type": "string"
-          },
+            "type": [ "string", "null" ]
+        },
           "datetime": {
-            "type": "string"
+            "type": [ "string", "null" ]
           },
           "executable": {
             "type": "string"
@@ -226,16 +226,16 @@
                         "type": "object",
                         "properties": {
                           "program": {
-                            "type": "string"
+                            "type": [ "string", "null" ]
                           },
                           "programversion": {
-                            "type": "string"
+                            "type": [ "string", "null" ]
                           },
                           "arguments": {
                             "type": "string"
                           },
                           "units": {
-                            "type": "string"
+                            "type": [ "string", "null" ]
                           }
                         },
                         "required": [
