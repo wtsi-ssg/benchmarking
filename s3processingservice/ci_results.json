@@ -97,25 +97,19 @@
                       },
                       "hz_advertised": {
                         "type": "array",
-                        "items": [
-                          {
+                        "items": {
                             "type": "integer"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        },
+                        "minItems" : 2,
+                        "maxItems" : 2
                       },
                       "hz_actual": {
                         "type": "array",
-                        "items": [
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        "items": {
+                          "type": "integer"
+                        },
+                        "minItems" : 2,
+                        "maxItems" : 2
                       },
                       "stepping": {
                         "type": "integer"
