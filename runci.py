@@ -76,6 +76,12 @@ def get_args():
         type=Decimal,
         help="""TCO of machine in £"""
     )
+    parser.add_argument(
+        '--return_results',
+        help="""Automatically upload results to Sanger""",
+        default=False,
+        action="store_true"
+    )
     return parser.parse_args()
 
 args = get_args()
