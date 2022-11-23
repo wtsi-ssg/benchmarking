@@ -126,7 +126,6 @@
                           "type": "string"
                         }
                       },
-
                       "l3_cache_size": {
                         "oneOf": [
                           { "type": "string" },
@@ -212,8 +211,8 @@
               },
               "results": {
                 "type": "object",
-                "properties": {
-                  "multithreaded_bcftools": {
+                "patternProperties": {
+                  "multithreaded_[A-Za-z0-9]*": {
                     "type": "object",
                     "properties": {
                       "settings": {
@@ -273,8 +272,8 @@
                                           },
                                           "power": {
                                             "type": "object",
-                                            "properties": {
-                                              "cpu_energy": {
+                                            "patternProperties": {
+                                              "[A-Za-z0-9]*": {
                                                 "type": "object",
                                                 "properties": {
                                                   "value": {
@@ -283,48 +282,9 @@
                                                   "units": {
                                                     "type": "string"
                                                   }
-                                                },
-                                                "required": [
-                                                  "value",
-                                                  "units"
-                                                ]
-                                              },
-                                              "gpu_energy": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "value": {
-                                                    "type": "integer"
-                                                  },
-                                                  "units": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "required": [
-                                                  "value",
-                                                  "units"
-                                                ]
-                                              },
-                                              "ram_energy": {
-                                                "type": "object",
-                                                "properties": {
-                                                  "value": {
-                                                    "type": "number"
-                                                  },
-                                                  "units": {
-                                                    "type": "string"
-                                                  }
-                                                },
-                                                "required": [
-                                                  "value",
-                                                  "units"
-                                                ]
+                                                }
                                               }
-                                            },
-                                            "required": [
-                                              "cpu_energy",
-                                              "gpu_energy",
-                                              "ram_energy"
-                                            ]
+                                            }
                                           }
                                         },
                                         "required": [
@@ -357,10 +317,7 @@
                       "results"
                     ]
                   }
-                },
-                "required": [
-                  "multithreaded_bcftools"
-                ]
+                }
               }
             },
             "required": [
