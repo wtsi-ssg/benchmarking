@@ -1,5 +1,4 @@
 import json
-from urllib import request
 
 import requests
 
@@ -10,8 +9,7 @@ class ResultsReturn:
 
     def post_results(self, raw_result_filename : str, jsondata : str, verbose:bool=False):
         # Fetch signed post URL from s3 cog
-        
-        r = request.get(url=self.post_signed_url)
+        r = requests.get(url=self.post_signed_url)
         if not r.ok:
             if verbose:
                 print(f'Fetch of POST URL for data return failed. Error {r.status_code}')
