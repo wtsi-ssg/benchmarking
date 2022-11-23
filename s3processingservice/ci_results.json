@@ -242,7 +242,7 @@
                         "properties": {
                           "configurations": {
                             "type": "array",
-                            "items": [
+                            "items": 
                               {
                                 "type": "object",
                                 "properties": {
@@ -254,7 +254,7 @@
                                   },
                                   "runs": {
                                     "type": "array",
-                                    "items": [
+                                    "items":
                                       {
                                         "type": "object",
                                         "properties": {
@@ -295,7 +295,6 @@
                                           "power"
                                         ]
                                       }
-                                    ]
                                   }
                                 },
                                 "required": [
@@ -304,7 +303,6 @@
                                   "runs"
                                 ]
                               }
-                            ]
                           }
                         },
                         "required": [
