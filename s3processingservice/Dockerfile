@@ -9,7 +9,8 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${PACKAGES} && \
     apt-get clean
 
-COPY ./jsonschema.json /
+COPY ./ci_results.json /
+COPY ./system_results.json /
 COPY ./requirements.txt /
 COPY ./imports3.py /
 RUN pip3 install --upgrade pip setuptools
