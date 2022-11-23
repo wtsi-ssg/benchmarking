@@ -11,18 +11,36 @@ CREATE TABLE public.returned_results
     id bigserial NOT NULL,
     jsondata jsonb NOT NULL,
     PRIMARY KEY (id)
-);
+)
+
+TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.returned_results
     OWNER to benchmarking;
 
+-- Table: public.ci_returned_results
+
+-- DROP TABLE IF EXISTS public.ci_returned_results;
+
+CREATE TABLE IF NOT EXISTS public.ci_returned_results
+(
+    id bigserial NOT NULL,
+    jsondata jsonb NOT NULL,
+    CONSTRAINT ci_returned_results_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.returned_results
+    OWNER to benchmarking;
+    
 -- Table: public.nickname_year
 
 -- DROP TABLE IF EXISTS public.nickname_year;
 
 CREATE TABLE IF NOT EXISTS public.nickname_year
 (
-    id bigint NOT NULL DEFAULT nextval('nickname_year_id_seq'::regclass),
+    id bigserial NOT NULL,
     nickname character varying COLLATE pg_catalog."default" NOT NULL,
     year integer NOT NULL,
     CONSTRAINT nickname_year_pkey PRIMARY KEY (id)
