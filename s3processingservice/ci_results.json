@@ -56,17 +56,11 @@
                       },
                       "cpuinfo_version": {
                         "type": "array",
-                        "items": [
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        "items": {
+                          "type": "integer"
+                        },
+                        "minItems" : 3,
+                        "maxItems" : 3
                       },
                       "cpuinfo_version_string": {
                         "type": "string"
