@@ -104,6 +104,63 @@ WITH DATA;
 
 ALTER TABLE IF EXISTS public.cpu_results
     OWNER TO benchmarking;
+
+-- View: public.ci_cpu_results
+
+-- DROP MATERIALIZED VIEW IF EXISTS public.ci_cpu_results;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.ci_cpu_results
+TABLESPACE pg_default
+AS
+ SELECT benchmark_data.nickname,
+    benchmark_data.benchmark_type,
+    benchmark_data.program_name,
+    benchmark_data.program_version,
+    benchmark_data.units,
+    benchmark_data.processes::integer AS processes,
+    benchmark_data.threads::integer AS threads,
+    benchmark_data.usercpu::numeric AS usercpu,
+    benchmark_data.syscpu::numeric AS syscpu,
+    benchmark_data.elapsed::numeric AS elapsed,
+    benchmark_data.maxrss::integer AS maxrss,
+    ((benchmark_data.powerl -> 'cpu_energy'::text) ->> 'value'::text)::numeric AS cpu_energy,
+    ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy
+   FROM ( SELECT benchmark_runs.nickname,
+            benchmark_runs.benchmark_type,
+            benchmark_runs.program_name,
+            benchmark_runs.program_version,
+            benchmark_runs.units,
+            benchmark_runs.processes,
+            benchmark_runs.threads,
+            benchmark_runs.runs ->> 'user'::text AS usercpu,
+            benchmark_runs.runs ->> 'system'::text AS syscpu,
+            benchmark_runs.runs ->> 'elapsed'::text AS elapsed,
+            benchmark_runs.runs ->> 'maxrss'::text AS maxrss,
+            benchmark_runs.runs -> 'power'::text AS powerl
+           FROM ( SELECT benchmarks.nickname,
+                    benchmarks.benchmark_type,
+                    benchmarks.program_name,
+                    benchmarks.program_version,
+                    benchmarks.units,
+                    benchmarks.benchmark_types ->> 'processes'::text AS processes,
+                    benchmarks.benchmark_types ->> 'threads'::text AS threads,
+                    jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
+                   FROM ( SELECT hosts.nickname,
+                            hosts.benchmark_type,
+                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'program'::text AS program_name,
+                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'programversion'::text AS program_version,
+                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'units'::text AS units,
+                            jsonb_array_elements((hosts.benchmark_types -> hosts.benchmark_type -> 'results'::text) -> 'configurations'::text) AS benchmark_types
+                           FROM ( SELECT ci_returned_results.jsondata ->> 'name'::text AS nickname,
+                                    jsonb_object_keys((ci_returned_results.jsondata -> 'results'::text) -> 'results'::text) AS benchmark_type,
+                                    (ci_returned_results.jsondata -> 'results'::text) -> 'results'::text AS benchmark_types
+                                   FROM ci_returned_results) hosts
+                          WHERE hosts.benchmark_type ~~ 'multithreaded_%'::text) benchmarks) benchmark_runs) benchmark_data
+WITH DATA;
+
+ALTER TABLE IF EXISTS public.ci_cpu_results
+    OWNER TO benchmarking;
+
 -- View: public.mbw_results
 
 -- DROP MATERIALIZED VIEW IF EXISTS public.mbw_results;
