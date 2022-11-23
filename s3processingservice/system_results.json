@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sanger.ac.uk/schemas/benchmarking/1.0",
+  "$id": "https://sanger.ac.uk/schemas/benchmarking/system/1.0",
   "type": "object",
   "properties": {
     "nickname": {
