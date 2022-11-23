@@ -4,6 +4,7 @@ import argparse
 from decimal import Decimal
 import json
 import sys
+import time
 from benchmark_suite.benchmarks.multithreaded import MultiThread
 
 import yapsy.PluginFileLocator as pfl
@@ -12,6 +13,7 @@ import yapsy.PluginManager as pm
 from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
                                                  ParentBenchmark)
 from benchmark_suite.datapreparer import DataPreparer
+from benchmark_suite.resultsreturn import ResultsReturn
 from benchmark_suite.suite import Suite
 
 sys.path.insert(1, f'{sys.path[0]}/setup/')
@@ -96,4 +98,9 @@ output = {
     "arguments": args.arguments,
     "results": benchsuite.run()
 }
+if args.return_results:
+    r = ResultsReturn("https://it_randd.cog.sanger.ac.uk/post_signed_url_ci.json")
+    result_filename = time.strftime("%Y-%m-%d-%H%M%S") + "_"+args.name+".json"
+    r.post_results(result_filename, json.dumps(output, indent=2, sort_keys=True), args.verbose)
+
 print(json.dumps(output))

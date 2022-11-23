@@ -9,8 +9,8 @@ import time
 from decimal import Decimal
 from typing import Tuple
 
-import requests
 import yaml
+from benchmark_suite.resultsreturn import ResultsReturn
 import yapsy.PluginFileLocator as pfl
 import yapsy.PluginManager as pm
 
@@ -148,22 +148,6 @@ def result_filename(b_type, output_basefile) -> Tuple[str, str, pathlib.Path, pa
     
     return [result_filename, plot_filename, output_fullpath, plot_fullpath]
 
-def post_results(raw_result_file : str, jsondata : str):
-    # Fetch signed post URL from s3 cog
-    post_signed_url = "https://it_randd.cog.sanger.ac.uk/post_signed_url.json"
-    r = requests.get(url=post_signed_url)
-    if not r.ok:
-        print(f'Fetch of POST URL for data return failed. Error {r.status_code}')
-        return
-    myurl_raw = json.loads(r.text)
-
-    # POST results JSON to fetched URL
-    files = {'file': (raw_result_file, jsondata.encode('utf-8'))}
-    resp = requests.post(myurl_raw['url'], data=myurl_raw['fields'], files=files)
-    if not resp.ok:
-        print(f'Error {resp.status_code} uploading results: {resp.text}')
-    else:
-        print('Results returned successfully.')
 
 def run_benchsuite(benchsuite, config_file, result_fullpath):
     install_dir = Utility.get_install_dir(config_file)
@@ -203,7 +187,7 @@ if __name__ == '__main__':
 
     config_file = get_config_file(args.type)
 
-    [raw_result_file, raw_plot_file, result_fullpath, plot_fullpath,] = result_filename(args.type, args.output_file_basename)
+    [raw_result_filename, raw_plot_file, result_fullpath, plot_fullpath,] = result_filename(args.type, args.output_file_basename)
     
     if args.verbose:
         print("Chosen benchmark type:      {}".format(args.type))
@@ -229,7 +213,8 @@ if __name__ == '__main__':
     result_file_path_to_local = str(pathlib.Path(*pathlib.Path(result_fullpath).parts[2:]))
     print("Result stored at: {}".format("<mount_point>/"+result_file_path_to_local))
     if args.return_results:
-        post_results(raw_result_file, json.dumps(results, indent=2, sort_keys=True))
+        r = ResultsReturn()
+        r.post_results(raw_result_filename, json.dumps(results, indent=2, sort_keys=True), args.verbose)
 
     plot_file_path_to_local = str(pathlib.Path(*pathlib.Path(plot_fullpath).parts[2:]))
     pr = PlotResults(result_fullpath, [], plot_fullpath, args.cost_per_kwh, args.carbon_per_kwh, override_power=None, override_tco=None)
