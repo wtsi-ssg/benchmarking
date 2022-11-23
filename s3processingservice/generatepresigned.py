@@ -7,14 +7,14 @@ client = boto3.client('s3', endpoint_url ='https://cog.sanger.ac.uk')
 
 Fields = {"Content-Type":"application/json", "acl":"private"}
 
-def create_upload_presigned(filename:str):
+def create_upload_presigned(prefix:str, filename:str):
     res = client.generate_presigned_post('it_randd',
-                                        'results/${filename}',
+                                        f"{prefix}" + '/${filename}',
                                         Fields=Fields,
                                         Conditions=[{'acl':'private'},
                                                     {'Content-Type':'application/json'},
                                                     ["content-length-range", 1, 10485760],
-                                                    ["starts-with", "$key", "results/"]],
+                                                    ["starts-with", "$key", f"{prefix}/"]],
                                         ExpiresIn=604800)
     print(res)
     with open(filename, "a") as f:
@@ -32,6 +32,6 @@ def create_upload_presigned(filename:str):
 
 
 # Create returned_results URL for system benchmarking
-create_upload_presigned('post_signed_url.json')
+create_upload_presigned('results', 'post_signed_url.json')
 # Create returned results URL for CI mode
-create_upload_presigned('post_signed_url_ci.json')
+create_upload_presigned('ci_results', 'post_signed_url_ci.json')
