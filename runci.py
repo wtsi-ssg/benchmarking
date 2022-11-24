@@ -49,7 +49,7 @@ def get_args():
         help="""Git revision hash of program being tested"""
     )
     parser.add_argument(
-        '-t', '--datetime',
+        '--datetime',
         type=str,
         help="""Commit date and time of program being tested"""
     )
