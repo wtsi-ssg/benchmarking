@@ -39,6 +39,11 @@ def get_args():
         required=True
     )
     parser.add_argument(
+        '-t', '--tag',
+        type=str,
+        help="""Git tag of program being tested"""
+    )
+    parser.add_argument(
         '-r', '--revision',
         type=str,
         help="""Git revision hash of program being tested"""
@@ -98,6 +103,7 @@ benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+"
 # Run benchmark and create JSON output
 output = {
     "name": args.name,
+    "tag": args.tag,
     "revision": args.revision,
     "datetime": args.datetime,
     "executable": args.executable,
