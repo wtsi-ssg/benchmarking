@@ -6,9 +6,12 @@
         "name": {
             "type": "string"
           },
+          "tag": {
+            "type": [ "string", "null" ]
+          },
           "revision": {
             "type": [ "string", "null" ]
-        },
+          },
           "datetime": {
             "type": [ "string", "null" ]
           },

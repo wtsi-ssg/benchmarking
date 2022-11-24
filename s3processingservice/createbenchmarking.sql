@@ -112,7 +112,10 @@ ALTER TABLE IF EXISTS public.cpu_results
 CREATE MATERIALIZED VIEW IF NOT EXISTS public.ci_cpu_results
 TABLESPACE pg_default
 AS
- SELECT benchmark_data.nickname,
+ SELECT benchmark_data.testname,
+    benchmark_data.tag,
+	benchmark_data.revision,
+	benchmark_data.commit_datetime,
     benchmark_data.benchmark_type,
     benchmark_data.program_name,
     benchmark_data.program_version,
@@ -125,7 +128,10 @@ AS
     benchmark_data.maxrss::integer AS maxrss,
     ((benchmark_data.powerl -> 'cpu_energy'::text) ->> 'value'::text)::numeric AS cpu_energy,
     ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy
-   FROM ( SELECT benchmark_runs.nickname,
+   FROM ( SELECT benchmark_runs.testname,
+            benchmark_runs.tag,
+			benchmark_runs.revision,
+			benchmark_runs.commit_datetime,
             benchmark_runs.benchmark_type,
             benchmark_runs.program_name,
             benchmark_runs.program_version,
@@ -137,7 +143,10 @@ AS
             benchmark_runs.runs ->> 'elapsed'::text AS elapsed,
             benchmark_runs.runs ->> 'maxrss'::text AS maxrss,
             benchmark_runs.runs -> 'power'::text AS powerl
-           FROM ( SELECT benchmarks.nickname,
+           FROM ( SELECT benchmarks.testname,
+                    benchmarks.tag,
+					benchmarks.revision,
+					benchmarks.commit_datetime,
                     benchmarks.benchmark_type,
                     benchmarks.program_name,
                     benchmarks.program_version,
@@ -145,13 +154,19 @@ AS
                     benchmarks.benchmark_types ->> 'processes'::text AS processes,
                     benchmarks.benchmark_types ->> 'threads'::text AS threads,
                     jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
-                   FROM ( SELECT hosts.nickname,
+                   FROM ( SELECT hosts.testname,
+                            hosts.tag,
+						    hosts.revision,
+						    hosts.commit_datetime,
                             hosts.benchmark_type,
-                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'program'::text AS program_name,
-                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'programversion'::text AS program_version,
-                            (hosts.benchmark_types -> hosts.benchmark_type -> 'settings'::text) ->> 'units'::text AS units,
-                            jsonb_array_elements((hosts.benchmark_types -> hosts.benchmark_type -> 'results'::text) -> 'configurations'::text) AS benchmark_types
-                           FROM ( SELECT ci_returned_results.jsondata ->> 'name'::text AS nickname,
+                            ((hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'program'::text AS program_name,
+                            ((hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'programversion'::text AS program_version,
+                            ((hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'units'::text AS units,
+                            jsonb_array_elements(((hosts.benchmark_types -> hosts.benchmark_type) -> 'results'::text) -> 'configurations'::text) AS benchmark_types
+                           FROM ( SELECT ci_returned_results.jsondata ->> 'name'::text AS testname,
+                                    ci_returned_results.jsondata ->> 'tag'::text AS tag,
+								    ci_returned_results.jsondata ->> 'revision'::text AS revision,
+								    ci_returned_results.jsondata ->> 'datetime'::text AS commit_datetime,
                                     jsonb_object_keys((ci_returned_results.jsondata -> 'results'::text) -> 'results'::text) AS benchmark_type,
                                     (ci_returned_results.jsondata -> 'results'::text) -> 'results'::text AS benchmark_types
                                    FROM ci_returned_results) hosts
