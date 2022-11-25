@@ -87,6 +87,12 @@ def get_args():
         default=False,
         action="store_true"
     )
+    parser.add_argument(
+        '--repeats',
+        help="""Number of times to repeat the experiment""",
+        type=int,
+        default=3,
+    )
     return parser.parse_args()
 
 args = get_args()
@@ -98,7 +104,7 @@ benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.name, ove
 pluginmanager = pm.PluginManager(categories_filter={"Benchmarks": BenchmarkPlugin}, plugin_locator=pfl.PluginFileLocator(analyzers=(pfl.PluginFileAnalyzerMathingRegex("", r"(?!^__init__.py$).*\.py$"),)))
 pluginmanager.setPluginPlaces([sys.path[0]+ "/benchmark_suite/benchmarks"])
 pluginmanager.collectPlugins()
-benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_path=args.executable, result_dir=args.working))
+benchsuite.add_benchmark(MultiThread(suite=benchsuite, command=args.executable+" "+args.arguments, install_path=args.executable, result_dir=args.working, repeats=args.repeats))
 
 # Run benchmark and create JSON output
 output = {
