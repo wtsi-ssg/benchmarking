@@ -14,6 +14,7 @@
         datadir: "/data/datasets/bcftools/"
         result_dir: "/data/results/runs/"
         repeats: 3
+        units: Chr22 @ 30x from WGS
         process_thread:
           - processes: 2
             threads: $N/2
