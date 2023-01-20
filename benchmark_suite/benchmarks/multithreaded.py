@@ -41,10 +41,13 @@ def eval_(node):
     elif isinstance(node, ast.UnaryOp): # <operator> <operand> e.g., -1
         return operators[type(node.op)](eval_(node.operand))
     elif isinstance(node, ast.Call) and node.func.id == 'range':
-        begin = eval_(node.args[0]) # begin
-        end = eval_(node.args[1]) # end
-        step = eval_(node.args[2]) # step
-        return range(begin, end, step)
+        begin = int(eval_(node.args[0])) # begin
+        end = int(eval_(node.args[1])) # end
+        if len(node.args) > 2:
+            step = int(eval_(node.args[2])) # step
+            return range(begin, end, step)
+        else:
+            return range(begin, end)
     else:
         raise TypeError(node)
 
