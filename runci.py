@@ -10,9 +10,7 @@ from benchmark_suite.benchmarks.multithreaded import MultiThread
 import yapsy.PluginFileLocator as pfl
 import yapsy.PluginManager as pm
 
-from benchmark_suite.benchmarkessentials import (BenchmarkPlugin,
-                                                 ParentBenchmark)
-from benchmark_suite.datapreparer import DataPreparer
+from benchmark_suite.benchmarkessentials import (BenchmarkPlugin)
 from benchmark_suite.resultsreturn import ResultsReturn
 from benchmark_suite.suite import Suite
 
