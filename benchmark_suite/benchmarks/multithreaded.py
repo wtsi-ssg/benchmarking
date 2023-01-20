@@ -97,78 +97,83 @@ class MultiThread(benchmarkessentials.Benchmark):
 
         for pt in self.process_thread:
 
-            ps = int(pt["processes"])
+            ps_list = eval_expr(string.Template(str(pt["processes"])).substitute(N=str(get_cpu_info()["count"])))
             th_list = eval_expr(string.Template(str(pt["threads"])).substitute(N=str(get_cpu_info()["count"])))
+            if not isinstance(ps_list, Iterable):
+                ps_list = [ps_list]
             if not isinstance(th_list, Iterable):
                 th_list = [th_list]
 
-            for th in th_list:
-                th = int(th)
-                configuration = { "processes" :ps,
-                            "threads" : int(th),
-                            "runs" : []
-                            }
+            # Cross join the lists from processes x threads in a single statement
+            for ps in ps_list:
+                for th in th_list:
+                    ps = int(ps)
+                    th = int(th)
+                    configuration = { "processes" :ps,
+                                "threads" : int(th),
+                                "runs" : []
+                                }
 
-                for repeat in range(1, self.repeats+1):
-                    if self.clear_caches:
-                        print("--Clearing cache", file=sys.stderr)
-                        self.suite.clear_cache()
-                    print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
+                    for repeat in range(1, self.repeats+1):
+                        if self.clear_caches:
+                            print("--Clearing cache", file=sys.stderr)
+                            self.suite.clear_cache()
+                        print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
 
-                    runresult = {}
+                        runresult = {}
 
-                    execstring = string.Template(self.execution_string)
-                    #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
-                    # Subclass Thread to collect resource usage
-                    class TailChase(threading.Thread):
-                        def __init__(self, pid: int):
-                            super(TailChase,self).__init__()
-                            self.pid = pid
-                        def run(self):
-                            _, self.exitstatus, self.results = os.wait4(self.pid, 0)
-                    start_time = time.perf_counter()
+                        execstring = string.Template(self.execution_string)
+                        #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
+                        # Subclass Thread to collect resource usage
+                        class TailChase(threading.Thread):
+                            def __init__(self, pid: int):
+                                super(TailChase,self).__init__()
+                                self.pid = pid
+                            def run(self):
+                                _, self.exitstatus, self.results = os.wait4(self.pid, 0)
+                        start_time = time.perf_counter()
 
-                    # Launch CodeCarbon to monitor power consumption
-                    tracker = OfflineEmissionsTracker(country_iso_code = "GBR", save_to_file=False, log_level = "warning")
-                    tracker.start()
+                        # Launch CodeCarbon to monitor power consumption
+                        tracker = OfflineEmissionsTracker(country_iso_code = "GBR", save_to_file=False, log_level = "warning")
+                        tracker.start()
 
-                    # Run the processes to be evaluated
-                    processes =[]
-                    for i in range(1,int(ps)+1):
-                        runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
-                        # print(f"runstring is: '{runstring}'")
-                        process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
-                        t = TailChase(process.pid)
-                        t.start()
-                        processes.append(t)
+                        # Run the processes to be evaluated
+                        processes =[]
+                        for i in range(1,int(ps)+1):
+                            runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
+                            # print(f"runstring is: '{runstring}'")
+                            process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
+                            t = TailChase(process.pid)
+                            t.start()
+                            processes.append(t)
 
-                    # wait for all processes to terminate
-                    for x in processes: x.join()
+                        # wait for all processes to terminate
+                        for x in processes: x.join()
 
-                    # monitor power consumption: stop perf monitoring and collect result
-                    tracker.stop()
-                    power_list = {
-                        "cpu_energy" : {"value": tracker.final_emissions_data.cpu_energy, "units": "kWh"},
-                        "gpu_energy" : {"value": tracker.final_emissions_data.gpu_energy, "units": "kWh"},
-                        "ram_energy" : {"value": tracker.final_emissions_data.ram_energy, "units": "kWh"},
-                    }
+                        # monitor power consumption: stop perf monitoring and collect result
+                        tracker.stop()
+                        power_list = {
+                            "cpu_energy" : {"value": tracker.final_emissions_data.cpu_energy, "units": "kWh"},
+                            "gpu_energy" : {"value": tracker.final_emissions_data.gpu_energy, "units": "kWh"},
+                            "ram_energy" : {"value": tracker.final_emissions_data.ram_energy, "units": "kWh"},
+                        }
 
-                    # Total rusage
-                    runresult["elapsed"] = time.perf_counter() - start_time
-                    runresult["user"] = 0
-                    runresult["system"] = 0
-                    runresult["maxrss"] = 0
-                    runresult["power"] = power_list
+                        # Total rusage
+                        runresult["elapsed"] = time.perf_counter() - start_time
+                        runresult["user"] = 0
+                        runresult["system"] = 0
+                        runresult["maxrss"] = 0
+                        runresult["power"] = power_list
 
-                    for x in processes:
-                        if os.waitstatus_to_exitcode(x.exitstatus) != 0:
-                            print("Non-zero exit code from test")
-                            os.abort()
-                        runresult["user"] = runresult["user"] + x.results.ru_utime
-                        runresult["system"] = runresult["system"] + x.results.ru_stime
-                        runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
-                    configuration["runs"].append(runresult)
-                results["configurations"].append(configuration)
+                        for x in processes:
+                            if os.waitstatus_to_exitcode(x.exitstatus) != 0:
+                                print("Non-zero exit code from test")
+                                os.abort()
+                            runresult["user"] = runresult["user"] + x.results.ru_utime
+                            runresult["system"] = runresult["system"] + x.results.ru_stime
+                            runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
+                        configuration["runs"].append(runresult)
+                    results["configurations"].append(configuration)
             
         return {"settings":self.settings,"results": results}
 
