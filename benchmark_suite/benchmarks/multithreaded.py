@@ -56,7 +56,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread=[{"processes":1,"threads":1}], units=None, *args, **kwargs):
+    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="default", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -87,6 +87,7 @@ class MultiThread(benchmarkessentials.Benchmark):
             "arguments":command,
             "units": units
             }
+        self.cpu_affy = cpu_affy
 
     def get_name(self) -> str:
         return "multithreaded_{tag}".format(tag=self.tag)
@@ -116,6 +117,11 @@ class MultiThread(benchmarkessentials.Benchmark):
                                 "threads" : int(th),
                                 "runs" : []
                                 }
+                    cpu_affy_list = None
+                    if self.cpu_affy == "interleave":
+                        pass
+                    elif self.cpu_affy == "sequential":
+                        pass
 
                     for repeat in range(1, self.repeats+1):
                         if self.clear_caches:
@@ -134,6 +140,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                                 self.pid = pid
                             def run(self):
                                 _, self.exitstatus, self.results = os.wait4(self.pid, 0)
+                        # Start wall time counter
                         start_time = time.perf_counter()
 
                         # Launch CodeCarbon to monitor power consumption
@@ -146,6 +153,8 @@ class MultiThread(benchmarkessentials.Benchmark):
                             runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
                             # print(f"runstring is: '{runstring}'")
                             process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
+                            if cpu_affy_list is not None:
+                                os.sched_setaffinity(process.pid, cpu_affy_list[i-1])
                             t = TailChase(process.pid)
                             t.start()
                             processes.append(t)
