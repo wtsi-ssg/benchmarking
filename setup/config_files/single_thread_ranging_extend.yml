@@ -16,6 +16,6 @@
         repeats: 3
         units: Chr22 @ 30x from WGS
         process_thread:
-          - processes: range($N/2+1,$N/2+10,1)
+          - processes: range($N/2,$N/2+11,1)
             threads: 2
         clear_caches: True
