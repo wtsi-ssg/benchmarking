@@ -49,6 +49,7 @@ class Suite(object):
         for node in range(number_of_nodes):
             print("-Node id: {0}\n--cpus: {1}".format(node, numa.node_to_cpus(node)), file=sys.stderr)
             numa_topology.append(list(numa.node_to_cpus(node)))
+        self.numa_topology = numa_topology
 
         return numa_topology
 

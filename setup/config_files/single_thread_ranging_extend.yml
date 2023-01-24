@@ -3,7 +3,7 @@
   install_dir: "/data/tools/"
 - type: cpu
   benchmarks:
-    - type: multithreaded 
+    - type: multithreaded
       settings:
         tag: bcftools-1.15.1
         command: "${install_path}bcftools mpileup --threads ${threads} -Ou -f ${input_datapath}/b37_human_decoy_reference.fasta ${input_datapath}/RMNISTHS_30xdownsample_chr22.cram | ${install_path}bcftools call --threads ${threads} -mv -o ${result_path}output.${repeatn}.${processn}.vcf.gz"

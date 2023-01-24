@@ -56,7 +56,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="default", *args, **kwargs):
+    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -85,7 +85,8 @@ class MultiThread(benchmarkessentials.Benchmark):
             "program":program,
             "programversion":programversion,
             "arguments":command,
-            "units": units
+            "units": units,
+            "cpu_affinity": cpu_affy,
             }
         self.cpu_affy = cpu_affy
 
@@ -117,17 +118,22 @@ class MultiThread(benchmarkessentials.Benchmark):
                                 "threads" : int(th),
                                 "runs" : []
                                 }
-                    cpu_affy_list = None
                     if self.cpu_affy == "interleave":
-                        pass
+                        configuration["cpu_affy"] = self.cpu_affy
+                        l = [val for tup in zip(*self.suite.numa_topology) for val in tup]
+                        cpu_affy_list = [l[i:i + th] for i in range(0, len(l), th)]
                     elif self.cpu_affy == "sequential":
-                        pass
+                        configuration["cpu_affy"] = self.cpu_affy
+                        l = range(0,len(sum(self.suite.numa_topology, [])), 1)
+                        cpu_affy_list = [l[i:i + th] for i in range(0, len(l), th)]
+                    else:
+                        cpu_affy_list = None
 
                     for repeat in range(1, self.repeats+1):
                         if self.clear_caches:
                             print("--Clearing cache", file=sys.stderr)
                             self.suite.clear_cache()
-                        print("-Running {tag} multithreaded numa interleaved: process={}, thread={}, run {repeat} of {repeats}".format(ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
+                        print("-Running {tag} multithreaded: cpu affinity={}, process={}, thread={}, run {repeat} of {repeats}".format(self.cpu_affy, ps, th, tag=self.tag, repeat=repeat, repeats=self.repeats), file=sys.stderr)
 
                         runresult = {}
 
