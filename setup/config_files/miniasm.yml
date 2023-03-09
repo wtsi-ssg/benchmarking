@@ -8,7 +8,7 @@
         tag: minimap2
         command: "${install_path}minimap2 -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
         program: "minimap2"
-        programversion: "1d3c3ee"
+        programversion: "2.24+1d3c3ee"
         shell: True
         dataset_file: "/benchmarking/setup/minimapasm_data.txt"
         datadir: "/data/datasets/minimapasm/"
@@ -28,7 +28,7 @@
         tag: miniasm
         command: "${install_path}miniasm -f ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.paf.gz > ${result_path}output.${repeatn}.${processn}.gfa"
         program: "miniasm"
-        programversion: "ce615d1"
+        programversion: "0.3+ce615d1"
         shell: True
         dataset_file: "/benchmarking/setup/minimapasm_data.txt"
         datadir: "/data/datasets/minimapasm/"
