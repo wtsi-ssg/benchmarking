@@ -1,0 +1,45 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: minimap2
+        command: "${install_path}minimap2 -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
+        program: "minimap2"
+        programversion: "1d3c3ee"
+        shell: True
+        dataset_file: "/benchmarking/setup/minimapasm_data.txt"
+        datadir: "/data/datasets/minimapasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 30X E.coli from a PacBio RS II P5-C3 single SMRTcell
+        process_thread:
+          - processes: 2
+            threads: $N/2
+          - processes: 1
+            threads: $N
+          - processes: 4
+            threads: $N/4
+        clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: miniasm
+        command: "${install_path}miniasm -f ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.paf.gz > ${result_path}output.${repeatn}.${processn}.gfa"
+        program: "miniasm"
+        programversion: "ce615d1"
+        shell: True
+        dataset_file: "/benchmarking/setup/minimapasm_data.txt"
+        datadir: "/data/datasets/minimapasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 30X E.coli from a PacBio RS II P5-C3 single SMRTcell
+        process_thread:
+          - processes: 2
+            threads: 1
+          - processes: 1
+            threads: 1
+          - processes: 4
+            threads: 1
+        clear_caches: True
