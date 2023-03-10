@@ -47,12 +47,12 @@ def get_args():
         help="""Nickname for host being evaluated"""
     )
     parser.add_argument(
-        '-i', '--server_ip',
+        '-i', '--iperf_server_ip',
         type=str,
         help="""Server IP for iPerf server""",
     )
     parser.add_argument(
-        '-p', '--server_port',
+        '-p', '--iperf_server_port',
         type=str,
         help="""Server Port for iPerf server""",
     )
@@ -86,6 +86,16 @@ def get_args():
         '--tco',
         type=Decimal,
         help="""TCO of machine in £"""
+    )
+    parser.add_argument(
+        '--geekbench5_email',
+        type=str,
+        help="""Geekbench 5 registered email""",
+    )
+    parser.add_argument(
+        '--geekbench5_key',
+        type=str,
+        help="""Geekbench 5 key""",
     )
 
     return parser.parse_args()
@@ -161,7 +171,7 @@ def run_benchsuite(benchsuite, config_file, result_fullpath):
 
     return results
 
-def update_iperf_server_address(config, server_address, port):
+def update_iperf_server_address(config, server_address : str, port : str):
     for c in config:
         if "benchmarks" in c:
             for b in c["benchmarks"]:
@@ -170,7 +180,15 @@ def update_iperf_server_address(config, server_address, port):
 
     return config
     
+def update_geekbench5(config, geekbench5_email : str, geekbench5_key : str):
+    for c in config:
+        if "benchmarks" in c:
+            for b in c["benchmarks"]:
+                b["settings"]["geekbench5_email"] = geekbench5_email
+                b["settings"]["geekbench5_key"] = geekbench5_key
 
+    return config
+    
 if __name__ == '__main__':
     args = get_args()
 
@@ -197,7 +215,10 @@ if __name__ == '__main__':
     config = get_config(config_file)
 
     if args.type == "network":
-        config = update_iperf_server_address(config, args.server_ip, args.server_port)
+        config = update_iperf_server_address(config, args.iperf_server_ip, args.iperf_server_port)
+    elif args.type == "geekbench5":
+        config = update_geekbench5(config, args.geekbench5_email, args.geekbench5_key)
+
 
     loaded_benchmarks = load_all_benchmarks()
     

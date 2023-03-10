@@ -15,12 +15,14 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 class GeekBench5(benchmarkessentials.Benchmark):
     """
     """
-    def __init__(self, install_dir, program, programversion, result_dir=None, *args, **kwargs):
+    def __init__(self, install_dir, program, programversion, result_dir=None, geekbench5_email=None, geekbench5_key=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
         self.install_dir = install_dir
         self.result_dir = result_dir
+        self.geekbench5_email = geekbench5_email
+        self.geekbench5_key = geekbench5_key
         self.settings = {
             "program":program,
             "programversion":programversion,
@@ -45,7 +47,7 @@ class GeekBench5(benchmarkessentials.Benchmark):
         print("--Version: {}".format(self.programversion))
         command = self.install_dir+"geekbench5-v"+self.programversion+ "/geekbench5"
         json_out = self._get_geekbench_json()
-        exe_list = [command, '--no-upload', '--export-json', json_out]
+        exe_list = [command, '--no-upload', '--export-json', json_out, '--unlock', self.geekbench5_email, self.geekbench5_key]
 
         with subprocess.Popen(exe_list, stdout=subprocess.PIPE, universal_newlines=True) as process:
             return_code = process.wait()
