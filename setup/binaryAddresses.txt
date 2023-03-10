@@ -332,3 +332,4 @@ samtools-v1.15.1,https://github.com/samtools/samtools/releases/download/1.15.1/s
 minimap2-v2.24+1d3c3ee,https://github.com/lh3/minimap2/archive/1d3c3eef03216fde72f5e1a3850941b0193216d9.zip
 miniasm-v0.3+ce615d1,https://github.com/lh3/miniasm/archive/ce615d1d6b8678d38f2f9d27c9dccd944436ae75.zip
 gatk-v4.3.0.0,https://github.com/broadinstitute/gatk/releases/download/4.3.0.0/gatk-4.3.0.0.zip
+geekbench5-v5.5.1,https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz

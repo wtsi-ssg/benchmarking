@@ -1,0 +1,10 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: geekbench5
+      settings:
+        program: "geekbench5"
+        programversion: "5.5.1"
+        result_dir: "/data/results/runs"
