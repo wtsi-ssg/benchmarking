@@ -7,6 +7,10 @@ path_to_program:
   "streams": "${name_and_version}/stream"
   "mbw": "${name_and_version}/mbw"
   "bcftools": "${name_and_version}/bcftools"
+  "geekbench5": "${name_and_version}/geekbench5"
+  "minimap2": "${name_and_version}/minimap2"
+  "miniasm": "${name_and_version}/miniasm"
+  "gatk": "${name_and_version}/gatk"
 default_version:
   "salmon" : "1.0.0"
   "iozone" : "3.488"
