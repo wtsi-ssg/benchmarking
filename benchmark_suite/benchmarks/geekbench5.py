@@ -43,7 +43,7 @@ class GeekBench5(benchmarkessentials.Benchmark):
                    "result_summary": {}}
 
         print("--Version: {}".format(self.programversion))
-        command = self.install_dir+"geekbench-v"+self.programversion+ "/geekbench5"
+        command = self.install_dir+"geekbench5-v"+self.programversion+ "/geekbench5"
         json_out = self._get_geekbench_json()
         exe_list = [command, '--no-upload', '--export-json', json_out]
 
