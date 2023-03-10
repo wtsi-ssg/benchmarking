@@ -52,6 +52,17 @@ build_command:
   "bcftools":
     "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native'; make"
     "cwd": "$install_dir$name_and_version"
-  "samstools":
+  "samtools":
     "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native'; make"
     "cwd": "$install_dir$name_and_version"
+  "minimap2":
+    "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
+    "cwd": "$install_dir$name_and_version"
+  "miniasm":
+    "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
+    "cwd": "$install_dir$name_and_version"
+  "gatk":
+    "no_build": "True"
+  "geekbench5":
+    "no_build": "True"
+

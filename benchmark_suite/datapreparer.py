@@ -111,8 +111,8 @@ class DataPreparer:
 
                         # Should we invoke build command?
                         if not program_name in self.build_command:
-                            print(f"An entry for the build_commandfor {program_name} was not found. Please update your settings and try again.")
-                            sys.exit(1)
+                            print(f"An entry for the build_commandfor {program_name} was not found. Assuming no_build")
+                            pass
                         elif "no_build" in self.build_command[program_name]:
                             pass
                         else:
@@ -196,7 +196,7 @@ class DataPreparer:
         if program_name in self.path_to_program_dict.keys():
             path_to_program_template = string.Template(self.path_to_program_dict[program_name])
         else:
-            path_to_program_template = string.Template("/")
+            path_to_program_template = string.Template(name_and_version+'/'+program_name)
         iperfvar = "iperf"+required_version[0]
         path_to_program = path_to_program_template.substitute(name_and_version=name_and_version,iperfvar=iperfvar)
 
