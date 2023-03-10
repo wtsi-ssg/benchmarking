@@ -47,7 +47,9 @@ class GeekBench5(benchmarkessentials.Benchmark):
         print("--Version: {}".format(self.programversion))
         command = self.install_dir+"geekbench5-v"+self.programversion+ "/geekbench5"
         json_out = self._get_geekbench_json()
-        exe_list = [command, '--no-upload', '--export-json', json_out, '--unlock', self.geekbench5_email, self.geekbench5_key]
+        unlock_list =  [command, '--unlock', self.geekbench5_email, self.geekbench5_key]
+        subprocess.run(unlock_list)
+        exe_list = [command, '--no-upload', '--export-json', json_out]
 
         with subprocess.Popen(exe_list, stdout=subprocess.PIPE, universal_newlines=True) as process:
             return_code = process.wait()
