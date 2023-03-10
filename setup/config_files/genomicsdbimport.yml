@@ -6,7 +6,7 @@
     - type: multithreaded
       settings:
         tag: genomicsdbimport
-        command: "${install_path}gatk --java-options '-Xmx4g -Xms4g' GenomicsDBImport --reader-threads ${threads} --reference ${input_datapath}/GRCh38_full_analysis_set_plus_decoy_hla.fa  --sample-name-map ${input_datapath}/1000Gsample.sample_map --genomicsdb-workspace-path ${result_path}/my_database.${repeatn}.${processn}. --tmp-dir ${result_path}/tmp -L 22"
+        command: "${install_path}gatk --java-options '-Xmx4g -Xms4g' GenomicsDBImport --reader-threads ${threads} --reference ${input_datapath}/GRCh38_full_analysis_set_plus_decoy_hla.fa  --sample-name-map ${input_datapath}/1000Gsample.sample_map --genomicsdb-workspace-path ${result_path}/my_database.${repeatn}.${processn} -L 22"
         program: "gatk"
         programversion: "4.3.0.0"
         shell: True
