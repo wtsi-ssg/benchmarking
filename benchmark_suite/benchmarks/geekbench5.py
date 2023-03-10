@@ -15,11 +15,12 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 class GeekBench5(benchmarkessentials.Benchmark):
     """
     """
-    def __init__(self, install_dir, program, programversion, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, install_dir, program, programversion, result_dir=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
         self.install_dir = install_dir
+        self.result_dir = result_dir
         self.settings = {
             "program":program,
             "programversion":programversion,
