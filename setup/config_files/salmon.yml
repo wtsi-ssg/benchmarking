@@ -9,7 +9,7 @@
         command: "${install_path}salmon quant --threads ${threads} -i ${input_datapath}/referenceGenome_index4/ -l A -1 ${input_datapath}/SRR10103759/C1_1.fq.gz -2 ${input_datapath}/SRR10103759/C1_2.fq.gz -o ${result_path}output.${repeatn}.${processn}.quant.sf"
         program: "salmon"
         programversion: "1.0.0"
-        shell: True
+        shell: False
         dataset_file:
           file: "/benchmarking/setup/salmon_input_data.txt"
           dest: "SRR10103759"

@@ -9,7 +9,7 @@
         command: "${install_path}bwa mem -t ${threads} -K 100000000 -o ${result_path}/output.${repeatn}.${processn}.sam ${input_datapath}/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna ${input_datapath}/truncated.fq"
         program: "bwa"
         programversion: "0.7.17+b56db22"
-        shell: True
+        shell: False
         dataset_file: "/benchmarking/setup/bwa_short_data.txt"
         datadir: "/data/datasets/bwa/"
         result_dir: "/data/results/runs/"

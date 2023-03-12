@@ -56,7 +56,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, step=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", *args, **kwargs):
+    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -78,6 +78,7 @@ class MultiThread(benchmarkessentials.Benchmark):
         self.dataset_file = dataset_file
         self.result_dir = result_dir
         self.shell = shell
+        self.cwd = cwd
         self.clear_caches = clear_caches
         self.repeats = repeats
         self.process_thread = process_thread
@@ -158,7 +159,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                         for i in range(1,int(ps)+1):
                             runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
                             # print(f"runstring is: '{runstring}'")
-                            process =  subprocess.Popen([runstring], shell=True, universal_newlines=True)
+                            process =  subprocess.Popen([runstring], shell=self.shell, universal_newlines=True, cwd=self.cwd)
                             if cpu_affy_list is not None:
                                 os.sched_setaffinity(process.pid, cpu_affy_list[i-1])
                             t = TailChase(process.pid)
@@ -186,7 +187,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                         for x in processes:
                             if os.waitstatus_to_exitcode(x.exitstatus) != 0:
                                 print("Non-zero exit code from test")
-                                os.abort()
+                                os.exit(1)
                             runresult["user"] = runresult["user"] + x.results.ru_utime
                             runresult["system"] = runresult["system"] + x.results.ru_stime
                             runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
