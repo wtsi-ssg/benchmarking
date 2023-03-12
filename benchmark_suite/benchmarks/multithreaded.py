@@ -71,8 +71,11 @@ class MultiThread(benchmarkessentials.Benchmark):
         else:
             self.install_path = install_path
         
-        self.execution_string = command
-        self.tag = tag if tag else os.path.basename(shlex.split(self.execution_string)[0]) 
+        if command is str:
+            self.execution_string = shlex.split(command)
+        else:
+            self.execution_string = command
+        self.tag = tag if tag else os.path.basename(self.execution_string[0]) 
         self.time_names = ["user", "system", "elapsed"] 
         self.original_datadir = os.path.abspath(os.path.expanduser(datadir)) if datadir else None
         self.dataset_file = dataset_file
@@ -138,7 +141,7 @@ class MultiThread(benchmarkessentials.Benchmark):
 
                         runresult = {}
 
-                        execstring = string.Template(self.execution_string)
+                        execstring = [string.Template(x) for x in self.execution_string]
                         #  +" "+get_cpu_info()["arch"]+" "++""+resulted_time_dir
                         # Subclass Thread to collect resource usage
                         class TailChase(threading.Thread):
@@ -157,9 +160,9 @@ class MultiThread(benchmarkessentials.Benchmark):
                         # Run the processes to be evaluated
                         processes =[]
                         for i in range(1,int(ps)+1):
-                            runstring =  execstring.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i)
+                            runstring = [x.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i) for x in execstring]
                             # print(f"runstring is: '{runstring}'")
-                            process =  subprocess.Popen([runstring], shell=self.shell, universal_newlines=True, cwd=self.cwd)
+                            process =  subprocess.Popen(runstring, shell=self.shell, universal_newlines=True, cwd=self.cwd)
                             if cpu_affy_list is not None:
                                 os.sched_setaffinity(process.pid, cpu_affy_list[i-1])
                             t = TailChase(process.pid)
