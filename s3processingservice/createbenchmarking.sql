@@ -53,14 +53,17 @@ ALTER TABLE IF EXISTS public.nickname_year
 
 -- View: public.cpu_results
 
+-- DROP MATERIALIZED VIEW IF EXISTS public.cpu_results;
+
 CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_results
 TABLESPACE pg_default
 AS
  SELECT benchmark_data.nickname,
     benchmark_data.benchmark_type,
-	benchmark_data.program_name,
-	benchmark_data.program_version,
-	benchmark_data.units,
+    benchmark_data.program_name,
+    benchmark_data.program_version,
+    benchmark_data.units,
+	benchmark_data.cpu_affinity,
     benchmark_data.processes::integer AS processes,
     benchmark_data.threads::integer AS threads,
     benchmark_data.usercpu::numeric AS usercpu,
@@ -71,9 +74,10 @@ AS
     ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy
    FROM ( SELECT benchmark_runs.nickname,
             benchmark_runs.benchmark_type,
-		    benchmark_runs.program_name,
-			benchmark_runs.program_version,
-			benchmark_runs.units,
+            benchmark_runs.program_name,
+            benchmark_runs.program_version,
+            benchmark_runs.units,
+		    benchmark_runs.cpu_affinity,
             benchmark_runs.processes,
             benchmark_runs.threads,
             benchmark_runs.runs ->> 'user'::text AS usercpu,
@@ -83,17 +87,19 @@ AS
             benchmark_runs.runs -> 'power'::text AS powerl
            FROM ( SELECT benchmarks.nickname,
                     benchmarks.benchmark_type,
-				    benchmarks.program_name,
-				    benchmarks.program_version,
-				    benchmarks.units,
+                    benchmarks.program_name,
+                    benchmarks.program_version,
+                    benchmarks.units,
+	                benchmarks.cpu_affinity,
                     benchmarks.benchmark_types ->> 'processes'::text AS processes,
                     benchmarks.benchmark_types ->> 'threads'::text AS threads,
                     jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
                    FROM ( SELECT hosts.nickname,
                             hosts.benchmark_type,
-						    jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings' ->> 'program' as program_name,
-						    jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings' ->> 'programversion' as program_version,
-						    jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings' ->> 'units' as units,
+                            (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'program'::text AS program_name,
+                            (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'programversion'::text AS program_version,
+                            (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'units'::text AS units,
+                            (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'cpu_affinity'::text AS cpu_affinity,
                             jsonb_array_elements((jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'results'::text) -> 'configurations'::text) AS benchmark_types
                            FROM ( SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
                                     jsonb_object_keys(((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text) AS benchmark_type,
