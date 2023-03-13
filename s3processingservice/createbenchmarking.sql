@@ -255,3 +255,52 @@ WITH DATA;
 
 ALTER TABLE IF EXISTS public.cpu_corecount
     OWNER TO benchmarking;
+
+-- View: public.geekbench5_results
+
+-- DROP MATERIALIZED VIEW IF EXISTS public.geekbench5_results;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.geekbench5_results
+TABLESPACE pg_default
+AS
+ SELECT benchmarks.nickname,
+    (benchmarks.geekbench5_results ->> 'score'::text)::numeric AS ovarall_score,
+    (benchmarks.geekbench5_results ->> 'runtime'::text)::numeric AS overall_runtime,
+    (benchmarks.geekbench5_results ->> 'multicore_score'::text)::numeric AS multicore_score,
+    nickname_year.year
+   FROM ( SELECT hosts.nickname,
+            (jsonb_array_elements(hosts.benchmark_types -> 'GeekBench5'::text) -> 'results'::text) -> 'result_summary'::text AS geekbench5_results
+           FROM ( SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
+                    ((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text AS benchmark_types
+                   FROM returned_results) hosts) benchmarks
+     LEFT JOIN nickname_year ON benchmarks.nickname = nickname_year.nickname::text
+WITH DATA;
+
+ALTER TABLE IF EXISTS public.geekbench5_results
+    OWNER TO benchmarking;
+
+-- View: public.geekbench5_detailed_results
+
+-- DROP MATERIALIZED VIEW IF EXISTS public.geekbench5_detailed_results;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.geekbench5_detailed_results
+TABLESPACE pg_default
+AS
+ SELECT benchmarks.nickname,
+    benchmarks.section_name,
+    benchmarks.geekbench5_results ->> 'name'::text AS detail_name,
+    (benchmarks.geekbench5_results ->> 'score'::text)::numeric AS detail_score,
+    nickname_year.year
+   FROM ( SELECT benchmark_section.nickname,
+            benchmark_section.geekbench5_results ->> 'name'::text AS section_name,
+            jsonb_array_elements(benchmark_section.geekbench5_results -> 'workloads'::text) AS geekbench5_results
+           FROM ( SELECT hosts.nickname,
+                    jsonb_array_elements(((jsonb_array_elements(hosts.benchmark_types -> 'GeekBench5'::text) -> 'results'::text) -> 'result_summary'::text) -> 'sections'::text) AS geekbench5_results
+                   FROM ( SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
+                            ((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text AS benchmark_types
+                           FROM returned_results) hosts) benchmark_section) benchmarks
+     LEFT JOIN nickname_year ON benchmarks.nickname = nickname_year.nickname::text
+WITH DATA;
+
+ALTER TABLE IF EXISTS public.geekbench5_detailed_results
+    OWNER TO benchmarking;
