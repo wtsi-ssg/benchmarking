@@ -194,6 +194,389 @@
             "benchmarks": {
               "type": "object",
               "properties": {
+                "geekbench5" : {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "object",
+                        "properties": {
+                          "program": {
+                            "type": "string"
+                          },
+                          "programversion": {
+                            "type": "string"
+                          },
+                          "arguments": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "program",
+                          "programversion",
+                          "arguments"
+                        ]
+                      },
+                      "results": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "program": {
+                              "type": "string"
+                            },
+                            "version": {
+                              "type": "string"
+                            },
+                            "result_summary": {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string"
+                                },
+                                "document_type": {
+                                  "type": "integer"
+                                },
+                                "document_version": {
+                                  "type": "integer"
+                                },
+                                "branch": {
+                                  "type": "string"
+                                },
+                                "build": {
+                                  "type": "integer"
+                                },
+                                "checksum": {
+                                  "type": "string"
+                                },
+                                "commit": {
+                                  "type": "string"
+                                },
+                                "options": {
+                                  "type": "object",
+                                  "properties": {
+                                    "iterations": {
+                                      "type": "integer"
+                                    },
+                                    "cpu_workers": {
+                                      "type": "integer"
+                                    },
+                                    "memory_workers": {
+                                      "type": "integer"
+                                    },
+                                    "workload_gap": {
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "iterations",
+                                    "cpu_workers",
+                                    "memory_workers",
+                                    "workload_gap"
+                                  ]
+                                },
+                                "platform": {
+                                  "type": "object",
+                                  "properties": {
+                                    "os": {
+                                      "type": "string"
+                                    },
+                                    "architecture": {
+                                      "type": "string"
+                                    },
+                                    "bits": {
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "required": [
+                                    "os",
+                                    "architecture",
+                                    "bits"
+                                  ]
+                                },
+                                "processor_frequency": {
+                                  "type": "object",
+                                  "properties": {
+                                    "frequencies": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "frequencies"
+                                  ]
+                                },
+                                "runtime": {
+                                  "type": "number"
+                                },
+                                "system_uuid": {
+                                  "type": "string"
+                                },
+                                "clock": {
+                                  "type": "number"
+                                },
+                                "uuid": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "string"
+                                },
+                                "metrics": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "value": {
+                                        "type": "string"
+                                      },
+                                      "ivalue": {
+                                        "type": "integer"
+                                      },
+                                      "fvalue": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "value",
+                                      "ivalue",
+                                      "fvalue"
+                                    ]
+                                  }
+                                },
+                                "multicore_rate": {
+                                  "type": "number"
+                                },
+                                "multicore_score": {
+                                  "type": "integer"
+                                },
+                                "score": {
+                                  "type": "integer"
+                                },
+                                "valid": {
+                                  "type": "integer"
+                                },
+                                "sections": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "id": {
+                                        "type": "integer"
+                                      },
+                                      "score": {
+                                        "type": "integer"
+                                      },
+                                      "graph_width": {
+                                        "type": "integer"
+                                      },
+                                      "valid": {
+                                        "type": "integer",
+                                        "enum": [
+                                          0,
+                                          1
+                                        ]
+                                      },
+                                      "workloads": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "name": {
+                                              "type": "string",
+                                              "enum": [
+                                                "AES-XTS",
+                                                "Text Compression",
+                                                "Image Compression",
+                                                "Navigation",
+                                                "HTML5",
+                                                "SQLite",
+                                                "PDF Rendering",
+                                                "Text Rendering",
+                                                "Clang",
+                                                "Camera",
+                                                "N-Body Physics",
+                                                "Rigid Body Physics",
+                                                "Gaussian Blur",
+                                                "Face Detection",
+                                                "Horizon Detection",
+                                                "Image Inpainting",
+                                                "HDR",
+                                                "Ray Tracing",
+                                                "Structure from Motion",
+                                                "Speech Recognition",
+                                                "Machine Learning"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "integer"
+                                            },
+                                            "units": {
+                                              "type": "integer"
+                                            },
+                                            "threads": {
+                                              "type": "integer"
+                                            },
+                                            "score": {
+                                              "type": "integer"
+                                            },
+                                            "graph_width": {
+                                              "type": "integer"
+                                            },
+                                            "factory_clock": {
+                                              "type": "number"
+                                            },
+                                            "factory_runtime": {
+                                              "type": "number"
+                                            },
+                                            "workload_clock": {
+                                              "type": "number"
+                                            },
+                                            "runtime": {
+                                              "type": "number"
+                                            },
+                                            "runtime_max": {
+                                              "type": "number"
+                                            },
+                                            "runtime_mean": {
+                                              "type": "number"
+                                            },
+                                            "runtime_median": {
+                                              "type": "number"
+                                            },
+                                            "runtime_min": {
+                                              "type": "number"
+                                            },
+                                            "runtime_stddev": {
+                                              "type": "number"
+                                            },
+                                            "runtime_warmup": {
+                                              "type": "number"
+                                            },
+                                            "runtimes": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "valid": {
+                                              "type": "integer",
+                                              "enum": [
+                                                0,
+                                                1
+                                              ]
+                                            },
+                                            "workload_rate": {
+                                              "type": "number"
+                                            },
+                                            "work": {
+                                              "type": "integer"
+                                            },
+                                            "rate_string": {
+                                              "type": "string"
+                                            },
+                                            "kernels": {
+                                              "type": "array"
+                                            },
+                                            "temperatures": {
+                                              "type": "array"
+                                            }
+                                          },
+                                          "required": [
+                                            "name",
+                                            "id",
+                                            "units",
+                                            "threads",
+                                            "score",
+                                            "graph_width",
+                                            "factory_clock",
+                                            "factory_runtime",
+                                            "workload_clock",
+                                            "runtime",
+                                            "runtime_max",
+                                            "runtime_mean",
+                                            "runtime_median",
+                                            "runtime_min",
+                                            "runtime_stddev",
+                                            "runtime_warmup",
+                                            "runtimes",
+                                            "valid",
+                                            "workload_rate",
+                                            "work",
+                                            "rate_string",
+                                            "kernels",
+                                            "temperatures"
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "id",
+                                      "score",
+                                      "graph_width",
+                                      "valid",
+                                      "workloads"
+                                    ]
+                                  }
+                                },
+                                "complete_benchmark": {
+                                  "type": "integer",
+                                  "enum": [
+                                    0,
+                                    1
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "date",
+                                "document_type",
+                                "document_version",
+                                "branch",
+                                "build",
+                                "checksum",
+                                "commit",
+                                "options",
+                                "platform",
+                                "processor_frequency",
+                                "runtime",
+                                "system_uuid",
+                                "clock",
+                                "uuid",
+                                "version",
+                                "metrics",
+                                "multicore_rate",
+                                "multicore_score",
+                                "score",
+                                "valid",
+                                "sections",
+                                "complete_benchmark"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "program",
+                            "version",
+                            "result_summary"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
                 "mbw": {
                   "type": "array",
                   "items": {
