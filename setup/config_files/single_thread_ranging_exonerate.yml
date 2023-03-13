@@ -1,0 +1,21 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: exonerate-2.2.0
+        command: "${install_path}/src/program/exonerate ${input_datapath}/query.fasta ${input_datapath}/target.fasta ${result_path}output.${repeatn}.${processn}.txt"
+        program: "exonerate"
+        programversion: "2.2.0"
+        shell: False
+        dataset_file: "/benchmarking/setup/exonerate_data.txt"
+        datadir: "/data/datasets/exonerate/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: Alignments
+        process_thread:
+          - processes: range(1,$N,1)
+            threads: 1
+        clear_caches: True

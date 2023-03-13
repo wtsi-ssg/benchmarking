@@ -333,3 +333,6 @@ minimap2-v2.24+1d3c3ee,https://github.com/lh3/minimap2/archive/1d3c3eef03216fde7
 miniasm-v0.3+ce615d1,https://github.com/lh3/miniasm/archive/ce615d1d6b8678d38f2f9d27c9dccd944436ae75.zip
 gatk-v4.3.0.0,https://github.com/broadinstitute/gatk/releases/download/4.3.0.0/gatk-4.3.0.0.zip
 geekbench5-v5.5.1,https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz
+exonerate-v2.2.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.2.0.tar.gz
+exonerate-v2.3.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.3.0.tar.gz
+exonerate-v2.4.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.4.0.tar.gz

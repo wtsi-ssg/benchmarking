@@ -65,4 +65,6 @@ build_command:
     "no_build": "True"
   "geekbench5":
     "no_build": "True"
-
+  "exonerate":
+    "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native' LDFLAGS='-Wl,--copy-dt-needed-entries'; make"
+    "cwd": "$install_dir$name_and_version"
