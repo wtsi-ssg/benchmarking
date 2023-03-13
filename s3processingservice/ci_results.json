@@ -19,7 +19,10 @@
             "type": "string"
           },
           "arguments": {
-            "type": "string"
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string"} }
+            ]
           },
           "results": {
             "type": "object",
@@ -222,7 +225,10 @@
                             "type": [ "string", "null" ]
                           },
                           "arguments": {
-                            "type": "string"
+                            "oneOf": [
+                              { "type": "string" },
+                              { "type": "array", "items": { "type": "string"} }
+                            ]              
                           },
                           "units": {
                             "type": [ "string", "null" ]
