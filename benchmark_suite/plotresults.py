@@ -37,7 +37,7 @@ class PlotResults:
             if report in compare_result['results']['CPU']['benchmarks']:
                 yield compare_result['nickname'], compare_result['results']['CPU']['benchmarks'][report]
 
-    def get_result_cpu_throughput_data(main_results, data):
+    def get_result_cpu_throughput_data(main_results, data) -> 'list[list,list,list,list,list,list,list]':
         return [list(itertools.chain.from_iterable(itertools.repeat(m['processes'], len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == main_results['system-info']['cpuinfo']['count'])), # processes
                 list(itertools.chain.from_iterable(itertools.repeat(f"{m['processes']}*{m['threads']}", len(m['runs'])) for m in data['results']['configurations'] if m['processes'] * m['threads'] == main_results['system-info']['cpuinfo']['count'])), # process thread labels
                 list(m['user'] for keyData in data['results']['configurations'] for m in keyData['runs'] if keyData['processes'] * keyData['threads'] == main_results['system-info']['cpuinfo']['count']),
@@ -97,19 +97,19 @@ class PlotResults:
                 x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_single_data(main_results['system-info']['model'], subdata)
                 if len(x_labels) == 0:
                     continue
-                x_models = np.tile(main_results['nickname'], len(x_labels))
+                models_list = [np.tile(main_results['nickname'], len(x_labels))]
                 # bring in results from matching tests in comparison reports
                 for model, matching_result in PlotResults.find_matching_reports(main_results, compare_results):
                     # FIXME: may be multiple versions of same program tested in a run in future, fix the [0]
                     m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_single_data(main_results, matching_result[0])
-                    x_labels = x_labels + m_labels
-                    x_user = x_user + m_user
-                    x_sys = x_sys + m_sys
-                    x_elapsed = x_elapsed + m_elapsed
-                    x_rss = x_rss + m_rss
-                    x_power_per_run = x_power_per_run + m_power_per_run
-                    m_models = np.tile(model, len(m_labels))
-                    x_models = np.hstack([x_models, m_models])
+                    x_labels.extend(m_labels)
+                    x_user.extend(m_user)
+                    x_sys.extend(m_sys)
+                    x_elapsed.extend(m_elapsed)
+                    x_rss.extend(m_rss)
+                    x_power_per_run.extend(m_power_per_run)
+                    models_list.extend(np.tile(model, len(m_labels)))
+                x_models = np.hstack(models_list)
 
                 x_outputs = [1 / (elapsed/3600) for elapsed in x_elapsed]
 
@@ -172,20 +172,21 @@ class PlotResults:
                 x_processes, x_labels, x_user, x_sys, x_elapsed, x_rss, x_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, subdata)
                 if len(x_processes) == 0:
                     continue
-                x_models = np.tile(main_results['nickname'], len(x_labels))
+                models_list = [np.tile(main_results['nickname'], len(x_labels))]
                 # bring in results from matching tests in comparison reports
                 for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
                     # FIXME: may be multiple versions of same program tested in a run in future, fix the [0]
                     m_processes, m_labels, m_user, m_sys, m_elapsed, m_rss, m_power_per_run = PlotResults.get_result_cpu_throughput_data(main_results, matching_result[0])
-                    x_processes = x_processes + m_processes
-                    x_labels = x_labels + m_labels
-                    x_user = x_user + m_user
-                    x_sys = x_sys + m_sys
-                    x_elapsed = x_elapsed + m_elapsed
-                    x_rss = x_rss + m_rss
-                    x_power_per_run = x_power_per_run + m_power_per_run
-                    m_models = np.tile(model, len(m_labels))
-                    x_models = np.hstack([x_models, m_models])
+                    x_processes.extend(m_processes)
+                    x_labels.extend(m_labels)
+                    x_user.extend(m_user)
+                    x_sys.extend(m_sys)
+                    x_elapsed.extend(m_elapsed)
+                    x_rss.extend(m_rss)
+                    x_power_per_run.extend(m_power_per_run)
+                    models_list.append(np.tile(model, len(m_labels)))
+
+                x_models = np.hstack(models_list)
 
                 x_outputs = [process / (elapsed/3600) for process, elapsed in zip(x_processes, x_elapsed)]
 
@@ -357,13 +358,14 @@ class PlotResults:
                 continue
 
             x_bandwidth = list(float(x['copy'].split(' ')[0]) for x in data[0]['results'] if x['method'] == 'MEMCPY')
-            x_models = np.tile(main_results['nickname'], len(x_bandwidth))
+            models_list = [np.tile(main_results['nickname'], len(x_bandwidth))]
 
             for model, matching_result in PlotResults.find_matching_reports(report, compare_results):
                 m_user = list(float(x['copy'].split(' ')[0]) for x in matching_result[0]['results'] if x['method'] == 'MEMCPY')
-                m_models = np.tile(model, len(m_user))
-                x_bandwidth = x_bandwidth + m_user
-                x_models = np.hstack([x_models, m_models])
+                x_bandwidth.extend(m_user)
+                models_list.extend(np.tile(model, len(m_user)))
+
+            x_models = np.hstack(models_list)
 
             a = np.array(x_models)
             grp_model_pt = npi.group_by(a)
