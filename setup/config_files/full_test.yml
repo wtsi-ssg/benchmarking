@@ -91,6 +91,63 @@
           - processes: 4
             threads: $N/4
         clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: minimap2
+        command: "${install_path}minimap2 -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
+        program: "minimap2"
+        programversion: "2.24+1d3c3ee"
+        shell: True
+        dataset_file: "/benchmarking/setup/minimapasm_data.txt"
+        datadir: "/data/datasets/minimapasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 30X E.coli from a PacBio RS II P5-C3 single SMRTcell
+        process_thread:
+          - processes: 2
+            threads: $N/2
+          - processes: 1
+            threads: $N
+          - processes: 4
+            threads: $N/4
+        clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: miniasm
+        command: "${install_path}miniasm -f ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.paf.gz > ${result_path}output.${repeatn}.${processn}.gfa"
+        program: "miniasm"
+        programversion: "0.3+ce615d1"
+        shell: True
+        dataset_file: "/benchmarking/setup/minimapasm_data.txt"
+        datadir: "/data/datasets/minimapasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 30X E.coli from a PacBio RS II P5-C3 single SMRTcell
+        process_thread:
+          - processes: 2
+            threads: 1
+          - processes: 1
+            threads: 1
+          - processes: 4
+            threads: 1
+        clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: genomicsdbimport
+        command: ["${install_path}gatk", "--java-options", "-Xmx4g -Xms4g", "GenomicsDBImport", "--reader-threads", "${threads}", "--reference", "${input_datapath}/GRCh38_full_analysis_set_plus_decoy_hla.fa", "--sample-name-map", "${input_datapath}/1000Gsample.sample_map", "--genomicsdb-workspace-path", "${result_path}/my_database.${repeatn}.${processn}", "-L", "chr22"]
+        program: "gatk"
+        programversion: "4.3.0.0"
+        shell: False
+        dataset_file: "/benchmarking/setup/genomedb_data.txt"
+        datadir: "/data/datasets/genomicsdbimport/"
+        cwd: "/data/datasets/genomicsdbimport/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: Chr22 @ 30x from WGS
+        process_thread:
+          - processes: 1
+            threads: 8
+        clear_caches: True
 - type: disk
   benchmarks:
     - type: iozone
