@@ -26,8 +26,8 @@
         program: "bcftools"
         programversion: "1.15.1"
         shell: True
-        dataset_file: "/benchmarking/setup/bcftools_data.txt"
-        datadir: "/data/datasets/bcftools/"
+        dataset_file: "/benchmarking/setup/variantcaller_data.txt"
+        datadir: "/data/datasets/variantcaller/"
         result_dir: "/data/results/runs/"
         repeats: 3
         units: Chr22 @ 30x from WGS
@@ -43,8 +43,8 @@
         program: "bcftools"
         programversion: "1.15.1"
         shell: True
-        dataset_file: "/benchmarking/setup/bcftools_data.txt"
-        datadir: "/data/datasets/bcftools/"
+        dataset_file: "/benchmarking/setup/variantcaller_data.txt"
+        datadir: "/data/datasets/variantcaller/"
         result_dir: "/data/results/runs/"
         repeats: 3
         units: Chr22 @ 30x from WGS

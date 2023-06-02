@@ -1,0 +1,25 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: haplotypecaller
+        command: ["${install_path}gatk", "--java-options", "-Xmx4g -Xms4g", "HaplotypeCaller", "--native-pair-hmm-threads", "${threads}", "--reference", "${input_datapath}/b37_human_decoy_reference.fasta", "-L", "chr22", "-O", "${result_path}output.${repeatn}.${processn}.g.vcf.gz", "-I", "${input_datapath}/RMNISTHS_30xdownsample_chr22.cram", "-ERC", "GVCF"]
+        program: "gatk"
+        programversion: "4.3.0.0"
+        shell: False
+        dataset_file: "/benchmarking/setup/variantcaller_data.txt"
+        datadir: "/data/datasets/variantcaller/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: Chr22 @ 30x from WGS
+        process_thread:
+          - processes: 2
+            threads: $N/2
+          - processes: 1
+            threads: $N
+          - processes: 4
+            threads: $N/4
+        clear_caches: True
