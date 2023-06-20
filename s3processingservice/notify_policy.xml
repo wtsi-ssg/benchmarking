@@ -1,5 +1,5 @@
 <NotificationConfiguration>
-  <QueueConfiguration>
+  <TopicConfiguration>
     <Id>1</Id>
     <Filter>
         <S3Key>
@@ -9,7 +9,7 @@
             </FilterRule>
         </S3Key>
     </Filter>
-    <Queue>arn:aws:sns:default::results-posted-topic</Queue>
+    <Topic>arn:aws:sns:default::results-posted-topic</Topic>
     <Event>s3:ObjectCreated:*</Event>
-  </QueueConfiguration>
+  </TopicConfiguration>
 </NotificationConfiguration>
