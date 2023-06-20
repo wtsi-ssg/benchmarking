@@ -9,7 +9,7 @@
             </FilterRule>
         </S3Key>
     </Filter>
-    <Topic>arn:aws:sns:default::results-posted-topic</Topic>
+    <Topic>arn:aws:sns:default::returned_results</Topic>
     <Event>s3:ObjectCreated:*</Event>
   </TopicConfiguration>
 </NotificationConfiguration>
