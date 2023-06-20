@@ -1,0 +1,15 @@
+<NotificationConfiguration>
+  <QueueConfiguration>
+    <Id>1</Id>
+    <Filter>
+        <S3Key>
+            <FilterRule>
+                <Name>prefix</Name>
+                <Value>results/</Value>
+            </FilterRule>
+        </S3Key>
+    </Filter>
+    <Queue>arn:aws:sns:default::results-posted-topic</Queue>
+    <Event>s3:ObjectCreated:*</Event>
+  </QueueConfiguration>
+</NotificationConfiguration>
