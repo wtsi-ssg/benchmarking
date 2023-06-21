@@ -34,8 +34,12 @@ def dump_message(message):
                 print(f'Downloading file {filename}')
                 try:
                     res = client.get_object(Bucket='it_randd', Key=record['s3']['object']['key'])
-                except boto3.S3.Client.exceptions.NoSuchKey:
-                    next
+                except ClientError as ex:
+                    if ex.response['Error']['Code'] == 'NoSuchKey':
+                        print(f'No object found {filename} - skipping')
+                        next
+                    else:
+                        raise
                 # Validate it against schema
                 doc = res['Body'].read()
                 docconv = json.loads(doc)
