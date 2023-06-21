@@ -1,7 +1,7 @@
 #!/bin/env python
 
 # Manually create dummy s3 message
-# e.g. python create_test.py 192.168.3.1 user MxRwazxoAhn55aicDK9T7SPU6YAOhosqLK60SYxAPBM= 2022-11-09-175119_single_process_ranging.json
+# e.g. python create_test.py 192.168.3.1 user password results/2022-11-09-175119_single_process_ranging.json
 
 import argparse
 import json
