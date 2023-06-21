@@ -16,4 +16,6 @@ COPY ./imports3.py /
 RUN pip3 install --upgrade pip setuptools
 RUN pip3 install -r /requirements.txt
 
+ENV PYTHONUNBUFFERED 1
+
 ENTRYPOINT ["/usr/bin/python3","/imports3.py"]
