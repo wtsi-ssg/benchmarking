@@ -29,7 +29,7 @@ def dump_message(message):
                 # Check it is for us
                 filename:str = record['s3']['object']['key']
                 if record['eventName'] != 's3:ObjectCreated:Post' or record['s3']['bucket']['name'] != 'it_randd' or not (filename.startswith('results/') or filename.startswith('ci_results/')):
-                    next
+                    continue
                 # Download new file from S3
                 print(f'Downloading file {filename}')
                 try:
@@ -37,7 +37,7 @@ def dump_message(message):
                 except ClientError as ex:
                     if ex.response['Error']['Code'] == 'NoSuchKey':
                         print(f'No object found {filename} - skipping')
-                        next
+                        continue
                     else:
                         raise
                 # Validate it against schema
