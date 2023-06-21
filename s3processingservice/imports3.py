@@ -74,6 +74,8 @@ def dump_message(message):
 parser = argparse.ArgumentParser(description='Check queue for files to download from S3.')
 parser.add_argument('host', metavar='host', type=str, nargs='?',
                     help='rabbitmq host', default='localhost')
+parser.add_argument('host', metavar='vhost', type=str, nargs='?',
+                    help='rabbitmq vhost', default='/')
 parser.add_argument('user', metavar='user', type=str, nargs='?',
                     help='rabbitmq username', default='guest')
 parser.add_argument('password', metavar='password', type=str, nargs='?',
