@@ -1,3 +1,5 @@
+#!/bin/bash
+set -euxo pipefail
 ACCESS_KEY=$1
 SECRET_ACCESS_KEY=$2
 DSN=$3
