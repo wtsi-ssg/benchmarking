@@ -1,0 +1,1 @@
+./s3curl.pl --id randd --endpoint cog.sanger.ac.uk -- -k -X POST https://cog.sanger.ac.uk/ -d "Action=CreateTopic&Name=returned_results&push-endpoint=amqp://benchmark-notify:passwordhere@rabbit-0.internal.sanger.ac.uk/bm-notify"
