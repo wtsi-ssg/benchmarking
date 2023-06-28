@@ -79,7 +79,7 @@
         programversion: "1.15.1"
         shell: True
         dataset_file: "/benchmarking/setup/variantcaller_data.txt"
-        datadir: "/data/datasets/bcftools/"
+        datadir: "/data/datasets/variantcaller/"
         result_dir: "/data/results/runs/"
         repeats: 3
         units: Chr22 30x WGS
