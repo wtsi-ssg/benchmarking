@@ -46,10 +46,13 @@ class Suite(object):
         numa_topology = []
         number_of_nodes = numa.get_max_node() + 1
         print("-Number of nodes:", number_of_nodes)
-        for node in range(number_of_nodes):
-            print("-Node id: {0}\n--cpus: {1}".format(node, numa.node_to_cpus(node)), file=sys.stderr)
-            numa_topology.append(list(numa.node_to_cpus(node)))
-        self.numa_topology = numa_topology
+        try:
+            for node in range(number_of_nodes):
+                print("-Node id: {0}\n--cpus: {1}".format(node, numa.node_to_cpus(node)), file=sys.stderr)
+                numa_topology.append(list(numa.node_to_cpus(node)))
+            self.numa_topology = numa_topology
+        except RuntimeError:
+            pass
 
         return numa_topology
 
