@@ -322,6 +322,7 @@ bwa-v0.7.15,https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.15.tar.bz2
 bwa-v0.7.16a,https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.16a.tar.bz2
 bwa-v0.7.17,https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2
 bwa-v0.7.17+b56db22,https://github.com/lh3/bwa/archive/b56db225480b9f6242b7d2b22b46b61d6ba48e73.zip
+bwa-v0.7.17+139f68f,https://github.com/lh3/bwa/archive/139f68fc4c3747813783a488aef2adc86626b01b.zip
 streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/stream.c
 streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c
 mbw-v1.4a, https://github.com/raas/mbw/archive/2a15026ff65160127204881263464b1740a57198.zip
