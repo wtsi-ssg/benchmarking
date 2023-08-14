@@ -328,6 +328,7 @@ streams-v0.5.1,https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c
 mbw-v1.4a, https://github.com/raas/mbw/archive/2a15026ff65160127204881263464b1740a57198.zip
 bwa-mem2-v2.2.1,https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.2.1/Source_code_including_submodules.tar.gz
 bwa-mem2-v2.2.1+d48e1de,https://it_randd.cog.sanger.ac.uk/software/bwa-mem2-2.2.1+d48e1de.tar.gz
+bwa-mem2-v2.2.1+simde_benchmarking,https://github.com/mp15/bwa-mem2/releases/download/v2.2.1%2Bsimde_benchmarking/bwa-mem-v2.2.1+simde_benchmarking.tar.bz2
 bcftools-v1.15.1,https://github.com/samtools/bcftools/releases/download/1.15.1/bcftools-1.15.1.tar.bz2
 samtools-v1.15.1,https://github.com/samtools/samtools/releases/download/1.15.1/samtools-1.15.1.tar.bz2
 minimap2-v2.24+1d3c3ee,https://github.com/lh3/minimap2/archive/1d3c3eef03216fde72f5e1a3850941b0193216d9.zip
