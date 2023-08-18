@@ -57,7 +57,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", path_to_program_dict=None, *args, **kwargs):
+    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", suite=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -98,8 +98,8 @@ class MultiThread(benchmarkessentials.Benchmark):
             "cpu_affinity": cpu_affy,
             }
         self.cpu_affy = cpu_affy
-        if path_to_program_dict:
-            self.path_to_program = path_to_program_dict[program]
+        if suite.path_to_program_dict:
+            self.path_to_program = suite.path_to_program_dict[program]
         else:
             self.path_to_program = pathlib.Path(self.install_dir) / pathlib.Path(self.program+"-v"+self.programversion) / program
 
@@ -112,6 +112,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                   }
 
         resulted_sam_dir = self.create_result_dirs(self.get_name())
+        path_to_program_templated = string.Template(self.path_to_program).substitute(name_and_version=self.program_name+'-v'+self.programversion)
 
         for pt in self.process_thread:
 
@@ -169,10 +170,10 @@ class MultiThread(benchmarkessentials.Benchmark):
                         processes =[]
                         for i in range(1,int(ps)+1):
                             if self.shell:
-                                runparam = string.Template(self.execution_string).substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, path_to_program=self.path_to_program)
+                                runparam = string.Template(self.execution_string).substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, path_to_program=path_to_program_templated)
                             else:
                                 execstring = [string.Template(x) for x in self.execution_array]
-                                runparam = [x.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i, path_to_program=self.path_to_program) for x in execstring]
+                                runparam = [x.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i, path_to_program=path_to_program_templated) for x in execstring]
                             # print(f"runstring is: '{runstring}'")
                             process =  subprocess.Popen(runparam, shell=self.shell, universal_newlines=True, cwd=self.cwd)
                             if cpu_affy_list is not None:
