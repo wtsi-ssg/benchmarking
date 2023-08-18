@@ -167,7 +167,7 @@ class DataPreparer:
         datadir = pathlib.Path(settings_dict["datadir"])
         #check and create datasets directory if doesn't exist
         os.makedirs(datadir, exist_ok=True)
-        datadir_dest = datadir + pathlib.Path(settings_dict["dataset_file"]["dest"])
+        datadir_dest = datadir / pathlib.Path(settings_dict["dataset_file"]["dest"])
         os.makedirs(datadir_dest, exist_ok=True)
 
         if type(settings_dict["dataset_file"]) is dict:
