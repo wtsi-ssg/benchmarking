@@ -8,7 +8,7 @@ ENV PACKAGES autoconf build-essential ca-certificates cmake curl g++ gcc git \
         libtbb-dev libusb-1.0-0-dev libusb-dev libxml2-dev make numactl python3-dev python3-pip \
         python3-yaml python3-yapsy python-is-python3 openjdk-8-jre-headless \
         samtools tar time unzip vim wget zlib1g-dev parallel libarchive-tools \
-        cereal-dev libgff-dev pkg-config libjemalloc-dev libcereal-dev
+        libgff-dev pkg-config libjemalloc-dev libcereal-dev
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${PACKAGES} && \
