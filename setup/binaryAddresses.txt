@@ -32,6 +32,7 @@ salmon-v1.5.2,https://github.com/COMBINE-lab/salmon/releases/download/v1.5.2/sal
 salmon-v0.10.1,no binary
 salmon-v0.10.2,no binary
 salmon-v0.15.0,no binary
+salmon-v1.10.1,https://github.com/COMBINE-lab/salmon/archive/refs/tags/v1.10.1.tar.gz
 iozone-v3.23,http://www.iozone.org/src/current/iozone3_23.tar
 iozone-v3.28,http://www.iozone.org/src/current/iozone3_28.tar
 iozone-v3.29,http://www.iozone.org/src/current/iozone3_29.tar

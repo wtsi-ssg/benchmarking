@@ -48,7 +48,8 @@ build_command:
     "cmd": "make arch=native"
     "cwd": "$install_dir$name_and_version"
   "salmon":
-    "no_build": "True"
+    "cmd": "mkdir build; cd build; cmake -DFETCH_STADEN=TRUE ..; make"
+    "cwd": "$install_dir$name_and_version"
   "bcftools":
     "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native'; make"
     "cwd": "$install_dir$name_and_version"
