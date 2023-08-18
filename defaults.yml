@@ -11,6 +11,7 @@ path_to_program:
   "minimap2": "${name_and_version}/minimap2"
   "miniasm": "${name_and_version}/miniasm"
   "gatk": "${name_and_version}/gatk"
+  "exonerate" : "${name_and_version}/src/program/exonerate"
 default_version:
   "salmon" : "1.10.1"
   "iozone" : "3.488"

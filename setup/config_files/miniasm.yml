@@ -6,7 +6,7 @@
     - type: multithreaded
       settings:
         tag: minimap2
-        command: "${install_path}minimap2 -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
+        command: "${path_to_program} -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
         program: "minimap2"
         programversion: "2.24+1d3c3ee"
         shell: True
@@ -26,7 +26,7 @@
     - type: multithreaded
       settings:
         tag: miniasm
-        command: "${install_path}miniasm -f ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.paf.gz > ${result_path}output.${repeatn}.${processn}.gfa"
+        command: "${path_to_program} -f ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.paf.gz > ${result_path}output.${repeatn}.${processn}.gfa"
         program: "miniasm"
         programversion: "0.3+ce615d1"
         shell: True
