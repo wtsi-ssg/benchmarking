@@ -112,7 +112,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                   }
 
         resulted_sam_dir = self.create_result_dirs(self.get_name())
-        path_to_program_templated = string.Template(self.path_to_program).substitute(name_and_version=self.program_name+'-v'+self.programversion)
+        path_to_program_templated = string.Template(self.path_to_program).substitute(name_and_version=self.program+'-v'+self.programversion)
 
         for pt in self.process_thread:
 
