@@ -88,11 +88,13 @@ class DataPreparer:
                 print("{} is already installed at {}".format(name_and_version, path_to_program))
                 continue
 
+            binary_address_found = False
             with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
                 for line in binary_url:
                     pro_ver, url = line.strip().split(',')
 
                     if pro_ver == name_and_version:
+                        binary_address_found = True
                         file_name = Path(url).name
                         if not os.path.exists(install_dir+file_name):
                             rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
@@ -111,17 +113,22 @@ class DataPreparer:
 
                         # Should we invoke build command?
                         if not program_name in self.build_command:
-                            print(f"An entry for the build_commandfor {program_name} was not found. Assuming no_build")
-                            pass
+                            print(f"An entry for the build_command for {program_name} was not found. Assuming no_build")
+                            break
                         elif "no_build" in self.build_command[program_name]:
-                            pass
+                            break
                         else:
                             # Invoke build command
                             build_cmd = self.build_command[program_name]['cmd']
                             build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
                             subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
-            if not os.path.exists(path_to_program):
+            
+            if not binary_address_found:
                 print(f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!")
+                sys.exit(1)
+
+            if not os.path.exists(path_to_program):
+                print(f"Build or download for tool {program_name} failed!")
                 sys.exit(1)
 
             print("Successfully installed {}.".format(name_and_version))
