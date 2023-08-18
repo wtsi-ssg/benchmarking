@@ -58,7 +58,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
 
 class MultiThread(benchmarkessentials.Benchmark):
     def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", suite=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(suite=suite, *args, **kwargs)
         self.program = program
         self.programversion = programversion
         self.install_dir = install_dir
