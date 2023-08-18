@@ -192,6 +192,7 @@ def update_geekbench5(config, geekbench5_email : str, geekbench5_key : str):
 if __name__ == '__main__':
     args = get_args()
 
+
     dp = DataPreparer('defaults.yml', f'/benchmarking/setup/config_files/{args.type}.yml',
                       os.path.dirname(os.path.realpath(__file__)), args.verbose)
     print('Preparing data for benchmarking...')
@@ -222,7 +223,7 @@ if __name__ == '__main__':
 
     loaded_benchmarks = load_all_benchmarks()
     
-    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.nickname, override_power=args.override_power, tco=args.tco)
+    benchsuite = Suite(clear_cache_bin=args.clear_cache_bin, nickname=args.nickname, override_power=args.override_power, tco=args.tco, path_to_program_dict=dp.path_to_program_dict)
     
     set_wd(config_file)
     
