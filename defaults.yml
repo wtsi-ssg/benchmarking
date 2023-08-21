@@ -58,7 +58,7 @@ build_command:
     "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native'; make"
     "cwd": "$install_dir$name_and_version"
   "minimap2":
-    "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
+    "cmd": "make -f Makefile.simde CFLAGS='-g -Wall -O3 -march=native'"
     "cwd": "$install_dir$name_and_version"
   "miniasm":
     "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
