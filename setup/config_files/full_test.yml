@@ -96,7 +96,7 @@
         tag: minimap2
         command: "${path_to_program} -x ava-pb -t ${threads} ${input_datapath}/pacbio_filtered.fastq ${input_datapath}/pacbio_filtered.fastq | gzip -1 > ${result_path}output.${repeatn}.${processn}.paf.gz"
         program: "minimap2"
-        programversion: "2.26"
+        programversion: "2.26+24d0af6"
         shell: True
         dataset_file: "/benchmarking/setup/minimapasm_data.txt"
         datadir: "/data/datasets/minimapasm/"
