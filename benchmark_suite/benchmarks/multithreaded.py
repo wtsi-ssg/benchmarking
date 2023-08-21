@@ -170,7 +170,7 @@ class MultiThread(benchmarkessentials.Benchmark):
                         processes =[]
                         for i in range(1,int(ps)+1):
                             if self.shell:
-                                runparam = string.Template(self.execution_string).substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, path_to_program=path_to_program_templated)
+                                runparam = string.Template(self.execution_string).substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i, path_to_program=path_to_program_templated)
                             else:
                                 execstring = [string.Template(x) for x in self.execution_array]
                                 runparam = [x.substitute(threads=th, repeatn = str(repeat), install_path=self.install_path, result_path=resulted_sam_dir, input_datapath = self.original_datadir, processn = i, path_to_program=path_to_program_templated) for x in execstring]
