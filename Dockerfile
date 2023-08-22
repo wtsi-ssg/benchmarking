@@ -23,6 +23,7 @@ COPY ./setup/ /benchmarking/setup
 COPY ./benchmark_suite /benchmarking/benchmark_suite
 COPY ./runbenchmarks.py /benchmarking/
 RUN pip3 install --upgrade pip setuptools
+RUN pip3 install https://github.com/mp15/py-cpuinfo/archive/refs/heads/prefer_bios_cpuid.zip
 RUN pip3 install -r /benchmarking/setup/requirements.txt
 
 #fork of codecarbon
