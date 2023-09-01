@@ -171,7 +171,6 @@
                       "vendor_id_raw",
                       "brand_raw",
                       "model",
-                      "family",
                       "flags",
                       "l3_cache_size",
                       "l2_cache_size",
