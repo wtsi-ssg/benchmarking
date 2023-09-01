@@ -170,20 +170,13 @@
                       "arch_string_raw",
                       "vendor_id_raw",
                       "brand_raw",
-                      "hz_advertised_friendly",
-                      "hz_actual_friendly",
-                      "hz_advertised",
-                      "hz_actual",
-                      "stepping",
                       "model",
                       "family",
                       "flags",
                       "l3_cache_size",
                       "l2_cache_size",
                       "l1_data_cache_size",
-                      "l1_instruction_cache_size",
-                      "l2_cache_line_size",
-                      "l2_cache_associativity"
+                      "l1_instruction_cache_size"
                     ]
                   },
                   "NUMAtopology": {
