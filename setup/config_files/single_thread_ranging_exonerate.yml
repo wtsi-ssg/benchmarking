@@ -5,7 +5,7 @@
   benchmarks:
     - type: multithreaded
       settings:
-        tag: exonerate-2.2.0
+        tag: exonerate
         command: "${path_to_program} ${input_datapath}/query.fasta ${input_datapath}/target.fasta ${result_path}output.${repeatn}.${processn}.txt"
         program: "exonerate"
         programversion: "2.2.0"

@@ -5,7 +5,7 @@
   benchmarks:
     - type: multithreaded
       settings:
-        tag: bcftools-1.15.1
+        tag: bcftools
         command: "${path_to_program} mpileup --threads ${threads} -Ou -f ${input_datapath}/b37_human_decoy_reference.fasta ${input_datapath}/RMNISTHS_30xdownsample_chr22.cram | ${install_path}bcftools call --threads ${threads} -mv -o ${result_path}output.${repeatn}.${processn}.vcf.gz"
         program: "bcftools"
         programversion: "1.15.1"
@@ -21,7 +21,7 @@
         clear_caches: True
     - type: multithreaded
       settings:
-        tag: bcftools-1.15.1
+        tag: bcftools
         command: "${path_to_program} mpileup --threads ${threads} -Ou -f ${input_datapath}/b37_human_decoy_reference.fasta ${input_datapath}/RMNISTHS_30xdownsample_chr22.cram | ${install_path}bcftools call --threads ${threads} -mv -o ${result_path}output.${repeatn}.${processn}.vcf.gz"
         program: "bcftools"
         programversion: "1.15.1"
@@ -38,7 +38,7 @@
         clear_caches: True
     - type: multithreaded
       settings:
-        tag: bcftools-1.15.1
+        tag: bcftools
         command: "${path_to_program} mpileup --threads ${threads} -Ou -f ${input_datapath}/b37_human_decoy_reference.fasta ${input_datapath}/RMNISTHS_30xdownsample_chr22.cram | ${install_path}bcftools call --threads ${threads} -mv -o ${result_path}output.${repeatn}.${processn}.vcf.gz"
         program: "bcftools"
         programversion: "1.15.1"
