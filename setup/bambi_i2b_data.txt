@@ -1,0 +1,10 @@
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.dict,23057b4248723ad3ff016cc5e797dc0e
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.0123,dc63686210b16bc448319ad53a3cb3c9
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.alt,b07e65aa4425bc365141756f5c98328c
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.amb,a36006982395d420e7086091aee82d96
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.ann,d3ca0cbbf588312c19b30df9edab10f5
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.bwt,ab1b0daa54b8ee570efd567a995eb873
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.bwt.2bit.64,26b56be2e53878f40eaebfcf6546ff29
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.pac,ce6bcc5d270367f7505f76b2eb6a0fe6
+https://it_randd.cog.sanger.ac.uk/ref/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.sa,0d21bda5c1192eeabb8db2666e51e4e0
+https://it_randd.cog.sanger.ac.uk/input/RMNISTHS_3xdownsample.fastq,9f306bf4950fa95e547c81a000ed3498

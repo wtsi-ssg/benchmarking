@@ -341,3 +341,4 @@ geekbench5-v5.5.1,https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz
 exonerate-v2.2.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.2.0.tar.gz
 exonerate-v2.3.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.3.0.tar.gz
 exonerate-v2.4.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.4.0.tar.gz
+bambi-v0.16.0,https://github.com/wtsi-npg/bambi/archive/refs/tags/0.16.0.tar.gz

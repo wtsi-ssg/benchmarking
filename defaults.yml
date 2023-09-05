@@ -70,3 +70,6 @@ build_command:
   "exonerate":
     "cmd": "./configure CFLAGS='-g -Wall -O3 -march=native' LDFLAGS='-Wl,--copy-dt-needed-entries'; make"
     "cwd": "$install_dir$name_and_version"
+  "bambi":
+    "cmd": "autoreconf -i; ./configure CFLAGS='-g -Wall -O3 -march=native'; make"
+    "cwd": "$install_dir$name_and_version"
