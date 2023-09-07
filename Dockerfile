@@ -3,12 +3,12 @@ FROM ubuntu:22.04
 LABEL org.opencontainers.image.authors="Martin Pollard <mp15@sanger.ac.uk>"
 
 ENV PACKAGES autoconf build-essential ca-certificates cmake curl g++ gcc git \
-        zlib1g libboost-all-dev libbz2-dev libcurl4 libcurl4-openssl-dev libffi-dev \
+        zlib1g libboost-all-dev libbz2-dev libcurl4 libcurl4-gnutls-dev libffi-dev \
         libfmt-dev libghc-iconv-dev libiperf-dev liblzma-dev libmysqlclient-dev libnuma-dev lib.so.6 libssl-dev \
         libtbb-dev libusb-1.0-0-dev libusb-dev libxml2-dev make numactl python3-dev python3-pip \
         python3-yaml python3-yapsy python-is-python3 openjdk-8-jre-headless \
         samtools tar time unzip vim wget zlib1g-dev parallel libarchive-tools \
-        libgff-dev pkg-config libjemalloc-dev libcereal-dev
+        libgff-dev pkg-config libjemalloc-dev libcereal-dev libhts-dev
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${PACKAGES} && \
