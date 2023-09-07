@@ -146,8 +146,14 @@ class DataPreparer:
     def get_file_data(self, list_filename : Path, datadir : Path):
         with open(list_filename, 'r') as data_f:
             for line in data_f:
-                required_file_name, correct_md5sum = line.strip().split(',')
-                file_name = Path(required_file_name).name
+                input = line.strip().split(',')
+                if len(input) == 2:
+                    required_file_name, correct_md5sum = input
+                    file_name = Path(required_file_name).name
+                elif len(input) == 2:
+                    required_file_name, correct_md5sum, file_name = input
+                else:
+                    raise Exception("Bad number of fields in dataset list")
 
                 if os.path.exists(datadir/file_name):
                     if not self.check_md5sum(datadir/file_name, correct_md5sum):
