@@ -152,7 +152,7 @@ class DataPreparer:
                     file_name = Path(required_file_name).name
                 elif len(input) == 3:
                     required_file_name, correct_md5sum, file_name = input
-                    os.makedirs(Path(file_name).parent, exist_ok=True)
+                    os.makedirs(datadir/Path(file_name).parent, exist_ok=True)
                 else:
                     raise Exception("Bad number of fields in dataset list")
 
