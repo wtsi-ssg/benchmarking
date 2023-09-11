@@ -72,12 +72,7 @@ class DataPreparer:
 
         return settings_list
 
-
-    def download_and_install_programs(self, settings_list : 'list[dict]', install_dir : str) -> bool:
-        #check and create tools directory if doesn't exist
-        os.makedirs(install_dir, exist_ok=True)
-
-        # read in program database
+    def _get_binary_database(self) -> 'dict[str,dict[str,str]]':
         loc_db = {}
         with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
             for line in binary_url:
@@ -91,6 +86,14 @@ class DataPreparer:
                 else:
                     version = {pro_ver : url}
                     loc_db[pro_name] = version
+        return loc_db
+
+    def download_and_install_programs(self, settings_list : 'list[dict]', install_dir : str) -> bool:
+        #check and create tools directory if doesn't exist
+        os.makedirs(install_dir, exist_ok=True)
+
+        # read in program database
+        loc_db = self._get_binary_database()
 
         for st in settings_list:
             program_name = st["program_name"]
@@ -106,6 +109,7 @@ class DataPreparer:
 
             if program_name in loc_db:
                 if required_version in loc_db[program_name]:
+                    url = loc_db[program_name][required_version]
                     file_name = Path(url).name
                     if not os.path.exists(install_dir+file_name):
                         rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
