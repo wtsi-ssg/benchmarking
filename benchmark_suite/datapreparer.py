@@ -109,6 +109,7 @@ class DataPreparer:
 
             if program_name in loc_db:
                 if required_version in loc_db[program_name]:
+                    # First download the binary package
                     url = loc_db[program_name][required_version]
                     file_name = Path(url).name
                     if not os.path.exists(install_dir+file_name):
@@ -117,6 +118,7 @@ class DataPreparer:
                     os.makedirs(install_dir+name_and_version, exist_ok=True)
                     file_extension = Path(file_name).suffix
 
+                    # Extract it
                     #if the binary is in .tar or .tar.gz form, extract it using tar
                     if file_extension in [".bz2",".gz",".tar"]:
                         rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)

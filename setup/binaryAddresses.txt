@@ -343,3 +343,4 @@ exonerate,2.3.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/e
 exonerate,2.4.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.4.0.tar.gz
 bambi,0.16.0,https://github.com/wtsi-npg/bambi/archive/refs/tags/0.16.0.tar.gz
 bambi,0.16.1,https://github.com/wtsi-npg/bambi/archive/refs/tags/0.16.1.tar.gz
+bambi,0.17.0,https://it_randd.cog.sanger.ac.uk/software/software/bambi-0.17.0.tar.gz
