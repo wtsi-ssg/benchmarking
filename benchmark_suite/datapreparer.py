@@ -31,8 +31,7 @@ class DataPreparer:
                     if 'program' in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         program_name = settings_doc[n]['benchmarks'][m]['settings']['program']
                     else:
-                        print("no program setting given")
-                        return None
+                        continue
 
                 #get program version
                 required_version = settings_doc[n]['benchmarks'][m]['settings']['programversion']
@@ -88,12 +87,25 @@ class DataPreparer:
                     loc_db[pro_name] = version
         return loc_db
 
-    def download_and_install_programs(self, settings_list : 'list[dict]', install_dir : str) -> bool:
-        #check and create tools directory if doesn't exist
-        os.makedirs(install_dir, exist_ok=True)
+    def download_and_install_environment(self, settings_doc : 'list[dict]') -> bool:
+        #check and create env directory if doesn't exist
+        os.makedirs(self.env_dir, exist_ok=True)
 
-        # read in program database
-        loc_db = self._get_binary_database()
+        for n_key, n_value in settings_doc.items():
+            for m_key, m_value in n_value['benchmarks'].items:
+                # Skip implicit type benchmarks
+                if m_value['type'] in self.implicit_program_type_benchmarks:
+                    continue
+                settings = m_value["settings"]
+                if "environment" not in m_value:
+                    continue
+                
+
+        return True
+
+    def download_and_install_programs(self, settings_list : 'list[dict]') -> bool:
+        #check and create tools directory if doesn't exist
+        os.makedirs(self.install_dir, exist_ok=True)
 
         for st in settings_list:
             program_name = st["program_name"]
@@ -107,26 +119,30 @@ class DataPreparer:
                 print("{} is already installed at {}".format(name_and_version, path_to_program))
                 continue
 
-            if program_name in loc_db:
-                if required_version in loc_db[program_name]:
+            if program_name in self.prog_binary_loc_db:
+                if required_version in self.prog_binary_loc_db[program_name]:
                     # First download the binary package
-                    url = loc_db[program_name][required_version]
+                    url = self.prog_binary_loc_db[program_name][required_version]
                     file_name = Path(url).name
-                    if not os.path.exists(install_dir+file_name):
-                        rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
+                    if not os.path.exists(self.install_dir+file_name):
+                        rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=self.install_dir)
                     #if the directory to install the program in does not exist, create it
-                    os.makedirs(install_dir+name_and_version, exist_ok=True)
+                    os.makedirs(self.install_dir+name_and_version, exist_ok=True)
                     file_extension = Path(file_name).suffix
 
                     # Extract it
+                    rc = 0
                     #if the binary is in .tar or .tar.gz form, extract it using tar
                     if file_extension in [".bz2",".gz",".tar"]:
-                        rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
+                        rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=self.install_dir)
                     #if the binary is in the .deb form, use dpkg to extract it
                     elif file_extension in [".deb"]:
-                        rc = subprocess.call(['dpkg', '-x', install_dir+file_name, install_dir+name_and_version], cwd=install_dir)
+                        rc = subprocess.call(['dpkg', '-x', self.install_dir+file_name, self.install_dir+name_and_version], cwd=self.install_dir)
                     elif file_extension in [".zip"]:
-                        rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
+                        rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=self.install_dir)
+                    if rc != 0:
+                        print(f"Build error for {program_name}.")
+                        return False
 
                     # Should we invoke build command?
                     if not program_name in self.build_command:
@@ -137,7 +153,7 @@ class DataPreparer:
                     else:
                         # Invoke build command
                         build_cmd = self.build_command[program_name]['cmd']
-                        build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
+                        build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=self.install_dir, name_and_version=name_and_version)
                         subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
                 else:
                     print(f"Entry for this tool {program_name} version {required_version} is not found in the binaryAddress list. Please update the list and run again!")
@@ -252,6 +268,10 @@ class DataPreparer:
         self.data_dependent_type_benchmarks=(["multithreaded"])
 
         self.install_dir = Utility.get_install_dir(settings_yml_input_file)
+        self.env_dir = Utility.get_env_dir(settings_yml_input_file)
+
+        # read in program database
+        self.prog_binary_loc_db = self._get_binary_database()
 
     def loadDefaults(self, defaults_doc):
         # Set a dictionary to show where executable will be stored
@@ -280,7 +300,10 @@ class DataPreparer:
         if self.verbose:
             print("List of programs from yml file :\n{}".format(settings_list))
 
-        if not self.download_and_install_programs(settings_list, self.install_dir):
+        if not self.download_and_install_programs(settings_list):
+            return False
+
+        if not self.download_and_install_environment(settings_doc):
             return False
 
         # Download datasets

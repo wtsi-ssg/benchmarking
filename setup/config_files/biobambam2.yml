@@ -1,0 +1,33 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+  env_dir: "/data/envs/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: biobambam2
+        command: "${path_to_program} i2b --intensity-dir ${input_datapath}/Data/Intensities --basecalls-dir ${input_datapath}/Data/Intensities/BaseCalls -o ${result_path}/${repeatn}.${processn}.bam --lane ${processn} --platform-unit ILMN_TEST --read-group-id TEST --threads ${threads}"
+        environment:
+          name: "biobambam2"
+          version: "2.0.813"
+          path_to_program: "${name_and_version}/src/bambi"
+          components:
+            - program: "libmaus2"
+              programversion: "2.0.813-release-20221210220409"
+              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make"
+              build_cwd: "$install_dir$name_and_version"
+            - program: "biobambam2"
+              programversion: "2.0.185-release-20221211202123"
+              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make"
+              build_cwd: "$install_dir$name_and_version"
+        shell: True
+        dataset_file: "/benchmarking/setup/biobambam2_data.txt"
+        datadir: "/data/datasets/biobambam2/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: Flowcell
+        process_thread:
+          - processes: 24
+            threads: 3
+        clear_caches: True
