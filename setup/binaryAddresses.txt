@@ -344,3 +344,5 @@ exonerate,2.4.0,http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/e
 bambi,0.16.0,https://github.com/wtsi-npg/bambi/archive/refs/tags/0.16.0.tar.gz
 bambi,0.16.1,https://github.com/wtsi-npg/bambi/archive/refs/tags/0.16.1.tar.gz
 bambi,0.17.0,https://it_randd.cog.sanger.ac.uk/software/bambi-0.17.0.tar.gz
+biobambam2,2.0.185,https://gitlab.com/german.tischler/biobambam2/-/archive/2.0.185-release-20221211202123/biobambam2-2.0.185-release-20221211202123.tar.bz2
+libmaus2,2.0.813,https://gitlab.com/german.tischler/libmaus2/-/archive/2.0.813-release-20221210220409/libmaus2-2.0.813-release-20221210220409.tar.bz2
