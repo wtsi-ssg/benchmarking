@@ -82,7 +82,11 @@ class DataPreparer:
         with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
             for line in binary_url:
                 pro_name, pro_ver, url = line.strip().split(',')
-                loc_db[pro_name][pro_ver] = url
+                if pro_name in loc_db:
+                    loc_db[pro_name][pro_ver] = url
+                else:
+                    version = {pro_ver : url}
+                    loc_db[pro_name] = version
 
         for st in settings_list:
             program_name = st["program_name"]
