@@ -8,7 +8,7 @@
         tag: bambi
         command: "${path_to_program} i2b --intensity-dir ${input_datapath}/Data/Intensities --basecalls-dir ${input_datapath}/Data/Intensities/BaseCalls -o ${result_path}/${repeatn}.${processn}.bam --lane ${processn} --platform-unit ILMN_TEST --read-group-id TEST --threads ${threads}"
         program: "bambi"
-        programversion: "0.16.0"
+        programversion: "0.16.1"
         shell: True
         dataset_file: "/benchmarking/setup/bambi_i2b_data.txt"
         datadir: "/data/datasets/bambi_i2b/"
