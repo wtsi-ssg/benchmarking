@@ -18,12 +18,13 @@ from .utility import Utility
 
 class DataPreparer:
 
-    def get_benchmark_list_settings(self, settings_doc) -> list:
+    def get_benchmark_list_settings(self, settings_doc : dict) -> list:
         """ this function gets a list of all programs, programversions, and datasets used by tests in the yml file"""
         settings_list = []
         set_keys = ["program_name", "required_version", "dataset_tag", "dataset_file", "datadir", "mode"]
         for n in range(1, len(settings_doc)) :
             for m in range(0, len(settings_doc[n]['benchmarks'])):
+                # Is there a program asssociated with this specific type of benchmark
                 if settings_doc[n]['benchmarks'][m]['type'] in self.implicit_program_type_benchmarks:
                     program_name = settings_doc[n]['benchmarks'][m]['type']
                 else:
@@ -41,16 +42,16 @@ class DataPreparer:
 
                 #get dataset_tag and datadir
                 if settings_doc[n]['benchmarks'][m]['type'] in self.data_dependent_type_benchmarks:
-                    if 'dataset_tag' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                    if "dataset_tag" in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         dataset_tag = settings_doc[n]['benchmarks'][m]['settings']['dataset_tag']
                     else:
                         dataset_tag = None
-                    if 'datadir' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                    if "datadir" in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         datadir = settings_doc[n]['benchmarks'][m]['settings']['datadir']
                     else:
                         print("datadir setting required, none set.")
                         return None
-                    if 'dataset_file' in settings_doc[n]['benchmarks'][m]['settings'].keys():
+                    if "dataset_file" in settings_doc[n]['benchmarks'][m]['settings'].keys():
                         dataset_file = settings_doc[n]['benchmarks'][m]['settings']['dataset_file']
                     else:
                         dataset_file = ""
@@ -72,9 +73,16 @@ class DataPreparer:
         return settings_list
 
 
-    def download_and_install_programs(self, settings_list : list, install_dir) -> bool:
+    def download_and_install_programs(self, settings_list : 'list[dict]', install_dir : str) -> bool:
         #check and create tools directory if doesn't exist
         os.makedirs(install_dir, exist_ok=True)
+
+        # read in program database
+        loc_db = {}
+        with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
+            for line in binary_url:
+                pro_name, pro_ver, url = line.strip().split(',')
+                loc_db[pro_name][pro_ver] = url
 
         for st in settings_list:
             program_name = st["program_name"]
@@ -88,48 +96,42 @@ class DataPreparer:
                 print("{} is already installed at {}".format(name_and_version, path_to_program))
                 continue
 
-            binary_address_found = False
-            with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
-                for line in binary_url:
-                    pro_ver, url = line.strip().split(',')
+            if program_name in loc_db:
+                if required_version in loc_db[program_name]
+                    file_name = Path(url).name
+                    if not os.path.exists(install_dir+file_name):
+                        rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
+                    #if the directory to install the program in does not exist, create it
+                    os.makedirs(install_dir+name_and_version, exist_ok=True)
+                    file_extension = Path(file_name).suffix
 
-                    if pro_ver == name_and_version:
-                        binary_address_found = True
-                        file_name = Path(url).name
-                        if not os.path.exists(install_dir+file_name):
-                            rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
-                        #if the directory to install the program in does not exist, create it
-                        os.makedirs(install_dir+name_and_version, exist_ok=True)
-                        file_extension = Path(file_name).suffix
+                    #if the binary is in .tar or .tar.gz form, extract it using tar
+                    if file_extension in [".bz2",".gz",".tar"]:
+                        rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
+                    #if the binary is in the .deb form, use dpkg to extract it
+                    elif file_extension in [".deb"]:
+                        rc = subprocess.call(['dpkg', '-x', install_dir+file_name, install_dir+name_and_version], cwd=install_dir)
+                    elif file_extension in [".zip"]:
+                        rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
 
-                        #if the binary is in .tar or .tar.gz form, extract it using tar
-                        if file_extension in [".bz2",".gz",".tar"]:
-                            rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
-                        #if the binary is in the .deb form, use dpkg to extract it
-                        elif file_extension in [".deb"]:
-                            rc = subprocess.call(['dpkg', '-x', install_dir+file_name, install_dir+name_and_version], cwd=install_dir)
-                        elif file_extension in [".zip"]:
-                            rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=install_dir)
-
-                        # Should we invoke build command?
-                        if not program_name in self.build_command:
-                            print(f"An entry for the build_command for {program_name} was not found. Assuming no_build")
-                            break
-                        elif "no_build" in self.build_command[program_name]:
-                            break
-                        else:
-                            # Invoke build command
-                            build_cmd = self.build_command[program_name]['cmd']
-                            build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
-                            subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
-            
-            if not binary_address_found:
-                print(f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!")
-                sys.exit(1)
+                    # Should we invoke build command?
+                    if not program_name in self.build_command:
+                        print(f"An entry for the build_command for {program_name} was not found. Assuming no_build")
+                        break
+                    elif "no_build" in self.build_command[program_name]:
+                        break
+                    else:
+                        # Invoke build command
+                        build_cmd = self.build_command[program_name]['cmd']
+                        build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
+                        subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
+                else:
+                    raise Exception(f"Entry for this tool {program_name} version {required_version} is not found in the binaryAddress list. Please update the list and run again!")
+            else:
+                raise Exception(f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!")
 
             if not os.path.exists(path_to_program):
-                print(f"Build or download for tool {program_name} failed!")
-                sys.exit(1)
+                raise Exception(f"Build or download for tool {program_name} failed!")
 
             print("Successfully installed {}.".format(name_and_version))
         return True
@@ -261,7 +263,8 @@ class DataPreparer:
         if self.verbose:
             print("List of programs from yml file :\n{}".format(settings_list))
 
-        self.download_and_install_programs(settings_list, self.install_dir)
+        if not self.download_and_install_programs(settings_list, self.install_dir):
+            return False
 
         # Download datasets
         for st in settings_list:
