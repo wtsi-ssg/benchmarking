@@ -97,7 +97,7 @@ class DataPreparer:
                 continue
 
             if program_name in loc_db:
-                if required_version in loc_db[program_name]
+                if required_version in loc_db[program_name]:
                     file_name = Path(url).name
                     if not os.path.exists(install_dir+file_name):
                         rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=install_dir)
