@@ -57,7 +57,7 @@ class Plugin(benchmarkessentials.BenchmarkPlugin):
         return {"multithreaded": MultiThread}
 
 class MultiThread(benchmarkessentials.Benchmark):
-    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", suite=None, *args, **kwargs):
+    def __init__(self, command, install_dir=None, install_path=None, tag=None, shell=False, cwd=None, datadir=None, dataset_file=None, result_dir=None, clear_caches=False, repeats=1, program=None, programversion=None, dataset_tag=None, process_thread=[{"processes":1,"threads":1}], units=None, cpu_affy="system", suite=None, cleanup_results=None, *args, **kwargs):
         super().__init__(suite=suite, *args, **kwargs)
         self.program = program
         self.programversion = programversion
@@ -102,6 +102,7 @@ class MultiThread(benchmarkessentials.Benchmark):
             self.path_to_program = suite.path_to_program_dict[program]
         else:
             self.path_to_program = pathlib.Path(self.install_dir) / pathlib.Path(self.program+"-v"+self.programversion) / program
+        self.cleanup_results = cleanup_results
 
     def get_name(self) -> str:
         return "multithreaded_{tag}".format(tag=self.tag)
@@ -207,17 +208,26 @@ class MultiThread(benchmarkessentials.Benchmark):
                             runresult["user"] = runresult["user"] + x.results.ru_utime
                             runresult["system"] = runresult["system"] + x.results.ru_stime
                             runresult["maxrss"] = runresult["maxrss"] + x.results.ru_maxrss
+                        if self.cleanup_results:
+                            self.destroy_result_dirs(self.get_name())
                         configuration["runs"].append(runresult)
                     results["configurations"].append(configuration)
             
         return {"settings":self.settings,"results": results}
 
-    def create_result_dirs(self, subdir) -> str:
+    def create_result_dirs(self, subdir : str) -> str:
         timestamp = time.strftime("%Y-%m-%d-%H%M%S")
         resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
         os.makedirs(resulted_data_dir, exist_ok=True)
 
         return resulted_data_dir
+
+    def destroy_result_dirs(self, subdir : str) -> None:
+        timestamp = time.strftime("%Y-%m-%d-%H%M%S")
+        resulted_data_dir = os.path.join(self.result_dir, subdir, self.tag, timestamp, "data_files", "")
+        os.unlink(resulted_data_dir)
+
+        return
 
     def get_time_results_from_file(self, fileout) -> dict:
         timedict = {}
