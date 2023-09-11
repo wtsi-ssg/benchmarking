@@ -81,7 +81,11 @@ class DataPreparer:
         loc_db = {}
         with open(self.base_dir+"/setup/binaryAddresses.txt", "r") as binary_url:
             for line in binary_url:
-                pro_name, pro_ver, url = line.strip().split(',')
+                try:
+                    pro_name, pro_ver, url = line.strip().split(',')
+                except:
+                    print(f"Line in binary addresses does not have exactly 3 fields: '{line}'")
+                    return False
                 if pro_name in loc_db:
                     loc_db[pro_name][pro_ver] = url
                 else:
@@ -130,12 +134,15 @@ class DataPreparer:
                         build_cwd = string.Template(self.build_command[program_name]['cwd']).substitute(install_dir=install_dir, name_and_version=name_and_version)
                         subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
                 else:
-                    raise Exception(f"Entry for this tool {program_name} version {required_version} is not found in the binaryAddress list. Please update the list and run again!")
+                    print(f"Entry for this tool {program_name} version {required_version} is not found in the binaryAddress list. Please update the list and run again!")
+                    return False
             else:
-                raise Exception(f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!")
-
+                print(f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!")
+                return False
+            
             if not os.path.exists(path_to_program):
-                raise Exception(f"Build or download for tool {program_name} failed!")
+                print(f"Build or download for tool {program_name} failed!")
+                return False
 
             print("Successfully installed {}.".format(name_and_version))
         return True
