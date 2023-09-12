@@ -2,6 +2,7 @@
 import pathlib
 import string
 import subprocess
+import tempfile
 
 import yaml
 
@@ -86,6 +87,36 @@ class DataPreparer:
                     version = {pro_ver : url}
                     loc_db[pro_name] = version
         return loc_db
+    
+    def _download_extract(self, build_dir : str, req_program : str, req_program_version :str) -> bool:
+        name_and_version = req_program+'-v'+req_program_version
+        url = self.prog_binary_loc_db[req_program][req_program_version]
+        file_name = Path(url).name
+        if req_program in self.prog_binary_loc_db:
+            if req_program_version in self.prog_binary_loc_db[req_program]:
+                # First download the binary package
+                if not os.path.exists(build_dir+file_name):
+                    rc = subprocess.call(["wget -O "+file_name+" "+ url], shell=True, cwd=build_dir)
+                #if the directory to install the program in does not exist, create it
+                os.makedirs(self.install_dir+name_and_version, exist_ok=True)
+                file_extension = Path(file_name).suffix
+
+                # Extract it
+                rc = 0
+                #if the binary is in .tar or .tar.gz form, extract it using tar
+                if file_extension in [".bz2",".gz",".tar"]:
+                    rc = subprocess.call(['tar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=build_dir)
+                #if the binary is in the .deb form, use dpkg to extract it
+                elif file_extension in [".deb"]:
+                    rc = subprocess.call(['dpkg', '-x', build_dir+file_name, build_dir+name_and_version], cwd=build_dir)
+                elif file_extension in [".zip"]:
+                    rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=build_dir)
+                if rc != 0:
+                    print(f"Extract error for {req_program}.")
+                    return False
+
+        return True
+
 
     def download_and_install_environment(self, settings_doc : 'list[dict]') -> bool:
         #check and create env directory if doesn't exist
@@ -97,9 +128,28 @@ class DataPreparer:
                 if m_value['type'] in self.implicit_program_type_benchmarks:
                     continue
                 settings = m_value["settings"]
-                if "environment" not in m_value:
+                if "environment" not in settings:
                     continue
-                
+                env_name = settings["name"]
+                env_version = settings["version"]
+                env_components = settings["components"]
+
+                for component in env_components:
+                    with tempfile.TemporaryDirectory() as build_path:
+                        req_program = component["program"]
+                        req_program_version = component["program_version"]
+
+                        if not self._download_extract(build_path, req_program, req_program_version):
+                            return False
+                        # Should we invoke build command?
+                        if "build_cmd" not in component:
+                            print(f"An entry for the build_command for {req_program} was not found. Assuming no_build")
+                            break
+                        else:
+                            # Invoke build command
+                            build_cmd = string.Template(component["build_cmd"]).substitute(prefix=self.env_dir)
+                            build_cwd = string.Template(component["build_cwd"]).substitute(build_path=build_path, name_and_version=req_program+'-v'+req_program_version)
+                            subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
 
         return True
 
@@ -141,15 +191,15 @@ class DataPreparer:
                     elif file_extension in [".zip"]:
                         rc = subprocess.call(['bsdtar', '-xf', file_name,'-C',name_and_version,'--strip-components=1'], cwd=self.install_dir)
                     if rc != 0:
-                        print(f"Build error for {program_name}.")
+                        print(f"Extract error for {program_name}.")
                         return False
 
                     # Should we invoke build command?
                     if not program_name in self.build_command:
                         print(f"An entry for the build_command for {program_name} was not found. Assuming no_build")
-                        break
+                        continue
                     elif "no_build" in self.build_command[program_name]:
-                        break
+                        continue
                     else:
                         # Invoke build command
                         build_cmd = self.build_command[program_name]['cmd']

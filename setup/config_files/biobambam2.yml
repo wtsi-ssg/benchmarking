@@ -11,15 +11,15 @@
         environment:
           name: "biobambam2"
           version: "2.0.813"
-          path_to_program: "${name_and_version}/src/bambi"
+          path_to_program: "${name_and_version}/bin/bambi"
           components:
             - program: "libmaus2"
-              programversion: "2.0.813-release-20221210220409"
-              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make"
+              program_version: "2.0.813-release-20221210220409"
+              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make install"
               build_cwd: "$install_dir$name_and_version"
             - program: "biobambam2"
-              programversion: "2.0.185-release-20221211202123"
-              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make"
+              program_version: "2.0.185-release-20221211202123"
+              build_cmd: "./configure --prefix=$prefix CFLAGS='-g -Wall -O3 -march=native' CXXFLAGS='-g -Wall -O3 -march=native'; make install"
               build_cwd: "$install_dir$name_and_version"
         shell: True
         dataset_file: "/benchmarking/setup/biobambam2_data.txt"
