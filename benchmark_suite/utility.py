@@ -17,7 +17,7 @@ class Utility:
             raise Exception("no install_dir set, automatic install failed")
         return pathlib.Path(install_dir)
 
-    def get_install_dir(yml_input_file) -> pathlib.Path:
+    def get_env_dir(yml_input_file) -> pathlib.Path:
         doc = yaml.load(open(yml_input_file, 'rb'), Loader=Loader)
         general_settings = doc[0]
         if 'env_dir' in general_settings.keys():
