@@ -133,6 +133,28 @@
         clear_caches: True
     - type: multithreaded
       settings:
+        tag: haplotypecaller
+        command: ["${path_to_program}", "--java-options", "-Xmx4g -Xms4g", "HaplotypeCaller", "--native-pair-hmm-threads", "${threads}", "--reference", "${input_datapath}/b37_human_decoy_reference.fasta", "-L", "22", "-O", "${result_path}output.${repeatn}.${processn}.g.vcf.gz", "-I", "${input_datapath}/RMNISTHS_30xdownsample_chr22.cram", "-ERC", "GVCF"]
+        program: "gatk"
+        programversion: "4.3.0.0"
+        shell: False
+        dataset_file: "/benchmarking/setup/variantcaller_data.txt"
+        datadir: "/data/datasets/variantcaller/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: Chr22 @ 30x from WGS
+        process_thread:
+          - processes: 1
+            threads: 4
+          - processes: 1
+            threads: $N
+          - processes: 2
+            threads: $N/2
+          - processes: 4
+            threads: $N/4
+        clear_caches: True
+    - type: multithreaded
+      settings:
         tag: genomicsdbimport
         command: ["${path_to_program}", "--java-options", "-Xmx4g -Xms4g", "GenomicsDBImport", "--reader-threads", "${threads}", "--reference", "${input_datapath}/GRCh38_full_analysis_set_plus_decoy_hla.fa", "--sample-name-map", "${input_datapath}/1000Gsample.sample_map", "--genomicsdb-workspace-path", "${result_path}/my_database.${repeatn}.${processn}", "-L", "chr22"]
         program: "gatk"
