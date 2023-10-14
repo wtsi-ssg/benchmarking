@@ -1,2 +1,2 @@
-./s3curl.pl --id randd --endpoint cog.sanger.ac.uk -- -k -X POST https://cog.sanger.ac.uk/ -d "Action=CreateTopic&Name=returned_results&push-endpoint=amqp://benchmark-notify:passwordhere@rabbit-0.internal.sanger.ac.uk/bm-notify"
+./s3curl.pl --id it-randd --endpoint cog.sanger.ac.uk -- -k -X POST https://cog.sanger.ac.uk/ -d "Action=CreateTopic&Name=returned_results&push-endpoint=amqp://benchmark-notify:passwordhere@rabbit-0.internal.sanger.ac.uk/bm-notify"
 #aws --endpoint-url https://cog.sanger.ac.uk sns create-topic --name returned_results --attributes push-endpoint=amqp://benchmark-notify:passwordhere@rabbit-0.internal.sanger.ac.uk/bm-notify,amqp-exchange=amq.direct,amqp-ack-level=none

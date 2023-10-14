@@ -1,1 +1,1 @@
-./s3curl.pl --id randd --endpoint cog.sanger.ac.uk -- -k -X POST https://cog.sanger.ac.uk/ -d "Action=DeleteTopic&TopicArn=arn:aws:sns:default::returned_results"
+./s3curl.pl --id it-randd --endpoint cog.sanger.ac.uk -- -k -X POST https://cog.sanger.ac.uk/ -d "Action=DeleteTopic&TopicArn=arn:aws:sns:default::returned_results"

@@ -4,7 +4,7 @@ import requests
 
 
 class ResultsReturn:
-    def __init__(self, post_signed_url:str = "https://it_randd.cog.sanger.ac.uk/post_signed_url.json"):
+    def __init__(self, post_signed_url:str = "https://it-randd.cog.sanger.ac.uk/post_signed_url.json"):
         self.post_signed_url = post_signed_url
 
     def post_results(self, raw_result_filename : str, jsondata : str, verbose:bool=False):

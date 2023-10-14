@@ -68,7 +68,7 @@ def dump_message(message):
                     print(f'Deleting file {filename}')
                     # Delete it from S3
                     try:
-                        res_del = client.delete_object(Bucket='it_randd', Key=record['s3']['object']['key'])
+                        res_del = client.delete_object(Bucket='it-randd', Key=record['s3']['object']['key'])
                     except ClientError as ex:
                         pass
     pgconn.close()

@@ -21,12 +21,12 @@ def create_upload_presigned(prefix:str, filename:str):
         f.write(json.dumps(res))
 
     #does equiv of:
-    #  s3cmd put post_signed_url.json s3://it_randd/post_signed_url.json
-    #  s3cmd setacl s3://it_randd/post_signed_url.json --acl-public
+    #  s3cmd put post_signed_url.json s3://it-randd/post_signed_url.json
+    #  s3cmd setacl s3://it-randd/post_signed_url.json --acl-public
 
     response = client.put_object(ACL='public-read',
                                 Body=json.dumps(res),
-                                Bucket='it_randd',
+                                Bucket='it-randd',
                                 ContentType='application/json',
                                 Key=filename)
 
