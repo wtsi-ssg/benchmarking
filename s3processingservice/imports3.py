@@ -33,7 +33,7 @@ def dump_message(message):
                 # Download new file from S3
                 print(f'Downloading file {filename}')
                 try:
-                    res = client.get_object(Bucket='it_randd', Key=record['s3']['object']['key'])
+                    res = client.get_object(Bucket='it-randd', Key=record['s3']['object']['key'])
                 except ClientError as ex:
                     if ex.response['Error']['Code'] == 'NoSuchKey':
                         print(f'No object found {filename} - skipping')
