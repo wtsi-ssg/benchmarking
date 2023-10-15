@@ -8,7 +8,7 @@ client = boto3.client('s3', endpoint_url ='https://cog.sanger.ac.uk')
 Fields = {"Content-Type":"application/json", "acl":"private"}
 
 def create_upload_presigned(prefix:str, filename:str):
-    res = client.generate_presigned_post('it_randd',
+    res = client.generate_presigned_post('it-randd',
                                         f"{prefix}" + '/${filename}',
                                         Fields=Fields,
                                         Conditions=[{'acl':'private'},
