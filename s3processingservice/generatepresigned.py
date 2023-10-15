@@ -34,4 +34,4 @@ def create_upload_presigned(prefix:str, filename:str):
 # Create returned_results URL for system benchmarking
 create_upload_presigned('results', 'post_signed_url.json')
 # Create returned results URL for CI mode
-create_upload_presigned('ci_results', 'post_signed_url_ci.json')
+create_upload_presigned('ci-results', 'post_signed_url_ci.json')
