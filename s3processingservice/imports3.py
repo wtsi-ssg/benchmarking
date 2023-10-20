@@ -50,7 +50,14 @@ def dump_message(message):
                         print(f'File {filename} has passed validation')
                         # It has passed? Send it to postgres database
                         # TODO: Catch exceptions from this and if it fails don't delete
-                        curs.execute("insert into returned_results (jsondata) values (%s)", (psycopg2.extras.Json(docconv),))
+                        curs.execute("INSERT INTO returned_results (jsondata) VALUES (%s)", (psycopg2.extras.Json(docconv),))
+                        # Update any potentially affected materialised views
+                        curs.execute("REFRESH MATERIALIZED VIEW cpu_corecount WITH DATA")
+                        curs.execute("REFRESH MATERIALIZED VIEW cpu_results WITH DATA")
+                        curs.execute("REFRESH MATERIALIZED VIEW geekbench5_detailed_results WITH DATA")
+                        curs.execute("REFRESH MATERIALIZED VIEW geekbench5_results WITH DATA")
+                        curs.execute("REFRESH MATERIALIZED VIEW iozone_results WITH DATA")
+                        curs.execute("REFRESH MATERIALIZED VIEW mbw_results WITH DATA")
                     except jsonschema.exceptions.ValidationError as err:
                         print(f'Downloaded file does not validate: {err.message}')
                         pass
@@ -60,8 +67,10 @@ def dump_message(message):
                         print(f'File {filename} has passed validation')
                         # It has passed? Send it to postgres database
                         # TODO: Catch exceptions from this and if it fails don't delete
-                        curs.execute("insert into ci_returned_results (jsondata) values (%s)", (psycopg2.extras.Json(docconv),))
-                    except jsonschema.exceptions.ValidationError as err:
+                        curs.execute("INSERT INTO ci_returned_results (jsondata) VALUES (%s)", (psycopg2.extras.Json(docconv),))
+                        # Update any potentially affected materialised views
+                        curs.execute("REFRESH MATERIALIZED VIEW ci_cpu_results WITH DATA")
+                     except jsonschema.exceptions.ValidationError as err:
                         print(f'Downloaded file does not validate: {err.message}')
                         pass
                 if args.delete:
