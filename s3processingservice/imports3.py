@@ -70,7 +70,7 @@ def dump_message(message):
                         curs.execute("INSERT INTO ci_returned_results (jsondata) VALUES (%s)", (psycopg2.extras.Json(docconv),))
                         # Update any potentially affected materialised views
                         curs.execute("REFRESH MATERIALIZED VIEW ci_cpu_results WITH DATA")
-                     except jsonschema.exceptions.ValidationError as err:
+                    except jsonschema.exceptions.ValidationError as err:
                         print(f'Downloaded file does not validate: {err.message}')
                         pass
                 if args.delete:
