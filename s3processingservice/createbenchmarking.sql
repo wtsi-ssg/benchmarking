@@ -63,7 +63,7 @@ AS
     benchmark_data.program_name,
     benchmark_data.program_version,
     benchmark_data.units,
-	benchmark_data.cpu_affinity,
+    benchmark_data.cpu_affinity,
     benchmark_data.processes::integer AS processes,
     benchmark_data.threads::integer AS threads,
     benchmark_data.usercpu::numeric AS usercpu,
@@ -71,26 +71,28 @@ AS
     benchmark_data.elapsed::numeric AS elapsed,
     benchmark_data.maxrss::integer AS maxrss,
     ((benchmark_data.powerl -> 'cpu_energy'::text) ->> 'value'::text)::numeric AS cpu_energy,
-    ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy
+    ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy,
+	repeatnum
    FROM ( SELECT benchmark_runs.nickname,
             benchmark_runs.benchmark_type,
             benchmark_runs.program_name,
             benchmark_runs.program_version,
             benchmark_runs.units,
-		    benchmark_runs.cpu_affinity,
+            benchmark_runs.cpu_affinity,
             benchmark_runs.processes,
             benchmark_runs.threads,
             benchmark_runs.runs ->> 'user'::text AS usercpu,
             benchmark_runs.runs ->> 'system'::text AS syscpu,
             benchmark_runs.runs ->> 'elapsed'::text AS elapsed,
             benchmark_runs.runs ->> 'maxrss'::text AS maxrss,
-            benchmark_runs.runs -> 'power'::text AS powerl
+            benchmark_runs.runs -> 'power'::text AS powerl,
+		    ROW_NUMBER()  OVER (PARTITION BY nickname, benchmark_type, cpu_affinity, processes, threads) AS repeatnum
            FROM ( SELECT benchmarks.nickname,
                     benchmarks.benchmark_type,
                     benchmarks.program_name,
                     benchmarks.program_version,
                     benchmarks.units,
-	                benchmarks.cpu_affinity,
+                    benchmarks.cpu_affinity,
                     benchmarks.benchmark_types ->> 'processes'::text AS processes,
                     benchmarks.benchmark_types ->> 'threads'::text AS threads,
                     jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
@@ -304,3 +306,129 @@ WITH DATA;
 
 ALTER TABLE IF EXISTS public.geekbench5_detailed_results
     OWNER TO benchmarking;
+
+-- View: public.cpu_results_best_avg_elapsed
+
+-- DROP VIEW public.cpu_results_best_avg_elapsed;
+
+CREATE OR REPLACE VIEW public.cpu_results_best_avg_elapsed
+ AS
+ WITH avg_elapsed_agg AS (
+         SELECT cpu_results_1.nickname,
+            cpu_results_1.benchmark_type,
+            cpu_results_1.program_name,
+            cpu_results_1.program_version,
+            cpu_results_1.units,
+            cpu_results_1.cpu_affinity,
+            cpu_results_1.processes,
+            cpu_results_1.threads,
+            avg(cpu_results_1.elapsed) AS avg_elapsed
+           FROM cpu_results cpu_results_1
+          GROUP BY cpu_results_1.nickname, cpu_results_1.benchmark_type, cpu_results_1.program_name, cpu_results_1.program_version, cpu_results_1.units, cpu_results_1.cpu_affinity, cpu_results_1.processes, cpu_results_1.threads
+        ), min_avg_elapsed_agg AS (
+         SELECT avg_elapsed_agg.nickname,
+            avg_elapsed_agg.benchmark_type,
+            avg_elapsed_agg.program_name,
+            avg_elapsed_agg.program_version,
+            avg_elapsed_agg.units,
+            avg_elapsed_agg.cpu_affinity,
+            min(avg_elapsed_agg.avg_elapsed) AS min_avg_elapsed
+           FROM avg_elapsed_agg
+          GROUP BY avg_elapsed_agg.nickname, avg_elapsed_agg.benchmark_type, avg_elapsed_agg.program_name, avg_elapsed_agg.program_version, avg_elapsed_agg.units, avg_elapsed_agg.cpu_affinity
+        ), avg_elapsed_agg_config AS (
+         SELECT avg_elapsed_agg.nickname,
+            avg_elapsed_agg.benchmark_type,
+            avg_elapsed_agg.program_name,
+            avg_elapsed_agg.program_version,
+            avg_elapsed_agg.units,
+            avg_elapsed_agg.cpu_affinity,
+            avg_elapsed_agg.processes,
+            avg_elapsed_agg.threads,
+            avg_elapsed_agg.avg_elapsed
+           FROM avg_elapsed_agg
+             JOIN min_avg_elapsed_agg ON avg_elapsed_agg.avg_elapsed = min_avg_elapsed_agg.min_avg_elapsed AND avg_elapsed_agg.nickname = min_avg_elapsed_agg.nickname AND avg_elapsed_agg.benchmark_type = min_avg_elapsed_agg.benchmark_type AND avg_elapsed_agg.program_name = min_avg_elapsed_agg.program_name AND avg_elapsed_agg.program_version = min_avg_elapsed_agg.program_version AND avg_elapsed_agg.units = min_avg_elapsed_agg.units AND avg_elapsed_agg.cpu_affinity = min_avg_elapsed_agg.cpu_affinity
+        )
+ SELECT cpu_results.nickname,
+    cpu_results.benchmark_type,
+    cpu_results.program_name,
+    cpu_results.program_version,
+    cpu_results.units,
+    cpu_results.cpu_affinity,
+    cpu_results.processes,
+    cpu_results.threads,
+    cpu_results.usercpu,
+    cpu_results.syscpu,
+    cpu_results.elapsed,
+    cpu_results.maxrss,
+    cpu_results.cpu_energy,
+    cpu_results.ram_energy,
+    cpu_results.repeatnum
+   FROM cpu_results
+     JOIN avg_elapsed_agg_config ON cpu_results.nickname = avg_elapsed_agg_config.nickname AND cpu_results.benchmark_type = avg_elapsed_agg_config.benchmark_type AND cpu_results.program_name = avg_elapsed_agg_config.program_name AND cpu_results.program_version = avg_elapsed_agg_config.program_version AND cpu_results.units = avg_elapsed_agg_config.units AND cpu_results.cpu_affinity = avg_elapsed_agg_config.cpu_affinity AND cpu_results.processes = avg_elapsed_agg_config.processes AND cpu_results.threads = avg_elapsed_agg_config.threads;
+
+ALTER TABLE public.cpu_results_best_avg_elapsed
+    OWNER TO benchmarking;
+
+-- View: public.cpu_results_best_avg_throughput
+
+-- DROP VIEW public.cpu_results_best_avg_throughput;
+
+CREATE OR REPLACE VIEW public.cpu_results_best_avg_throughput
+ AS
+ WITH avg_throughput_agg AS (
+         SELECT cpu_results_1.nickname,
+            cpu_results_1.benchmark_type,
+            cpu_results_1.program_name,
+            cpu_results_1.program_version,
+            cpu_results_1.units,
+            cpu_results_1.cpu_affinity,
+            cpu_results_1.processes,
+            cpu_results_1.threads,
+            avg(cpu_results_1.elapsed/cpu_results_1.processes) AS avg_throughput
+           FROM cpu_results cpu_results_1
+          GROUP BY cpu_results_1.nickname, cpu_results_1.benchmark_type, cpu_results_1.program_name, cpu_results_1.program_version, cpu_results_1.units, cpu_results_1.cpu_affinity, cpu_results_1.processes, cpu_results_1.threads
+        ), max_avg_throughput_agg AS (
+         SELECT avg_throughput_agg.nickname,
+            avg_throughput_agg.benchmark_type,
+            avg_throughput_agg.program_name,
+            avg_throughput_agg.program_version,
+            avg_throughput_agg.units,
+            avg_throughput_agg.cpu_affinity,
+            max(avg_throughput_agg.avg_throughput) AS max_avg_throughput
+           FROM avg_throughput_agg
+          GROUP BY avg_throughput_agg.nickname, avg_throughput_agg.benchmark_type, avg_throughput_agg.program_name, avg_throughput_agg.program_version, avg_throughput_agg.units, avg_throughput_agg.cpu_affinity
+        ), avg_throughput_agg_config AS (
+         SELECT avg_throughput_agg.nickname,
+            avg_throughput_agg.benchmark_type,
+            avg_throughput_agg.program_name,
+            avg_throughput_agg.program_version,
+            avg_throughput_agg.units,
+            avg_throughput_agg.cpu_affinity,
+            avg_throughput_agg.processes,
+            avg_throughput_agg.threads,
+            avg_throughput_agg.avg_throughput
+           FROM avg_throughput_agg
+             JOIN max_avg_throughput_agg ON avg_throughput_agg.avg_throughput = max_avg_throughput_agg.max_avg_throughput AND avg_throughput_agg.nickname = max_avg_throughput_agg.nickname AND avg_throughput_agg.benchmark_type = max_avg_throughput_agg.benchmark_type AND avg_throughput_agg.program_name = max_avg_throughput_agg.program_name AND avg_throughput_agg.program_version = max_avg_throughput_agg.program_version AND avg_throughput_agg.units = max_avg_throughput_agg.units AND avg_throughput_agg.cpu_affinity = max_avg_throughput_agg.cpu_affinity
+        )
+ SELECT cpu_results.nickname,
+    cpu_results.benchmark_type,
+    cpu_results.program_name,
+    cpu_results.program_version,
+    cpu_results.units,
+    cpu_results.cpu_affinity,
+    cpu_results.processes,
+    cpu_results.threads,
+    cpu_results.usercpu,
+    cpu_results.syscpu,
+    cpu_results.elapsed,
+    cpu_results.maxrss,
+    cpu_results.cpu_energy,
+    cpu_results.ram_energy,
+    cpu_results.repeatnum
+   FROM cpu_results
+     JOIN avg_throughput_agg_config ON cpu_results.nickname = avg_throughput_agg_config.nickname AND cpu_results.benchmark_type = avg_throughput_agg_config.benchmark_type AND cpu_results.program_name = avg_throughput_agg_config.program_name AND cpu_results.program_version = avg_throughput_agg_config.program_version AND cpu_results.units = avg_throughput_agg_config.units AND cpu_results.cpu_affinity = avg_throughput_agg_config.cpu_affinity AND cpu_results.processes = avg_throughput_agg_config.processes AND cpu_results.threads = avg_throughput_agg_config.threads;
+
+ALTER TABLE public.cpu_results_best_avg_throughput
+    OWNER TO benchmarking;
+
+
