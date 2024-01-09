@@ -59,6 +59,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_results
 TABLESPACE pg_default
 AS
  SELECT benchmark_data.nickname,
+	benchmark_data.run_date,
     benchmark_data.benchmark_type,
     benchmark_data.program_name,
     benchmark_data.program_version,
@@ -72,8 +73,9 @@ AS
     benchmark_data.maxrss::integer AS maxrss,
     ((benchmark_data.powerl -> 'cpu_energy'::text) ->> 'value'::text)::numeric AS cpu_energy,
     ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy,
-	repeatnum
+    benchmark_data.repeatnum
    FROM ( SELECT benchmark_runs.nickname,
+			benchmark_runs.run_date,
             benchmark_runs.benchmark_type,
             benchmark_runs.program_name,
             benchmark_runs.program_version,
@@ -86,8 +88,9 @@ AS
             benchmark_runs.runs ->> 'elapsed'::text AS elapsed,
             benchmark_runs.runs ->> 'maxrss'::text AS maxrss,
             benchmark_runs.runs -> 'power'::text AS powerl,
-		    ROW_NUMBER()  OVER (PARTITION BY nickname, benchmark_type, cpu_affinity, processes, threads) AS repeatnum
+            row_number() OVER (PARTITION BY benchmark_runs.nickname, benchmark_runs.benchmark_type, benchmark_runs.cpu_affinity, benchmark_runs.processes, benchmark_runs.threads) AS repeatnum
            FROM ( SELECT benchmarks.nickname,
+				    benchmarks.run_date,
                     benchmarks.benchmark_type,
                     benchmarks.program_name,
                     benchmarks.program_version,
@@ -97,6 +100,7 @@ AS
                     benchmarks.benchmark_types ->> 'threads'::text AS threads,
                     jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
                    FROM ( SELECT hosts.nickname,
+						    hosts.run_date,
                             hosts.benchmark_type,
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'program'::text AS program_name,
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'programversion'::text AS program_version,
@@ -104,6 +108,7 @@ AS
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'cpu_affinity'::text AS cpu_affinity,
                             jsonb_array_elements((jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'results'::text) -> 'configurations'::text) AS benchmark_types
                            FROM ( SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
+								 returned_results.jsondata ->> 'date'::datetime AS run_date,
                                     jsonb_object_keys(((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text) AS benchmark_type,
                                     ((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text AS benchmark_types
                                    FROM returned_results) hosts
@@ -384,7 +389,7 @@ CREATE OR REPLACE VIEW public.cpu_results_best_avg_throughput
             cpu_results_1.cpu_affinity,
             cpu_results_1.processes,
             cpu_results_1.threads,
-            avg(cpu_results_1.elapsed/cpu_results_1.processes) AS avg_throughput
+            avg(cpu_results_1.processes/(cpu_results_1.elapsed/3600)) AS avg_throughput
            FROM cpu_results cpu_results_1
           GROUP BY cpu_results_1.nickname, cpu_results_1.benchmark_type, cpu_results_1.program_name, cpu_results_1.program_version, cpu_results_1.units, cpu_results_1.cpu_affinity, cpu_results_1.processes, cpu_results_1.threads
         ), max_avg_throughput_agg AS (
