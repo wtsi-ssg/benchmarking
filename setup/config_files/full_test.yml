@@ -20,6 +20,8 @@
             threads: $N/2
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
           - processes: 1
             threads: range(2,$N,4)
         clear_caches: True
@@ -40,6 +42,8 @@
             threads: $N/2
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
           - processes: 1
             threads: range(2,$N,4)
         clear_caches: True
@@ -65,6 +69,8 @@
             threads: $N/2
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
         clear_caches: True
     - type: mbw
       settings:
@@ -110,6 +116,8 @@
             threads: $N
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
         clear_caches: True
     - type: multithreaded
       settings:
@@ -129,6 +137,8 @@
           - processes: 1
             threads: 1
           - processes: 4
+            threads: 1
+          - processes: 8
             threads: 1
         clear_caches: True
     - type: multithreaded
@@ -152,6 +162,8 @@
             threads: $N/2
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
         clear_caches: True
     - type: multithreaded
       settings:
