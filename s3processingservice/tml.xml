@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<NotificationConfiguration>
+	<TopicConfiguration>
+		<Id>1</Id>
+		<Topic>arn:aws:sns:default::results-posted-topic</Topic>
+		<Filter>
+			<S3Key>
+				<FilterRule>
+					<Name>prefix</Name>
+					<Value>results/</Value>
+				</FilterRule>
+			</S3Key>
+		</Filter>
+		<Event>s3:ObjectCreated:*</Event>
+	</TopicConfiguration>
+	<TopicConfiguration>
+		<Id>1</Id>
+		<Topic>arn:aws:sns:default::returned_results</Topic>
+		<Filter>
+			<S3Key>
+				<FilterRule>
+					<Name>prefix</Name>
+					<Value>results/</Value>
+				</FilterRule>
+			</S3Key>
+		</Filter>
+		<Event>s3:ObjectCreated:*</Event>
+	</TopicConfiguration>
+</NotificationConfiguration>
+
