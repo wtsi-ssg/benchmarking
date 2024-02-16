@@ -59,7 +59,8 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS public.cpu_results
 TABLESPACE pg_default
 AS
  SELECT benchmark_data.nickname,
-	benchmark_data.run_date,
+    benchmark_data.cpu_model,
+    benchmark_data.run_date,
     benchmark_data.benchmark_type,
     benchmark_data.program_name,
     benchmark_data.program_version,
@@ -75,7 +76,8 @@ AS
     ((benchmark_data.powerl -> 'ram_energy'::text) ->> 'value'::text)::numeric AS ram_energy,
     benchmark_data.repeatnum
    FROM ( SELECT benchmark_runs.nickname,
-			benchmark_runs.run_date,
+		    benchmark_runs.cpu_model,
+            benchmark_runs.run_date,
             benchmark_runs.benchmark_type,
             benchmark_runs.program_name,
             benchmark_runs.program_version,
@@ -90,7 +92,8 @@ AS
             benchmark_runs.runs -> 'power'::text AS powerl,
             row_number() OVER (PARTITION BY benchmark_runs.nickname, benchmark_runs.benchmark_type, benchmark_runs.cpu_affinity, benchmark_runs.processes, benchmark_runs.threads) AS repeatnum
            FROM ( SELECT benchmarks.nickname,
-				    benchmarks.run_date,
+				    benchmarks.cpu_model,
+                    benchmarks.run_date,
                     benchmarks.benchmark_type,
                     benchmarks.program_name,
                     benchmarks.program_version,
@@ -100,7 +103,8 @@ AS
                     benchmarks.benchmark_types ->> 'threads'::text AS threads,
                     jsonb_array_elements(benchmarks.benchmark_types -> 'runs'::text) AS runs
                    FROM ( SELECT hosts.nickname,
-						    hosts.run_date,
+						    hosts.cpu_model,
+                            hosts.run_date,
                             hosts.benchmark_type,
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'program'::text AS program_name,
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'programversion'::text AS program_version,
@@ -108,7 +112,8 @@ AS
                             (jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'settings'::text) ->> 'cpu_affinity'::text AS cpu_affinity,
                             jsonb_array_elements((jsonb_array_elements(hosts.benchmark_types -> hosts.benchmark_type) -> 'results'::text) -> 'configurations'::text) AS benchmark_types
                            FROM ( SELECT returned_results.jsondata ->> 'nickname'::text AS nickname,
-								 returned_results.jsondata ->> 'date'::datetime AS run_date,
+								    returned_results.jsondata -> 'system-info'->> 'model'::text AS cpu_model,
+                                    returned_results.jsondata ->> 'date'::text AS run_date,
                                     jsonb_object_keys(((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text) AS benchmark_type,
                                     ((returned_results.jsondata -> 'results'::text) -> 'CPU'::text) -> 'benchmarks'::text AS benchmark_types
                                    FROM returned_results) hosts
@@ -354,6 +359,8 @@ CREATE OR REPLACE VIEW public.cpu_results_best_avg_elapsed
              JOIN min_avg_elapsed_agg ON avg_elapsed_agg.avg_elapsed = min_avg_elapsed_agg.min_avg_elapsed AND avg_elapsed_agg.nickname = min_avg_elapsed_agg.nickname AND avg_elapsed_agg.benchmark_type = min_avg_elapsed_agg.benchmark_type AND avg_elapsed_agg.program_name = min_avg_elapsed_agg.program_name AND avg_elapsed_agg.program_version = min_avg_elapsed_agg.program_version AND avg_elapsed_agg.units = min_avg_elapsed_agg.units AND avg_elapsed_agg.cpu_affinity = min_avg_elapsed_agg.cpu_affinity
         )
  SELECT cpu_results.nickname,
+	cpu_results.run_date,
+	cpu_results.cpu_model,
     cpu_results.benchmark_type,
     cpu_results.program_name,
     cpu_results.program_version,
@@ -416,6 +423,8 @@ CREATE OR REPLACE VIEW public.cpu_results_best_avg_throughput
              JOIN max_avg_throughput_agg ON avg_throughput_agg.avg_throughput = max_avg_throughput_agg.max_avg_throughput AND avg_throughput_agg.nickname = max_avg_throughput_agg.nickname AND avg_throughput_agg.benchmark_type = max_avg_throughput_agg.benchmark_type AND avg_throughput_agg.program_name = max_avg_throughput_agg.program_name AND avg_throughput_agg.program_version = max_avg_throughput_agg.program_version AND avg_throughput_agg.units = max_avg_throughput_agg.units AND avg_throughput_agg.cpu_affinity = max_avg_throughput_agg.cpu_affinity
         )
  SELECT cpu_results.nickname,
+	cpu_results.run_date,
+	cpu_results.cpu_model,
     cpu_results.benchmark_type,
     cpu_results.program_name,
     cpu_results.program_version,
