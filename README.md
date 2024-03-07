@@ -8,13 +8,13 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 ### Prior to running this benchmarking suite, please ensure the following steps are taken
 
-1. Install the latest version of docker (documentation at https://docs.docker.com/get-docker/)
+1. Install the latest version of docker (documentation at <https://docs.docker.com/get-docker/>)
 
-2. If using singularity, please ensure singularity 3.5.3 or later is installed (documentation at http://singularity.lbl.gov/install-linux)
+2. If using singularity, please ensure singularity 3.5.3 or later is installed (documentation at <http://singularity.lbl.gov/install-linux>)
 
 3. A data volume is available to be mounted to the `/data` directory of this container. (Approx volume size: 200 GB)
 
-4. For network specific benchmark (i.e. iperf), an iperf server will need to be set up and be running on an appropriate machine (documentation on https://iperf.fr/)
+4. For network specific benchmark (i.e. iperf), an iperf server will need to be set up and be running on an appropriate machine (documentation on <https://iperf.fr/>)
 
 5. All the benchmarks must be run as `root`.
 
@@ -23,7 +23,8 @@ Additionally, it can be used in conjunction with continuous integration systems 
 #### Using a pre built docker image
 
 The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the dockerhub `wsisci/benchmarking:1.0` as below:
-```
+
+```text
 docker pull wsisci/benchmarking:1.0
 ```
 
@@ -31,7 +32,7 @@ docker pull wsisci/benchmarking:1.0
 
 Alternatively, this docker image can be built from scratch by cloning this repository, and using docker build command, as below, this option is only applicable to those with access to the sanger internal gitlab site.
 
-```
+```text
 git clone https://gitlab.internal.sanger.ac.uk/ISG/benchmarking.git
 
 docker build -f Dockerfile . -t benchmarking:latest
@@ -43,17 +44,19 @@ This is necessary for running the container in environment where docker is eithe
 
 #### Using a pre built singularity image
 
-ISG has build the singularity image for this benchmarking suite which can be found at `/software/isg/benchmarking_suite/singularity_image/benchmarking.simg` location on farm cluster. 
+ISG has build the singularity image for this benchmarking suite which can be found at `/software/isg/benchmarking_suite/singularity_image/benchmarking.simg` location on farm cluster.
 
 #### Building the singularity image from the docker image
 
 Alternatively, this singularity image can be built from the docker image as:
-```
+
+```text
 SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://wsisci/benchmarking:1.0
 ```
 
 Or from a local docker images as:
-```
+
+```text
 docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
 docker tag <NAME_OF_LOCAL_DOCKER_IMAGE> localhost:5000/<NAME_OF_DOCKER_IMAGE>
@@ -63,42 +66,40 @@ docker push localhost:5000/<NAME_OF_DOCKER_IMAGE>
 SINGULARITY_NOHTTPS=1 singularity build <NAME_OF_SINGULARITY_IMAGE>.simg docker://localhost:5000/<NAME_OF_DOCKER_IMAGE>
 ```
 
-
 ## **Benchmarks in docker container**
 
-Currently for this version, all the benchmark configuration files are pre-defined (~/benchmarking/setup/config_files). You just need to pass the type of the benchmark to be run to the `docker run` command and that should be enough. 
+Currently for this version, all the benchmark configuration files are pre-defined (~/benchmarking/setup/config_files). You just need to pass the type of the benchmark to be run to the `docker run` command and that should be enough.
 
-#### Types of benchmarks:
+### Types of benchmarks
+
 - Runnable program
-  * `threaded` (BWA, Salmon)
+  - `threaded` (BWA, Salmon)
 - IO test
-  * `disk` (iozone)
+  - `disk` (iozone)
 - Network test
-  * `network` (iperf)
+  - `network` (iperf)
 - Memory test
-  * `mbw`
+  - `mbw`
 
 The respective configuration files are named based on these types, and this is to be passed to `docker run` command. Please refer [Running different benchmarks](## Running different benchmarks) section below for further details about each one.
 
 #### Directory structure in docker container
 
-|     What      |     Path      |
-| ------------- | ------------- |
-| Data and tools related files  | /benchmarking/setup/ |
-| Config files  | /benchmarking/setup/config_files/    |
-| Bash scripts for bwa, multithreading, salmon commands  | /benchmarking/scripts/ |
-| Benchmarks    | /benchmarking/benchmark_suit/benchmarks/ |
-| Datasets*     | /data/datasets/|
-| Tools*        | /data/tools/   |
-| Results*      | /data/results/ |
+|                       What                             |                  Path                    |
+| ------------------------------------------------------ | ---------------------------------------- |
+| Data and tools related files                           | /benchmarking/setup/                     |
+| Config files                                           | /benchmarking/setup/config_files/        |
+| Bash scripts for bwa, multithreading, salmon commands  | /benchmarking/scripts/                   |
+| Benchmarks                                             | /benchmarking/benchmark_suit/benchmarks/ |
+| Datasets*                                              | /data/datasets/                          |
+| Tools*                                                 | /data/tools/                             |
+| Results*                                               | /data/results/                           |
 
 *These directories will be created on-the-go and can be easily accessible from the local machine under `/<mount_point_for_data_volume>` directory.
-
 
 ## **Benchmarks in singularity container**
 
 Similar to docker, singularity container also follows the same format to run the benchmarking suite depending on its type. In addition to that, we need to specify the present working directory (`--pwd`) as "/" in the `singularity run` command.
-
 
 ## **Running different benchmarks**
 
@@ -106,35 +107,41 @@ Benchmarks can be run by passing their type to the `docker run` or `singularity 
 
 `docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark> <outputfile.json> <machine nickname>`
 
-or 
+or
 
-`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark> <outputfile.json> <machine nickname>` 
-
+`singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg <type_of_benchmark> <outputfile.json> <machine nickname>`
 
 ### Runnable program
 
 #### general settings
-```
+
+```yml
 - general_settings:
   install_dir: "/data/tools"
 ```
-The benchmarking suite requires the installation directory for the programs to be set. 
+
+The benchmarking suite requires the installation directory for the programs to be set.
 
 #### `threaded` (BWA+NUMA)
+
 This benchmark is for running in a multi process-threaded setup, measuring the time taken to run a command on the dataset.
 
-**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks. 
+**Please note:** As we'll be clearing the cache between each run, docker must be run in --privileged mode for all the multithreaded related benchmarks.
 Eg.
-```
+
+```bash
 docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded output.json 'Special machine'
 ```
+
 Or
-```
+
+```bash
 singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded output.json 'Special machine'
 ```
 
 Example config:
-```
+
+```yml
 - type: cpu
   benchmarks:
     - type: multithreaded 
@@ -152,27 +159,31 @@ Example config:
         process_thread: "1*1,1*N"
         clear_caches: True
 ```
-The above configuration file will run bwa tool with numa, on process_thread configuration of `1*1` (one process, one thread) and `1*N` (one process and N threads). Here `N` is the maximum number of cores available to the system. 
+
+The above configuration file will run bwa tool with numa, on process_thread configuration of `1*1` (one process, one thread) and `1*N` (one process and N threads). Here `N` is the maximum number of cores available to the system.
 Additionally, multiple variations of the process_thread can be used in the same section as: `process_thread: "1*1,1*2,2*1,2*2,4*16,1*N,2*N"` (first entry is for process and second is for thread.)
 
 The test will be run `repeat` number of times and an average will be stored in result file. If `clear_cache` is set to True, it'd clear the system cache between each run.
 
-
 ### IO test
 
 #### `disk` (iozone)
-This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at http://www.iozone.org/ for more information. 
 
-```
+This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at <http://www.iozone.org/> for more information.
+
+```bash
 docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk output.json 'Special machine'
 ```
+
 Or
-```
+
+```bash
 singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg disk output.json 'Special machine'
 ```
 
 Example config:
-```
+
+```yml
 ---
 - type: disk
   settings:
@@ -189,8 +200,7 @@ Example config:
 
 Disk type benchmarks require a "target_dir" to be set for files to be input to and output from, default is set to `/tmp`.
 
-`arguments: "-a"` launches iozone in default mode (recommended). 
-
+`arguments: "-a"` launches iozone in default mode (recommended).
 
 ### Network test
 
@@ -198,16 +208,19 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
-```
+```bash
 docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
 ```
+
 Or
-```
+
+```bash
 singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
 ```
 
 Example config:
-```
+
+```yml
 ---
 - type: network
   benchmarks:
@@ -233,18 +246,18 @@ Example config:
 
 This benchmark tests both `protocol: "UDP"` and `protocol: "TCP"`. The `time_to_transmit` specifies the time in seconds to transmit for and `parallel_streams` specifies the number of parallel client threads to run.
 
-
 ## **Results**
 
 As mentioned above, results for each benchmark is stored in `/data/results/` on docker container i.e. `/<mount_point_for_volume>/results/` directory on local machine under their respective type.
 
-Eg. 
-```
+Eg.
+
+```bash
 :~$/mnt/data_volume/results# ls 
 disk  network  runs  threaded  timed_command
 ```
 
-This directory will also have a `runs` directory which contains all the intermediate files and output .sam/.quant.sf files for each test run. 
+This directory will also have a `runs` directory which contains all the intermediate files and output .sam/.quant.sf files for each test run.
 
 Example result file for network test:
 <details>
@@ -334,9 +347,10 @@ Example result file for network test:
      }
   }
 ```
+
 </details>
 
-
 ## **TODOs**
-1. Add functionality to take user-defined configuration file as an input. 
+
+1. Add functionality to take user-defined configuration file as an input.
 2. CI for building docker & singularity images
