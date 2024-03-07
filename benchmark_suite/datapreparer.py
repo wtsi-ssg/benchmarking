@@ -1,28 +1,53 @@
+"""Module to import data from config files, download datasets and install programs"""
+
 #!/usr/bin/env python3
+import os.path
 import pathlib
 import string
 import subprocess
-import concurrent.futures
+from typing import Literal
 
 import yaml
+
+from .utility import Utility
 
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
 
-import os.path
-import sys
-from pathlib import Path
-
-from .utility import Utility
-
 
 class DataPreparer:
+    """Class to import data from config files, download datasets and install programs"""
+
+    def __init__(
+        self,
+        defaults_yml_input_file: pathlib.Path,
+        settings_yml_input_file: pathlib.Path,
+        basedir: pathlib.Path,
+        verbose: bool,
+    ) -> None:
+        self.defaults_yml_input_file: pathlib.Path = defaults_yml_input_file
+        self.settings_yml_input_file: pathlib.Path = settings_yml_input_file
+        self.base_dir: pathlib.Path = basedir
+        self.verbose: bool = verbose
+
+        # set a dictionary variable for all programs that do not require a program setting
+        self.implicit_program_type_benchmarks: list[str] = [
+            "iperf",
+            "iozone",
+            "streams",
+        ]
+
+        # set a dictionary variable for all benchmarks that require data to be downloaded
+        self.data_dependent_type_benchmarks: list[str] = ["multithreaded"]
+
+        self.install_dir = Utility.get_install_dir(settings_yml_input_file)
+
     def get_benchmark_list_settings(self, settings_doc: dict) -> list:
-        """this function gets a list of all programs, programversions, and datasets used by tests in the yml file"""
-        settings_list = []
-        set_keys = [
+        """Gets a list of all programs, programversions, and datasets from yml file for tests"""
+        settings_list: list = []
+        set_keys: list[str] = [
             "program_name",
             "required_version",
             "dataset_tag",
@@ -30,9 +55,11 @@ class DataPreparer:
             "datadir",
             "mode",
         ]
+
         for n in range(1, len(settings_doc)):
             for m in range(0, len(settings_doc[n]["benchmarks"])):
-                # Is there a program asssociated with this specific type of benchmark
+
+                # Is there a program asssociated with this specific type of benchmark?
                 if (
                     settings_doc[n]["benchmarks"][m]["type"]
                     in self.implicit_program_type_benchmarks
@@ -51,7 +78,8 @@ class DataPreparer:
                 required_version = settings_doc[n]["benchmarks"][m]["settings"][
                     "programversion"
                 ]
-                # It uses a predefined default_version dictionary for each program if default version is mentioned
+
+                # Uses predefined default_version dict for each program if default version is there
                 if (
                     required_version == "default"
                     and program_name in self.default_version.keys()
@@ -70,15 +98,19 @@ class DataPreparer:
                         dataset_tag = settings_doc[n]["benchmarks"][m]["settings"][
                             "dataset_tag"
                         ]
+
                     else:
                         dataset_tag = None
+
                     if "datadir" in settings_doc[n]["benchmarks"][m]["settings"].keys():
                         datadir = settings_doc[n]["benchmarks"][m]["settings"][
                             "datadir"
                         ]
+
                     else:
                         print("datadir setting required, none set.")
                         return None
+
                     if (
                         "dataset_file"
                         in settings_doc[n]["benchmarks"][m]["settings"].keys()
@@ -86,21 +118,21 @@ class DataPreparer:
                         dataset_file = settings_doc[n]["benchmarks"][m]["settings"][
                             "dataset_file"
                         ]
+
                     else:
-                        dataset_file = ""
+                        dataset_file: Literal[""] = ""
                 else:
                     dataset_tag = None
                     datadir = None
                     dataset_file = None
 
                 # get mode for streams benchmark
-                # FIXME: hard coding for specific benchmark
                 if program_name == "streams":
                     mode = settings_doc[n]["benchmarks"][m]["settings"]["mode"]
                 else:
                     mode = None
 
-                set_values = [
+                set_values: list = [
                     program_name,
                     required_version,
                     dataset_tag,
@@ -113,12 +145,14 @@ class DataPreparer:
         return settings_list
 
     def _get_binary_database(self) -> "dict[str,dict[str,str]]":
-        loc_db = {}
-        with open(self.base_dir + "/setup/binaryAddresses.txt", "r") as binary_url:
+        loc_db: dict = {}
+        with open(
+            self.base_dir + "/setup/binaryAddresses.txt", "r", encoding="UTF-8"
+        ) as binary_url:
             for line in binary_url:
                 try:
                     pro_name, pro_ver, url = line.strip().split(",")
-                except:
+                except ValueError:
                     print(
                         f"Line in binary addresses does not have exactly 3 fields: '{line}'"
                     )
@@ -132,17 +166,18 @@ class DataPreparer:
 
     def download_and_install_programs(
         self, settings_list: "list[dict]", install_dir: str
-    ) -> bool:  # MULTITHREAD
+    ) -> bool:
+        """Downloads and installs programs from settings_list"""
+
         # check and create tools directory if doesn't exist
         os.makedirs(install_dir, exist_ok=True)
 
         # read in program database
-        loc_db = self._get_binary_database()
+        loc_db: dict[str, dict[str, str]] = self._get_binary_database()
 
         for st in settings_list:
             program_name = st["program_name"]
             required_version = st["required_version"]
-            mode = st["mode"]
             name_and_version = program_name + "-v" + required_version
 
             print("Required program name and version: " + name_and_version)
@@ -155,7 +190,7 @@ class DataPreparer:
                 if required_version in loc_db[program_name]:
                     # First download the binary package
                     url = loc_db[program_name][required_version]
-                    file_name = Path(url).name
+                    file_name = pathlib.Path(url).name
                     if not os.path.exists(install_dir + file_name):
                         rc = subprocess.call(
                             ["wget -O " + file_name + " " + url],
@@ -164,7 +199,7 @@ class DataPreparer:
                         )
                     # if the directory to install the program in does not exist, create it
                     os.makedirs(install_dir + name_and_version, exist_ok=True)
-                    file_extension = Path(file_name).suffix
+                    file_extension = pathlib.Path(file_name).suffix
 
                     # Extract it
                     # if the binary is in .tar or .tar.gz form, extract it using tar
@@ -207,28 +242,33 @@ class DataPreparer:
                     # Should we invoke build command?
                     if not program_name in self.build_command:
                         print(
-                            f"An entry for the build_command for {program_name} was not found. Assuming no_build"
+                            f"An entry for the build_command for {program_name} was not found."
+                            "Assuming no_build"
                         )
                         break
-                    elif "no_build" in self.build_command[program_name]:
+ 
+                    if "no_build" in self.build_command[program_name]:
                         break
-                    else:
-                        # Invoke build command
-                        build_cmd = self.build_command[program_name]["cmd"]
-                        build_cwd = string.Template(
-                            self.build_command[program_name]["cwd"]
-                        ).substitute(
-                            install_dir=install_dir, name_and_version=name_and_version
-                        )
-                        subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
+
+                    # Invoke build command
+                    build_cmd = self.build_command[program_name]["cmd"]
+                    build_cwd: str = string.Template(
+                        self.build_command[program_name]["cwd"]
+                    ).substitute(
+                        install_dir=install_dir, name_and_version=name_and_version
+                    )
+                    subprocess.check_call([build_cmd], shell=True, cwd=build_cwd)
+
                 else:
                     print(
-                        f"Entry for this tool {program_name} version {required_version} is not found in the binaryAddress list. Please update the list and run again!"
+                        f"Entry for this tool {name_and_version} not found in binaryAddress list."
+                        "Please update the list and run again."
                     )
                     return False
             else:
                 print(
-                    f"Entry for this tool {program_name} is not found in the binaryAddress list. Please update the list and run again!"
+                    f"Entry for this tool {name_and_version} not found in the binaryAddress list. "
+                    "Please update the list and run again!"
                 )
                 return False
 
@@ -240,66 +280,39 @@ class DataPreparer:
 
         return True
 
-    def download_and_install_programs_multithread(
-        self, settings_list, install_dir
-    ) -> bool:
-        os.makedirs(install_dir, exist_ok=True)
-        loc_db = self._get_binary_database()
-
-        # Create list of threads and start them
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = []
-            for st in settings_list:
-                futures.append(
-                    executor.submit(
-                        self.download_and_install_programs, st, install_dir, loc_db
-                    )
-                )
-            # Wait for all threads to complete
-            concurrent.futures.wait(futures)
-
-            # Check if any of the threads failed and report errors
-            for future in futures:
-                if future.exception() is not None:
-                    print(
-                        f"Error during download_and_install_programs: {future.exception()}"
-                    )
-                    return False
-        return True
-
-    def check_md5sum(self, path: Path, correct_sum):
-        md5sumproc = subprocess.Popen(
+    def check_md5sum(self, path: pathlib.Path, correct_sum) -> bool:
+        """Checks md5sum of given file with the correct sum."""
+        with subprocess.Popen(
             ["md5sum " + path.as_posix()],
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-        )
-        out, err = md5sumproc.communicate()
-        md5sumcheck = out.split(" ")
-        if md5sumcheck[0] == correct_sum:
-            return True
-        else:
-            return False
+        ) as md5sumproc:
+            out, _ = md5sumproc.communicate()
+            md5sumcheck: list[str] = out.split(" ")
+            return bool(md5sumcheck[0] == correct_sum)
 
-    def get_file_data(self, list_filename: Path, datadir: Path):
-        with open(list_filename, "r") as data_f:
+    def get_file_data(self, list_filename: pathlib.Path, datadir: pathlib.Path) -> None:
+        """Downloads programs based on required_file_name."""
+        with open(list_filename, "r", encoding="UTF-8") as data_f:
             for line in data_f:
-                input = line.strip().split(",")
-                if len(input) == 2:
-                    required_file_name, correct_md5sum = input
-                    file_name = Path(required_file_name).name
-                elif len(input) == 3:
-                    required_file_name, correct_md5sum, file_name = input
-                    os.makedirs(datadir / Path(file_name).parent, exist_ok=True)
+                file_input: list[str] = line.strip().split(",")
+                if len(file_input) == 2:
+                    required_file_name, correct_md5sum = file_input
+                    file_name: str = pathlib.Path(required_file_name).name
+                elif len(file_input) == 3:
+                    required_file_name, correct_md5sum, file_name = file_input
+                    os.makedirs(datadir / pathlib.Path(file_name).parent, exist_ok=True)
                 else:
-                    raise Exception("Bad number of fields in dataset list")
+                    raise ValueError("Bad number of fields in dataset list")
 
                 if os.path.exists(datadir / file_name):
                     if not self.check_md5sum(datadir / file_name, correct_md5sum):
                         if self.verbose:
                             print(
-                                f"{required_file_name} is not downloaded correctly. Trying to redownload now..."
+                                f"{required_file_name} is not downloaded correctly."
+                                "Trying to redownload now..."
                             )
                         subprocess.check_call(
                             [f"wget {required_file_name} -O {datadir/file_name}"],
@@ -316,12 +329,13 @@ class DataPreparer:
                         shell=True,
                     )
 
-    def download_dataset_file(self, settings_dict):
+    def download_dataset_file(self, settings_dict) -> None:
+        """Downloads dataset file specified in settings_dict"""
         datadir = pathlib.Path(settings_dict["datadir"])
         # check and create datasets directory if doesn't exist
         os.makedirs(datadir, exist_ok=True)
 
-        if type(settings_dict["dataset_file"]) is dict:
+        if isinstance(settings_dict["dataset_file"], dict):
             datadir_dest = datadir / pathlib.Path(settings_dict["dataset_file"]["dest"])
             os.makedirs(datadir_dest, exist_ok=True)
             self.get_file_data(
@@ -333,7 +347,8 @@ class DataPreparer:
 
         print("Required dataset is downloaded.")
 
-    def download_default_tagged_dataset(self, settings_dict):
+    def download_default_tagged_dataset(self, settings_dict) -> None:
+        """Downloads default datasets if tagged in settings_dict"""
         program = settings_dict["program_name"]
         required_version = settings_dict["required_version"]
         dataset_tag = settings_dict["dataset_tag"]
@@ -346,7 +361,7 @@ class DataPreparer:
         if dataset_tag == "default":
             for ds in self.dataset_required[program]:
                 if required_version in self.dataset_required[program][ds]:
-                    print("Benchmark is using data_set: {} ".format(ds))
+                    print(f"Benchmark is using data_set: {ds} ")
                     index_name = pathlib.Path(self.dataset_index[program][ds])
 
                     # check and create datasets directory if doesn't exist
@@ -361,7 +376,7 @@ class DataPreparer:
         self, program_name: str, required_version: str
     ) -> pathlib.Path:
         """get the path to the program"""
-        name_and_version = f"{program_name}-v{required_version}"
+        name_and_version: str = f"{program_name}-v{required_version}"
         if program_name in self.path_to_program_dict.keys():
             path_to_program_template = string.Template(
                 self.path_to_program_dict[program_name]
@@ -370,34 +385,16 @@ class DataPreparer:
             path_to_program_template = string.Template(
                 name_and_version + "/" + program_name
             )
-        iperfvar = "iperf" + required_version[0]
-        path_to_program = path_to_program_template.substitute(
+        iperfvar: str = "iperf" + required_version[0]
+        path_to_program: str = path_to_program_template.substitute(
             name_and_version=name_and_version, iperfvar=iperfvar
         )
 
         return pathlib.Path(path_to_program)
 
-    def __init__(
-        self,
-        defaults_yml_input_file: pathlib.Path,
-        settings_yml_input_file: pathlib.Path,
-        basedir: pathlib.Path,
-        verbose: bool,
-    ):
-        self.defaults_yml_input_file = defaults_yml_input_file
-        self.settings_yml_input_file = settings_yml_input_file
-        self.base_dir = basedir
-        self.verbose = verbose
+    def load_defaults(self, defaults_doc) -> None:
+        """Load the default settings from the defaults_doc"""
 
-        # set a dictionary variable for all programs that do not require a program setting
-        self.implicit_program_type_benchmarks = ["iperf", "iozone", "streams"]
-
-        # set a dictionary variable for all benchmarks that require data to be downloaded
-        self.data_dependent_type_benchmarks = ["multithreaded"]
-
-        self.install_dir = Utility.get_install_dir(settings_yml_input_file)
-
-    def loadDefaults(self, defaults_doc):
         # Set a dictionary to show where executable will be stored
         self.path_to_program_dict = {
             key: f"{self.install_dir}{value}"
@@ -405,22 +402,21 @@ class DataPreparer:
         }
         # Set a dictionary variable for all the default versions of programs
         self.default_version = defaults_doc["default_version"]
-        # set a dictionary variable saying which version of the salmon index is required for a given version
+        # set a dictionary variable for which version of the salmon index is required
         self.dataset_required = defaults_doc["dataset_required"]
         # dataset index
         self.dataset_index = defaults_doc["dataset_index"]
         # command to build program
         self.build_command = defaults_doc["build_command"]
 
-    def prepareData(self) -> bool:
-        defaults_doc = yaml.load(
-            open(self.defaults_yml_input_file, "rb"), Loader=Loader
-        )
-        self.loadDefaults(defaults_doc)
+    def prepare_data(self) -> bool:
+        """Prepare data for the benchmarks by downloading the datasets and installing programs"""
+        with open(self.defaults_yml_input_file, "rb") as defaults_file:
+            defaults_doc = yaml.load(defaults_file, Loader=Loader)
+        self.load_defaults(defaults_doc)
 
-        settings_doc = yaml.load(
-            open(self.settings_yml_input_file, "rb"), Loader=Loader
-        )
+        with open(self.settings_yml_input_file, "rb") as settings_file:
+            settings_doc = yaml.load(settings_file, Loader=Loader)
 
         settings_list = self.get_benchmark_list_settings(settings_doc)
 
@@ -429,7 +425,7 @@ class DataPreparer:
 
         # Print the program list if verbose is set
         if self.verbose:
-            print("List of programs from yml file :\n{}".format(settings_list))
+            print(f"List of programs from yml file :\n{settings_list}")
 
         if not self.download_and_install_programs(settings_list, self.install_dir):
             return False
