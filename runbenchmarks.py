@@ -287,9 +287,10 @@ if __name__ == "__main__":
     RESULT_FILE_PATH_TO_LOCAL = str(
         pathlib.Path(*pathlib.Path(result_fullpath).parts[2:])
     )
-    print("Result stored at: <mount_point>/{RESULT_FILE_PATH_TO_LOCAL}")
+    print(f"Result stored at: <mount_point>/{RESULT_FILE_PATH_TO_LOCAL}")
 
     if args.return_results:
+        print("Uploading results as requested.")
         r = ResultsReturn()
         r.post_results(
             raw_result_filename,
