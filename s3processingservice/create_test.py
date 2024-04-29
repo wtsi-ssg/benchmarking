@@ -41,7 +41,7 @@ print(json.dumps(record))
 
 # Connect to Rabbit MQ server providing S3 notifications
 conn = Connection(host=args.host, userid=args.user,
-                  password=args.password, virtual_host=args.vhost)
+                  password=args.password, virtual_host=args.vhost, ssl=True)
 conn.connect()
 
 # Set up channel to send to queue
