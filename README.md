@@ -22,10 +22,10 @@ Additionally, it can be used in conjunction with continuous integration systems 
 
 #### Using a pre built docker image
 
-The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the dockerhub `wsisci/benchmarking:1.0` as below:
+The recommended method for accessing this benchmarking suite is pulling the ISG built docker image directly from the quay.io `quay.io/wsi-ids/genomics_benchmarking:1.1.7.1` as below:
 
 ```text
-docker pull wsisci/benchmarking:1.0
+docker pull quay.io/wsi-ids/genomics_benchmarking:1.1.7.1
 ```
 
 #### Building the docker image locally
@@ -44,7 +44,7 @@ This is necessary for running the container in environment where docker is eithe
 
 #### Using a pre built singularity image
 
-ISG has build the singularity image for this benchmarking suite which can be found at `/software/isg/benchmarking_suite/singularity_image/benchmarking.simg` location on farm cluster.
+ISG has built the singularity image for this benchmarking suite which can be found at `/software/isg/benchmarking_suite/singularity_image/benchmarking.simg` location on farm cluster.
 
 #### Building the singularity image from the docker image
 
@@ -73,7 +73,7 @@ Currently for this version, all the benchmark configuration files are pre-define
 ### Types of benchmarks
 
 - Runnable program
-  - `threaded` (BWA, Salmon)
+  - `multithreaded` (BWA, Salmon)
 - IO test
   - `disk` (iozone)
 - Network test
@@ -105,7 +105,7 @@ Similar to docker, singularity container also follows the same format to run the
 
 Benchmarks can be run by passing their type to the `docker run` or `singularity run` commands as:
 
-`docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 <type_of_benchmark> <outputfile.json> <machine nickname>`
+`docker run -v /<mount_point_for_volume>/:/data quay.io/wsi-ids/genomics_benchmarking:1.1.7.1 <type_of_benchmark> <outputfile.json> <machine nickname>`
 
 or
 
@@ -122,7 +122,7 @@ or
 
 The benchmarking suite requires the installation directory for the programs to be set.
 
-#### `threaded` (BWA+NUMA)
+#### `multithreaded` (BWA+NUMA)
 
 This benchmark is for running in a multi process-threaded setup, measuring the time taken to run a command on the dataset.
 
@@ -130,13 +130,13 @@ This benchmark is for running in a multi process-threaded setup, measuring the t
 Eg.
 
 ```bash
-docker run --privileged -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 threaded output.json 'Special machine'
+docker run --privileged -v /<mount_point_for_volume>/:/data quay.io/wsi-ids/genomics_benchmarking:1.1.7.1 multithreaded output.json 'Special machine'
 ```
 
 Or
 
 ```bash
-singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg threaded output.json 'Special machine'
+singularity run --pwd / -B /<mount_point_for_volume>/:/data benchmarking.simg multithreaded output.json 'Special machine'
 ```
 
 Example config:
@@ -172,7 +172,7 @@ The test will be run `repeat` number of times and an average will be stored in r
 This benchmark uses `iozone` tool that runs the IOzone filesystem benchmark, please see documentaion at <http://www.iozone.org/> for more information.
 
 ```bash
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 disk output.json 'Special machine'
+docker run -v /<mount_point_for_volume>/:/data quay.io/wsi-ids/genomics_benchmarking:1.1.7.1 disk output.json 'Special machine'
 ```
 
 Or
@@ -209,7 +209,7 @@ Disk type benchmarks require a "target_dir" to be set for files to be input to a
 This benchmarking suite uses iperf exclusively for network benchmarking. To run the iperf benchmark successfully an iperf server must be started. (default port for iperf is 5201). In the `docker run` or `singularity run` command we must pass the iperf server address and port.
 
 ```bash
-docker run -v /<mount_point_for_volume>/:/data wsisci/benchmarking:1.0 -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
+docker run -v /<mount_point_for_volume>/:/data quay.io/wsi-ids/genomics_benchmarking:1.1.7.1 -i <iperf_server_address> -p <iperf_port> network output.json 'Special machine'
 ```
 
 Or
