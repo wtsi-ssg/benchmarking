@@ -7,7 +7,6 @@
 .job_template: &start_docker
     before_script:
         - mkdir -p /etc/docker
-        - echo '{"registry-mirrors":["https://docker-hub-mirror.internal.sanger.ac.uk:5000"],"default-address-pools":[{"base":"192.168.4.0/16","size":24}]}' > /etc/docker/daemon.json
         - dockerd > /var/log/dockerd.log 2>&1 &
         - sleep 10
 
