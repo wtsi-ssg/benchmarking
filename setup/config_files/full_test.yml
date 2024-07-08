@@ -160,6 +160,8 @@
             threads: $N
           - processes: 4
             threads: $N/4
+          - processes: 8
+            threads: $N/8
         clear_caches: True
     - type: multithreaded
       settings:
