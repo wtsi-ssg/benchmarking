@@ -1,0 +1,45 @@
+---
+- general_settings:
+  install_dir: "/data/tools/"
+- type: cpu
+  benchmarks:
+    - type: multithreaded
+      settings:
+        tag: hifiasm
+        command: ["{path_to_program}", "-t", "${threads}", "-o", "${result_path}gsMetZobe1.${repeatn}.${processn}", "--h1", "${input_datapath}/h1_sampled.fq", "--h2", "${input_datapath}/h2_sampled.fq ${input_datapath}/gsMetZobe1_sampled.fasta"]
+        program: "hifiasm"
+        programversion: "0.19.8-r603"
+        shell: False
+        dataset_file: "/benchmarking/setup/hifiasm_data.txt"
+        datadir: "/data/datasets/hifiasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 50X gsMetZobe1 PacBio HiFi and 50X Hi-C
+        process_thread:
+          - processes: 2
+            threads: $N/2
+          - processes: 1
+            threads: $N
+          - processes: 4
+            threads: $N/4
+        clear_caches: True
+    - type: multithreaded
+      settings:
+        tag: hifiasm
+        command: ["{path_to_program}", "-t", "${threads}", "-o", "${result_path}gsMetZobe1.${repeatn}.${processn}", "--h1", "${input_datapath}/h1_sampled.fq", "--h2", "${input_datapath}/h2_sampled.fq ${input_datapath}/gsMetZobe1_sampled.fasta"]
+        program: "hifiasm"
+        programversion: "0.19.8-r603"
+        shell: False
+        dataset_file: "/benchmarking/setup/hifiasm_data.txt"
+        datadir: "/data/datasets/hifiasm/"
+        result_dir: "/data/results/runs/"
+        repeats: 3
+        units: random subset of 50X gsMetZobe1 PacBio HiFi and 50X Hi-C
+        process_thread:
+          - processes: 2
+            threads: 1
+          - processes: 1
+            threads: 1
+          - processes: 4
+            threads: 1
+        clear_caches: True
