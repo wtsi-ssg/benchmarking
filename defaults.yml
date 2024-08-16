@@ -10,6 +10,7 @@ path_to_program:
   "geekbench5": "${name_and_version}/geekbench5"
   "minimap2": "${name_and_version}/minimap2"
   "miniasm": "${name_and_version}/miniasm"
+  "hifiasm": "${name_and_version}/hifiasm"
   "gatk": "${name_and_version}/gatk"
   "exonerate" : "${name_and_version}/src/program/exonerate"
   "bambi" : "${name_and_version}/src/bambi"
@@ -62,6 +63,9 @@ build_command:
     "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
     "cwd": "$install_dir$name_and_version"
   "miniasm":
+    "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
+    "cwd": "$install_dir$name_and_version"
+  "hifiasm":
     "cmd": "make CFLAGS='-g -Wall -O3 -march=native'"
     "cwd": "$install_dir$name_and_version"
   "gatk":

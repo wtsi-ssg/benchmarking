@@ -1,0 +1,3 @@
+https://it_randd.cog.sanger.ac.uk/input/h1_sampled.fq.gz,183ef5473495f7ffc466e6a0700c61e6
+https://it_randd.cog.sanger.ac.uk/input/h2_sampled.fq.gz,4e77473a0eeeb26354ad5336b3ccabed
+https://it_randd.cog.sanger.ac.uk/input/gsMetZobe1_sampled.fasta.gz,72a1b361fdc274cee55f23b046825844
