@@ -6,7 +6,7 @@
     - type: multithreaded
       settings:
         tag: hifiasm
-        command: ["${path_to_program}", "-t", "${threads}", "-o", "${result_path}gsMetZobe1.${repeatn}.${processn}", "--h1", "${input_datapath}/h1_sampled.fq.gz", "--h2", "${input_datapath}/h2_sampled.fq.gz ${input_datapath}/gsMetZobe1_sampled.fasta.gz"]
+        command: ["${path_to_program}", "-t", "${threads}", "-o", "${result_path}gsMetZobe1.${repeatn}.${processn}", "--h1", "${input_datapath}/h1_sampled.fq.gz", "--h2", "${input_datapath}/h2_sampled.fq.gz", "${input_datapath}/gsMetZobe1_sampled.fasta.gz"]
         program: "hifiasm"
         programversion: "0.19.8-r603"
         shell: False
