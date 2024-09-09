@@ -209,6 +209,6 @@
     - type: iozone
       settings:
         program: "iozone"
-        programversion: "3.492"
+        programversion: "3.506"
         arguments: "-a"
         result_dir: "/data/results/runs"
