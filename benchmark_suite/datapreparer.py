@@ -197,6 +197,13 @@ class DataPreparer:
                             shell=True,
                             cwd=install_dir,
                         )
+                        if rc != 0:
+                            print(
+                                f"Download for this tool {name_and_version} at {url} has failed."
+                                "Please update the list and run again."
+                            )
+                            return False
+
                     # if the directory to install the program in does not exist, create it
                     os.makedirs(install_dir + name_and_version, exist_ok=True)
                     file_extension = pathlib.Path(file_name).suffix
@@ -215,6 +222,13 @@ class DataPreparer:
                             ],
                             cwd=install_dir,
                         )
+                        if rc != 0:
+                            print(
+                                f"Extract for this tool {name_and_version} has failed."
+                                "Please update the list and run again."
+                            )
+                            return False
+
                     # if the binary is in the .deb form, use dpkg to extract it
                     elif file_extension in [".deb"]:
                         rc = subprocess.call(
@@ -226,6 +240,13 @@ class DataPreparer:
                             ],
                             cwd=install_dir,
                         )
+                        if rc != 0:
+                            print(
+                                f"Extract for this tool {name_and_version} has failed."
+                                "Please update the list and run again."
+                            )
+                            return False
+
                     elif file_extension in [".zip"]:
                         rc = subprocess.call(
                             [
@@ -238,6 +259,12 @@ class DataPreparer:
                             ],
                             cwd=install_dir,
                         )
+                        if rc != 0:
+                            print(
+                                f"Extract for this tool {name_and_version} has failed."
+                                "Please update the list and run again."
+                            )
+                            return False
 
                     # Should we invoke build command?
                     if not program_name in self.build_command:
