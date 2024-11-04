@@ -16,7 +16,7 @@
         repeats: 3
         units: Chr22 @ 30x from WGS
         process_thread:
-          - processes: range(1,$N/2+1,1)
+          - processes: range(1,$N/2+11,1)
             threads: 2
         clear_caches: True
     - type: multithreaded
@@ -33,7 +33,7 @@
         units: Chr22 @ 30x from WGS
         cpu_affy: interleave
         process_thread:
-          - processes: range(1,$N/2+1,1)
+          - processes: range(1,$N/2+11,1)
             threads: 2
         clear_caches: True
     - type: multithreaded
@@ -50,7 +50,7 @@
         units: Chr22 @ 30x from WGS
         cpu_affy: sequential
         process_thread:
-          - processes: range(1,$N/2+1,1)
+          - processes: range(1,$N/2+11,1)
             threads: 2
         clear_caches: True
 
